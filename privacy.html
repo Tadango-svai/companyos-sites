@@ -132,7 +132,18 @@ table.legal th{background:var(--soft);width:32%;font-weight:700}
 @media(max-width:860px){.hero .grid2{grid-template-columns:1fr}.visual{display:none}nav a:not(.cta){display:none}
 .hero{padding:64px 0 56px}section{padding:68px 0}.btn.ghost{margin:12px 0 0}
 .mcta{display:block;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;transition:opacity .25s,transform .25s}.mcta.off{opacity:0;transform:translateY(20px);pointer-events:none}.mcta .btn{width:100%;justify-content:center}body{padding-bottom:84px}}
-</style></head><body>
+</style><script>
+(function(){var own=false,C="https://tadangforai.tail5734ce.ts.net:8443",T="",sid;try{if(/[?&]cos_owner=1/.test(location.search))localStorage.setItem("cos_owner","1");own=localStorage.getItem("cos_owner")==="1";
+sid=sessionStorage.getItem("cos_sid")||Math.random().toString(36).slice(2,12);sessionStorage.setItem("cos_sid",sid)}catch(x){sid="x"}
+window.cosTrack=function(ev,pr){if(own)return;try{if(C)fetch(C+"/e",{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"text/plain"},
+body:JSON.stringify({e:ev,p:location.pathname,r:document.referrer,s:sid,x:pr||{}})}).catch(function(){})}catch(x){}try{if(T)posthog.capture(ev,pr||{})}catch(x){}};
+if(own)return;if(T)posthog.init(T,{api_host:"https://us.i.posthog.com",person_profiles:"identified_only",capture_pageleave:true,disable_session_recording:true,autocapture:false});
+cosTrack("pageview",{});
+document.addEventListener("click",function(ev){var a=ev.target.closest("a.btn,.share a,.related a");if(!a)return;var s=a.closest("section,.hero,.mcta");
+cosTrack(a.closest(".share")?"share_click":(a.closest(".related")?"article_click":"cta_click"),{label:(a.innerText||"").trim().slice(0,40),where:s?(s.id||s.className||"").toString().slice(0,30):""})},true);
+var marks={25:0,50:0,75:0,100:0};addEventListener("scroll",function(){var h=document.documentElement,p=Math.round((h.scrollTop+innerHeight)/h.scrollHeight*100);
+for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct:+k})}}},{passive:true});
+if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body>
 <header class="top"><div class="wrap"><a class="brand" href="./"><span class="mark">ス</span>スムージア</a><nav><a href="./#services">サービス</a><a href="./about.html">運営者</a><a class="cta" href="./contact.html">お問い合わせ</a></nav></div></header>
 <div class="page-head"><div class="wrap"><div class="kicker" style="color:#cfd6ff">スムージア</div><h1>プライバシーポリシー</h1></div></div><section><div class="wrap" style="max-width:860px"><p>スムージア(以下「当方」)は、お客様の個人情報を以下の方針で取り扱います。</p>
 <h3>取得する情報</h3><p>お問い合わせ・お申し込みの際にご提供いただく氏名、メールアドレス等。決済情報は決済代行会社(Stripe)が管理し、当方はカード番号を保持しません。</p>
