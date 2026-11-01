@@ -147,7 +147,7 @@ window.cosTrack=function(ev,pr){if(own)return;try{if(C)fetch(C+"/e",{method:"POS
 body:JSON.stringify({e:ev,p:location.pathname,r:document.referrer,s:sid,x:pr||{}})}).catch(function(){})}catch(x){}try{if(T)posthog.capture(ev,pr||{})}catch(x){}};
 if(own)return;if(T)posthog.init(T,{api_host:"https://us.i.posthog.com",person_profiles:"identified_only",capture_pageleave:true,disable_session_recording:true,autocapture:false});
 cosTrack("pageview",{});
-document.addEventListener("click",function(ev){var a=ev.target.closest("a.btn,.share a,.related a");if(!a)return;var s=a.closest("section,.hero,.mcta");
+document.addEventListener("click",function(ev){var f=ev.target.closest("a.aff");if(f){cosTrack("aff_click",{id:f.getAttribute("data-aff")||""});return}var a=ev.target.closest("a.btn,.share a,.related a");if(!a)return;var s=a.closest("section,.hero,.mcta");
 cosTrack(a.closest(".share")?"share_click":(a.closest(".related")?"article_click":"cta_click"),{label:(a.innerText||"").trim().slice(0,40),where:s?(s.id||s.className||"").toString().slice(0,30):""})},true);
 var marks={25:0,50:0,75:0,100:0};addEventListener("scroll",function(){var h=document.documentElement,p=Math.round((h.scrollTop+innerHeight)/h.scrollHeight*100);
 for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct:+k})}}},{passive:true});
