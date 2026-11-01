@@ -132,7 +132,18 @@ table.legal th{background:var(--soft);width:32%;font-weight:700}
 @media(max-width:860px){.hero .grid2{grid-template-columns:1fr}.visual{display:none}nav a:not(.cta){display:none}
 .hero{padding:64px 0 56px}section{padding:68px 0}.btn.ghost{margin:12px 0 0}
 .mcta{display:block;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;transition:opacity .25s,transform .25s}.mcta.off{opacity:0;transform:translateY(20px);pointer-events:none}.mcta .btn{width:100%;justify-content:center}body{padding-bottom:84px}}
-</style></head><body>
+</style><script>
+(function(){var own=false,C="https://tadangforai.tail5734ce.ts.net:8443",T="",sid;try{if(/[?&]cos_owner=1/.test(location.search))localStorage.setItem("cos_owner","1");own=localStorage.getItem("cos_owner")==="1";
+sid=sessionStorage.getItem("cos_sid")||Math.random().toString(36).slice(2,12);sessionStorage.setItem("cos_sid",sid)}catch(x){sid="x"}
+window.cosTrack=function(ev,pr){if(own)return;try{if(C)fetch(C+"/e",{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"text/plain"},
+body:JSON.stringify({e:ev,p:location.pathname,r:document.referrer,s:sid,x:pr||{}})}).catch(function(){})}catch(x){}try{if(T)posthog.capture(ev,pr||{})}catch(x){}};
+if(own)return;if(T)posthog.init(T,{api_host:"https://us.i.posthog.com",person_profiles:"identified_only",capture_pageleave:true,disable_session_recording:true,autocapture:false});
+cosTrack("pageview",{});
+document.addEventListener("click",function(ev){var a=ev.target.closest("a.btn,.share a,.related a");if(!a)return;var s=a.closest("section,.hero,.mcta");
+cosTrack(a.closest(".share")?"share_click":(a.closest(".related")?"article_click":"cta_click"),{label:(a.innerText||"").trim().slice(0,40),where:s?(s.id||s.className||"").toString().slice(0,30):""})},true);
+var marks={25:0,50:0,75:0,100:0};addEventListener("scroll",function(){var h=document.documentElement,p=Math.round((h.scrollTop+innerHeight)/h.scrollHeight*100);
+for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct:+k})}}},{passive:true});
+if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body>
 <header class="top"><div class="wrap"><a class="brand" href="./"><span class="mark">ス</span>スムージア</a><nav><a href="./#services">サービス</a><a href="./about.html">運営者</a><a class="cta" href="./contact.html">お問い合わせ</a></nav></div></header>
 <div class="page-head"><div class="wrap"><div class="kicker" style="color:#cfd6ff">スムージア</div><h1>特定商取引法に基づく表記</h1></div></div><section><div class="wrap" style="max-width:860px"><table class="legal"><tr><th>販売事業者</th><td>松永匡史</td></tr><tr><th>運営責任者</th><td>松永匡史</td></tr><tr><th>所在地</th><td>請求があった場合には遅滞なく開示いたします。</td></tr><tr><th>電話番号</th><td>請求があった場合には遅滞なく開示いたします。</td></tr><tr><th>メールアドレス</th><td>tadangon@gmail.com</td></tr><tr><th>販売価格</th><td>各サービスページに記載(税込)</td></tr><tr><th>商品代金以外の必要料金</th><td>インターネット接続にかかる通信料はお客様のご負担となります。</td></tr><tr><th>支払方法</th><td>クレジットカード(Stripe決済)</td></tr><tr><th>支払時期</th><td>ご注文時にお支払いが確定します。</td></tr><tr><th>引渡時期</th><td>お支払い確認後、各サービスページに記載の時期に提供します。</td></tr><tr><th>返品・キャンセル</th><td>デジタルサービスの性質上、提供開始後の返品・返金はお受けしておりません。提供に不備があった場合はご連絡ください。</td></tr></table></div></section>
 <footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
