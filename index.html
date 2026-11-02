@@ -221,7 +221,7 @@ h2{font-size:clamp(26px,3.6vw,42px)!important;letter-spacing:-.005em}
 sid=sessionStorage.getItem("cos_sid")||Math.random().toString(36).slice(2,12);sessionStorage.setItem("cos_sid",sid)}catch(x){sid="x"}
 window.cosTrack=function(ev,pr){if(own)return;try{if(C)fetch(C+"/e",{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"text/plain"},
 body:JSON.stringify({e:ev,p:location.pathname,r:document.referrer,s:sid,x:pr||{}})}).catch(function(){})}catch(x){}try{if(T)posthog.capture(ev,pr||{})}catch(x){}};
-if(own)return;if(T)posthog.init(T,{api_host:"https://us.i.posthog.com",person_profiles:"identified_only",capture_pageleave:true,disable_session_recording:true,autocapture:false});
+if(own){try{if(C&&!sessionStorage.getItem("cos_op")){sessionStorage.setItem("cos_op","1");fetch(C+"/e",{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"text/plain"},body:JSON.stringify({e:"owner_ping",p:location.pathname,s:sid})}).catch(function(){})}}catch(x){}return}if(T)posthog.init(T,{api_host:"https://us.i.posthog.com",person_profiles:"identified_only",capture_pageleave:true,disable_session_recording:true,autocapture:false});
 cosTrack("pageview",{});
 document.addEventListener("click",function(ev){var f=ev.target.closest("a.aff");if(f){cosTrack("aff_click",{id:f.getAttribute("data-aff")||""});return}var a=ev.target.closest("a.btn,.share a,.related a");if(!a)return;var s=a.closest("section,.hero,.mcta");
 cosTrack(a.closest(".share")?"share_click":(a.closest(".related")?"article_click":"cta_click"),{label:(a.innerText||"").trim().slice(0,40),where:s?(s.id||s.className||"").toString().slice(0,30):""})},true);
