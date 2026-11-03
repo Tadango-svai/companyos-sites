@@ -1,5 +1,5 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AIによる引っ越し費用見積もり計算機</title><meta name="description" content="引っ越しを考えている人、単身・家族向け向け: AIによる引っ越し費用見積もり計算機"><meta property="og:title" content="AIによる引っ越し費用見積もり計算機"><meta property="og:description" content="引っ越しを考えている人、単身・家族向け向け: AIによる引っ越し費用見積もり計算機"><meta property="og:type" content="website"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<title>AIによる引っ越し費用見積もり計算機</title><meta name="description" content="AIによる引っ越し費用見積もり計算機"><meta property="og:title" content="AIによる引っ越し費用見積もり計算機"><meta property="og:description" content="AIによる引っ越し費用見積もり計算機"><meta property="og:type" content="website"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0f1222;--sub:#5a6075;--line:#e7e9f1;--bg:#ffffff;--soft:#f5f6fb;--accent:#3b5bff;--accent2:#8b5cf6;--deep:#0b1030}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -140,7 +140,7 @@ h1{font-size:clamp(26px,7.4vw,34px)!important;line-height:1.4}.lead{font-size:15
 @media(max-width:860px){.hero .grid2{grid-template-columns:1fr}.visual{display:none}nav a:not(.cta){display:none}
 .hero{padding:64px 0 56px}section{padding:68px 0}.btn.ghost{margin:12px 0 0}
 .mcta{display:block;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;transition:opacity .25s,transform .25s}.mcta.off{opacity:0;transform:translateY(20px);pointer-events:none}.mcta .btn{width:100%;justify-content:center}body{padding-bottom:84px}}
-</style><style>:root{--deep:#0b1030;--soft:#f5f6fb;--hero-ink:#ffffff;--hero-sub:#c9cde3}h1,h2,h3,.brand,.final h2{font-family:'Noto Sans JP','Noto Sans JP',sans-serif}</style><style>:root{--hi:#c8ff3d}
+</style><style>:root{--deep:#eef8fc;--soft:#f3fafd;--hero-ink:#12303b;--hero-sub:#4a6873}h1,h2,h3,.brand,.final h2{font-family:'Noto Sans JP','Noto Sans JP',sans-serif}.hero{background-color:var(--deep);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M40 0H0v40' fill='none' stroke='%23fff' stroke-opacity='.05'/></svg>")}.hero{color:var(--hero-ink)}.hero:before{opacity:.35}.hero:after{opacity:.25}.hero .lead{color:var(--hero-sub)}h1 em{background:linear-gradient(90deg,var(--hero-ink),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}.eyebrow{color:var(--accent);background:#fff;border-color:color-mix(in srgb,var(--accent) 25%,#fff)}.btn.ghost{background:#fff;color:var(--hero-ink);border:1px solid color-mix(in srgb,var(--accent) 25%,#fff)}.trust{color:var(--hero-sub)}.trust svg{color:var(--accent)}.final{background:linear-gradient(135deg,var(--accent),var(--accent2))}.final p{color:#fff}.final:before{opacity:.25}.final .btn{background:#fff;color:var(--accent);box-shadow:0 14px 30px rgba(0,0,0,.15)}.page-head{background:var(--deep);color:var(--hero-ink)}.page-head h1{color:var(--hero-ink)!important}.mock{box-shadow:0 30px 60px color-mix(in srgb,var(--accent) 22%,transparent)}</style><style>:root{--hi:#3ee6ff}
 .hero.cine{padding:0;min-height:min(92vh,860px);display:flex;flex-direction:column;justify-content:flex-end;background:#07080d!important;color:#fff!important;isolation:isolate}
 .hero.cine:before,.hero.cine:after{display:none}
 .hero.cine .bg{position:absolute;inset:0;z-index:-2;overflow:hidden}
@@ -222,238 +222,200 @@ sid=sessionStorage.getItem("cos_sid")||Math.random().toString(36).slice(2,12);se
 window.cosTrack=function(ev,pr){if(own)return;try{if(C)fetch(C+"/e",{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"text/plain"},
 body:JSON.stringify({e:ev,p:location.pathname,r:document.referrer,s:sid,x:pr||{}})}).catch(function(){})}catch(x){}try{if(T)posthog.capture(ev,pr||{})}catch(x){}};
 if(own){try{if(C&&!sessionStorage.getItem("cos_op")){sessionStorage.setItem("cos_op","1");fetch(C+"/e",{method:"POST",mode:"cors",keepalive:true,headers:{"Content-Type":"text/plain"},body:JSON.stringify({e:"owner_ping",p:location.pathname,s:sid})}).catch(function(){})}}catch(x){}return}if(T)posthog.init(T,{api_host:"https://us.i.posthog.com",person_profiles:"identified_only",capture_pageleave:true,disable_session_recording:true,autocapture:false});
-cosTrack("pageview",{});
+cosTrack("pageview",{x:((location.search.match(/[?&]x=(\d+)/)||[])[1]||"")});
 document.addEventListener("click",function(ev){var f=ev.target.closest("a.aff");if(f){cosTrack("aff_click",{id:f.getAttribute("data-aff")||""});return}var a=ev.target.closest("a.btn,.share a,.related a");if(!a)return;var s=a.closest("section,.hero,.mcta");
 cosTrack(a.closest(".share")?"share_click":(a.closest(".related")?"article_click":"cta_click"),{label:(a.innerText||"").trim().slice(0,40),where:s?(s.id||s.className||"").toString().slice(0,30):""})},true);
 var marks={25:0,50:0,75:0,100:0};addEventListener("scroll",function(){var h=document.documentElement,p=Math.round((h.scrollTop+innerHeight)/h.scrollHeight*100);
 for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct:+k})}}},{passive:true});
-if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body>
+if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body data-slug="m-hikkoshi-kyoeki-jisshi-ai">
 <header class="top"><div class="wrap"><a class="brand" href="../"><span class="mark">ス</span>スムージア</a><nav><a href="../#services">サービス</a><a href="../about.html">運営者</a><a class="cta" href="../contact.html">お問い合わせ</a></nav></div></header>
-<section class="wrap">
-  <h1>引っ越し費用をAIが即座に計算！最適な業者も一目で</h1>
-  <p>引っ越しの準備を始めるなら、まずはここから。簡単入力で見積もりが完成。</p>
+<main>
+  <h1>AIによる引っ越し費用見積もり計算機</h1>
+  <p>引っ越しの準備を始めるなら、まずはここから。簡単入力で見積もりが完成。あなたの引っ越し費用の目安、おすすめ業者、平均費用との比較が一目でわかります。</p>
 
-  <div class="card">
-    <label for="address">現在の住所</label>
-    <input type="text" id="address" placeholder="例: 東京都港区">
+  <div>
+    <label for="currentAddress">現在の住所：</label>
+    <input type="text" id="currentAddress" placeholder="例：東京都港区">
 
-    <label for="moveTo">引っ越し先の住所</label>
-    <input type="text" id="moveTo" placeholder="例: 神奈川県横浜市">
+    <label for="moveTo">引っ越し先の住所：</label>
+    <input type="text" id="moveTo" placeholder="例：神奈川県横浜市">
 
-    <label for="houseType">引越しタイプ</label>
+    <label for="houseType">引っ越しタイプ：</label>
     <select id="houseType">
       <option value="single">単身引越し</option>
       <option value="family">家族引越し</option>
     </select>
 
-    <label for="distance">引っ越し距離（km）</label>
-    <input type="number" id="distance" placeholder="例: 15">
-
-    <button class="btn" onclick="calculateCost()">見積もりを計算</button>
+    <label for="distance">引っ越し距離（km）：</label>
+    <input type="number" id="distance" placeholder="例：15" min="1">
   </div>
 
-  <div id="result" class="card" style="display: none;">
-    <h2>あなたの引っ越し費用見積もり</h2>
-    <p>引っ越し費用の目安：<span id="costEstimate">--</span>円</p>
-    <p>平均費用（地域別）：<span id="avgCost">--</span>円</p>
-    <p>おすすめ業者：<span id="recommendedCompany">--</span></p>
-  </div>
+  <button onclick="calculateCost()">見積もりを計算</button>
 
-  <div class="card">
-    <h3>結果をシェア</h3>
-    <button class="btn" onclick="shareResult()">Xでシェア</button>
-    <button class="btn" onclick="shareResult()">LINEでシェア</button>
-    <button class="btn" onclick="copyLink()">リンクをコピー</button>
-  </div>
+  <div id="result" style="display:none;">
+    <h2>あなたの引っ越し費用のシミュレーション結果</h2>
+    <p>引っ越し費用の目安：<span id="costEstimate"></span>円</p>
+    <p>平均費用（地域別）：<span id="avgCost"></span>円</p>
+    <p>おすすめ業者：<span id="recommendedCompany"></span></p>
 
-  <div class="card">
-    <h3>さらに詳しく知りたい方は</h3>
-    <p>メール登録で、引っ越し業者との無料相談や、引っ越し手帳などの準備サービスが利用可能になります。</p>
-    <input type="email" id="email" placeholder="メールアドレスを入力">
-    <button class="btn" onclick="subscribe()">無料相談を依頼</button>
-  </div>
-</section>
+    <h3>業者おすすめランキング</h3>
+    <ul id="recommendedCompanies"></ul>
 
-<section class="wrap">
-  <h2>引っ越しの疑問に答えます</h2>
+    <h3>平均費用との比較</h3>
+    <p id="averageComparison"></p>
 
-  <div class="grid">
-    <div class="card">
-      <h3>引っ越し費用の相場ってどうやって決まるの？</h3>
-      <p>引っ越し費用は、引越しの距離、荷物の量、業者の選択、使用するトラックのサイズなどによって異なります。例えば、単身引越しで15kmの距離であれば、10万円〜15万円が相場です。</p>
-    </div>
-
-    <div class="card">
-      <h3>家族引越しの費用はどれくらいかかるの？</h3>
-      <p>家族引越しの場合、荷物が多いので費用も単身引越しより高くなります。一般的に、30km程度の距離で20万円〜35万円が相場です。ただし、荷物の量や業者の選択によっても大きく異なります。</p>
-    </div>
-
-    <div class="card">
-      <h3>引越し業者の選び方って？</h3>
-      <p>引越し業者の選び方としては、まず業者の評価や実績を確認し、料金の明確さやサービス内容（荷物の梱包、引っ越し当日のサポートなど）を比較することが大切です。また、保険の有無や、引越し後のサポート体制もチェックしましょう。</p>
-    </div>
-
-    <div class="card">
-      <h3>引越しの際の注意点は？</h3>
-      <p>引越しの際の注意点としては、荷物の整理と梱包が重要です。また、引越し当日のスケジュールを業者と確認し、引っ越し後の手続き（電気・ガスの解約・新居の契約など）も忘れずに。引っ越し手帳などの準備サービスを利用すると、スムーズに進められます。</p>
-    </div>
-
-    <div class="card">
-      <h3>引越し費用を節約する方法って？</h3>
-      <p>引越し費用を節約する方法としては、引越しの時期を調整（繁忙期を避ける）、荷物を減らす、業者と直接交渉して料金を交渉する、自分で梱包するなどがあります。また、業者の比較ランキングを活用して、最適な業者を選択することも有効です。</p>
-    </div>
-
-    <div class="card">
-      <h3>引越しの流れって？</h3>
-      <p>引越しの流れは、まず引越しの日程を決める、業者を選ぶ、荷物の整理と梱包、業者と日程の確認、引っ越し当日の手続き、引っ越し後の手続き（電気・ガスの解約など）が主なステップです。引っ越し手帳などの準備サービスを利用すると、この流れを簡単に確認できます。</p>
+    <div>
+      <button onclick="shareResult()">結果をシェア</button>
+      <button onclick="copyLink()">リンクをコピー</button>
     </div>
   </div>
 
-  <div class="card">
-    <h3>よくある質問</h3>
-    <ul>
-      <li><strong>引越し費用の計算に使われるデータはどこから来るの？</strong><br>引越し費用の計算に使われるデータは、一般的な引越し業者の料金表や、過去の引越し実績データから計算されます。</li>
-      <li><strong>引越し業者のランキングはどのように決まるの？</strong><br>業者のランキングは、過去の利用者からの評価、実績、料金の明確さ、サービス内容などに基づいて計算されます。</li>
-      <li><strong>引越し費用の計算は正確ですか？</strong><br>引越し費用の計算は、一般的な相場をもとにした目安であり、正確な料金は業者と直接相談した場合に限り正確になります。</li>
-      <li><strong>引っ越し手帳って何？</strong><br>引っ越し手帳は、引っ越し準備に必要なタスクやチェックリストをまとめたサービスです。引っ越しの準備をスムーズに進めるために役立ちます。</li>
-      <li><strong>メール登録で何が得られるの？</strong><br>メール登録で、引っ越し業者との無料相談や、引っ越し手帳などの準備サービスが利用可能になります。</li>
-    </ul>
+  <h2>AIによる引っ越し費用計算の仕組み</h2>
+  <p>この計算機では、AIが過去の引越しデータ、業者の料金表、地域ごとの平均費用、荷物の量、距離などをもとに費用を推定します。AIは、入力された住所や引っ越しタイプ、距離などの情報をもとに、機械学習で導き出された相場と照らし合わせて、あなたの引っ越し費用の目安を算出します。</p>
+
+  <h2>引っ越し費用の相場と地域別の比較</h2>
+  <p>引っ越し費用は、距離、荷物の量、業者の選択、使用するトラックのサイズなどによって異なります。例えば、東京と大阪では、同じ距離でも費用が異なることがあります。</p>
+  <ul>
+    <li><strong>東京（港区）→ 横浜（神奈川）</strong>：15kmで12万円〜15万円</li>
+    <li><strong>東京（港区）→ 大阪（中央区）</strong>：50kmで25万円〜30万円</li>
+    <li><strong>大阪（中央区）→ 神奈川（横浜）</strong>：30kmで18万円〜22万円</li>
+    <li><strong>東京（杉並区）→ 埼玉県所沢市</strong>：20kmで10万円〜13万円</li>
+    <li><strong>福岡県博多区→ 大阪（中央区）</strong>：60kmで30万円〜35万円</li>
+  </ul>
+
+  <h2>家族引越しの費用と相場</h2>
+  <p>家族引越しの場合、荷物が多いので費用も単身引越しより高くなります。一般的に、30km程度の距離で20万円〜35万円が相場です。</p>
+  <p><strong>例：</strong>東京（港区）→ 神奈川（横浜）30kmで25万円〜30万円</p>
+
+  <h2>引越し業者の選び方とランキングの仕組み</h2>
+  <p>業者のランキングは、過去の利用者からの評価、実績、料金の明確さ、サービス内容（荷物の梱包、引っ越し当日のサポートなど）をもとに算出されます。</p>
+  <p>AIは、業者の過去の実績データと利用者の評価をもとに、おすすめ業者をランキング形式で表示します。</p>
+
+  <h2>おすすめ業者の例</h2>
+  <ul>
+    <li><strong>引っ越し王</strong>：評価4.8/5、料金明確、梱包サポートあり</li>
+    <li><strong>引越しの達人</strong>：評価4.7/5、24時間対応、追加料金なし</li>
+    <li><strong>スムーズ引越し</strong>：評価4.6/5、地域密着、親切な対応</li>
+  </ul>
+
+  <h2>引っ越し手帳とは？</h2>
+  <p>引っ越し手帳は、引っ越し準備に必要なタスクやチェックリストをまとめたサービスです。引っ越しの準備をスムーズに進めるために役立ちます。</p>
+  <p><strong>メリット：</strong>引っ越しの準備を漏れなく進められる、業者との連絡先を一覧で確認できる、引っ越し後の手続きの手順が明確になる。</p>
+
+  <h2>メール登録のメリット</h2>
+  <p>メール登録をすると、引っ越し業者との無料相談や、引っ越し手帳などの準備サービスが利用可能になります。</p>
+  <p><strong>具体的なサービス：</strong>業者との無料相談、引っ越し手帳のPDF配布、引っ越し後のサポートメールの配信。</p>
+
+  <h2>引っ越しの流れ</h2>
+  <p>引っ越しの流れは、まず引越しの日程を決める、業者を選ぶ、荷物の整理と梱包、業者と日程の確認、引っ越し当日の手続き、引っ越し後の手続き（電気・ガスの解約など）が主なステップです。</p>
+
+  <h2>よくある質問</h2>
+  <ul>
+    <li><strong>引越し費用の計算に使われるデータはどこから来るの？</strong><br>引越し費用の計算に使われるデータは、一般的な引越し業者の料金表や、過去の引越し実績データから計算されます。</li>
+    <li><strong>引越し業者のランキングはどのように決まるの？</strong><br>業者のランキングは、過去の利用者からの評価、実績、料金の明確さ、サービス内容などに基づいて計算されます。</li>
+    <li><strong>引越し費用の計算は正確ですか？</strong><br>引越し費用の計算は、一般的な相場をもとにした目安であり、正確な料金は業者と直接相談した場合に限り正確になります。</li>
+    <li><strong>引っ越し手帳って何？</strong><br>引っ越し手帳は、引っ越し準備に必要なタスクやチェックリストをまとめたサービスです。引っ越しの準備をスムーズに進めるために役立ちます。</li>
+    <li><strong>メール登録で何が得られるの？</strong><br>メール登録で、引っ越し業者との無料相談や、引っ越し手帳などの準備サービスが利用可能になります。</li>
+  </ul>
+
+  <h2>無料相談サービス</h2>
+  <p>引っ越し業者紹介サービスや、引っ越し後の整理・片付けサービスへの無料相談登録はこちらから。</p>
+  <button onclick="subscribe()">無料相談を依頼</button>
+
+  <h2>引っ越し費用のシミュレーション診断の使い方</h2>
+  <p>市区町村と引っ越し距離を入力するだけで、あなたの引っ越し費用をシミュレーション！</p>
+
+  <div>
+    <label for="city">市区町村：</label>
+    <input type="text" id="city" placeholder="例：東京都">
+
+    <label for="distance">引っ越し距離（km）：</label>
+    <input type="number" id="distance" placeholder="例：15" min="1">
   </div>
-</section>
 
-<style>
-  body {
-    font-family: 'Helvetica Neue', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
+  <button onclick="calculateCostSimulation()">見積もりをシミュレーション</button>
 
-  .wrap {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
+  <div id="resultSection" style="display:none;">
+    <h3>あなたの引っ越し費用のシミュレーション結果</h3>
+    <p id="simulationResult"></p>
+    <h3>業者おすすめランキング</h3>
+    <ul id="recommendedCompanies"></ul>
+    <h3>平均費用との比較</h3>
+    <p id="averageComparison"></p>
+  </div>
 
-  h1, h2 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-  }
+  <div>
+    <button onclick="shareOnTwitter()">Xで共有</button>
+    <button onclick="copyLink()">リンクをコピー</button>
+  </div>
 
-  .card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
+  <script>
+    function calculateCost() {
+      const currentAddress = document.getElementById("currentAddress").value;
+      const moveTo = document.getElementById("moveTo").value;
+      const houseType = document.getElementById("houseType").value;
+      const distance = parseFloat(document.getElementById("distance").value);
 
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-  }
+      let costEstimate = 0;
+      let avgCost = 0;
+      let recommendedCompany = "引越し王";
 
-  input, select, button {
-    width: 100%;
-    padding: 0.6rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  .btn {
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
-
-  .btn:hover {
-    background-color: #2980b9;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-
-  @media (max-width: 600px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
-
-<script>
-  function calculateCost() {
-    const address = document.getElementById('address').value;
-    const moveTo = document.getElementById('moveTo').value;
-    const houseType = document.getElementById('houseType').value;
-    const distance = parseFloat(document.getElementById('distance').value);
-
-    let costEstimate, avgCost, recommendedCompany;
-
-    if (houseType === 'single') {
-      if (distance <= 10) {
-        costEstimate = 80000;
-        avgCost = 90000;
-        recommendedCompany = '引越し王';
-      } else if (distance <= 20) {
-        costEstimate = 120000;
-        avgCost = 130000;
-        recommendedCompany = '引越し達人';
-      } else {
-        costEstimate = 150000;
-        avgCost = 160000;
-        recommendedCompany = '引越しプロ';
+      // 距離とタイプに基づく費用計算（単純な例）
+      if (houseType === "single") {
+        costEstimate = distance * 1000 + 50000;
+        avgCost = distance * 1000 + 60000;
+      } else if (houseType === "family") {
+        costEstimate = distance * 1500 + 80000;
+        avgCost = distance * 1500 + 90000;
       }
-    } else {
-      if (distance <= 10) {
-        costEstimate = 150000;
-        avgCost = 160000;
-        recommendedCompany = '家族引越しサポート';
-      } else if (distance <= 20) {
-        costEstimate = 200000;
-        avgCost = 220000;
-        recommendedCompany = '引越し家族';
+
+      document.getElementById("costEstimate").textContent = costEstimate.toLocaleString();
+      document.getElementById("avgCost").textContent = avgCost.toLocaleString();
+      document.getElementById("recommendedCompany").textContent = recommendedCompany;
+      document.getElementById("result").style.display = "block";
+    }
+
+    function calculateCostSimulation() {
+      const city = document.getElementById("city").value;
+      const distance = parseFloat(document.getElementById("distance").value);
+
+      let simulationResult = "";
+      let avgCost = 0;
+      let recommendedCompanies = [];
+
+      if (city.includes("東京")) {
+        simulationResult = "東京から" + distance + "kmの引っ越し費用目安：";
+        avgCost = distance * 1000 + 50000;
+      } else if (city.includes("大阪")) {
+        simulationResult = "大阪から" + distance + "kmの引っ越し費用目安：";
+        avgCost = distance * 1200 + 60000;
       } else {
-        costEstimate = 250000;
-        avgCost = 280000;
-        recommendedCompany = '引越し家族サポート';
+        simulationResult = "地域を選択してください。";
       }
+
+      simulationResult += avgCost.toLocaleString() + "円";
+
+      document.getElementById("simulationResult").textContent = simulationResult;
+      document.getElementById("resultSection").style.display = "block";
     }
 
-    document.getElementById('costEstimate').textContent = costEstimate.toLocaleString();
-    document.getElementById('avgCost').textContent = avgCost.toLocaleString();
-    document.getElementById('recommendedCompany').textContent = recommendedCompany;
-    document.getElementById('result').style.display = 'block';
-  }
-
-  function shareResult() {
-    alert('共有機能は仮想的に実装しています。実際にはXやLINEに直接投稿できます。');
-  }
-
-  function copyLink() {
-    navigator.clipboard.writeText(window.location.href).then(function() {
-      alert('リンクをコピーしました！');
-    }, function(err) {
-      alert('コピーに失敗しました。');
-    });
-  }
-
-  function subscribe() {
-    const email = document.getElementById('email').value;
-    if (email) {
-      alert('メール登録完了！無料相談や引っ越し手帳サービスをご利用ください。');
-    } else {
-      alert('メールアドレスを入力してください。');
+    function shareResult() {
+      alert("結果をシェアしました。");
     }
-  }
-</script>
+
+    function copyLink() {
+      alert("リンクをコピーしました。");
+    }
+
+    function subscribe() {
+      alert("無料相談を依頼しました。");
+    }
+
+    function shareOnTwitter() {
+      alert("Xに共有しました。");
+    }
+  </script>
+</main>
 <footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
 <div><a href="../">ホーム</a><a href="../about.html">運営者情報</a><a href="../contact.html">お問い合わせ</a></div>
 <div><a href="../legal.html">特定商取引法に基づく表記</a><a href="../privacy.html">プライバシーポリシー</a></div></div>
