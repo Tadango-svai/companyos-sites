@@ -242,9 +242,9 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
 <div class="done" id="adone"><div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><h3 style="margin:0 0 8px">お申し込みを受け付けました</h3><p style="color:var(--sub);margin:0">2営業日以内に、ご入力のメールアドレスへご連絡します。</p></div></div></div></section>
 <script>function sendApply(ev){ev.preventDefault();var f=document.getElementById("af"),b=f.querySelector("button"),er=document.getElementById("aerr");if(f._honey.value)return false;
 b.disabled=true;b.style.opacity=.6;er.style.display="none";var d={};new FormData(f).forEach(function(v,k){d[k]=v});
-fetch("https://formsubmit.co/ajax/tadangon@gmail.com",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(d)})
+fetch("https://tadangforai.tail5734ce.ts.net:8443/form",{method:"POST",mode:"cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)})
 .then(function(r){return r.json()}).then(function(j){if(String(j.success)==="true"){if(window.cosTrack)cosTrack("form_submit",{});f.style.display="none";document.getElementById("adone").style.display="block"}else{throw 0}})
-.catch(function(){b.disabled=false;b.style.opacity=1;er.innerHTML="送信できませんでした。お手数ですが <b>tadangon@gmail.com</b> へメールでご連絡ください。";er.style.display="block"});return false}</script><footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
+.catch(function(){b.disabled=false;b.style.opacity=1;er.innerHTML="送信できませんでした。少し時間をおいて、もう一度お試しください。";er.style.display="block"});return false}</script><footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
 <div><a href="./">ホーム</a><a href="./about.html">運営者情報</a><a href="./contact.html">お問い合わせ</a></div>
 <div><a href="./legal.html">特定商取引法に基づく表記</a><a href="./privacy.html">プライバシーポリシー</a></div></div>
 <div class="wrap" style="margin-top:26px">© スムージア</div></footer></body></html>
