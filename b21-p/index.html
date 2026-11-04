@@ -1,84 +1,32 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>b21: Silence Compress & Release</title>
-    <style>
-        body { font-family: sans-serif; background: #111; color: #fff; text-align: center; padding: 40px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .gauge { width: 200px; height: 20px; background: #333; margin: 20px auto; border-radius: 10px; overflow: hidden; }
-        .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000); transition: width 0.5s; }
-        button { padding: 15px 30px; font-size: 18px; cursor: pointer; margin: 10px; }
-        .release { background: #ff4444; }
-        .status { margin-top: 20px; font-size: 24px; min-height: 30px; }
-        .thought-box { background: #222; padding: 20px; text-align: left; margin: 20px 0; min-height: 100px; border: 1px solid #444; }
-    </style>
+<meta charset="UTF-8">
+<title>静寂のブラックフライデー</title>
+<style>
+    body { margin: 0; padding: 20px; background: #111; color: #eee; font-family: sans-serif; text-align: center; }
+    .container { max-width: 600px; margin: auto; }
+    h1 { font-size: 1.5rem; border-bottom: 1px solid #444; padding-bottom: 10px; }
+    .price { font-size: 2rem; color: #4caf50; margin: 20px 0; }
+    button { background: #333; color: #fff; border: none; padding: 15px; width: 100%; font-size: 1rem; cursor: pointer; }
+    button:active { background: #4caf50; }
+    .status { margin-top: 20px; font-style: italic; color: #aaa; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>沈黙の圧縮機</h1>
-        <p>あなたの頭の中の「言えないこと」(沈黙)を入力し、圧縮して、解放してください。</p>
-        
-        <div class="thought-box" id="thought-box">
-            ここに、あなたが言えないことを書きなさい。
-            (例: 上司への不満、友人への嫉妬、自分への失望...)
-        </div>
-
-        <div class="gauge">
-            <div class="fill" id="pressure-fill"></div>
-        </div>
-        <p id="pressure-text">圧力: 0%</p>
-
-        <button onclick="increasePressure()">沈黙を圧縮する</button>
-        <button class="release" onclick="releaseSilence()">解放!!</button>
-
-        <div class="status" id="status"></div>
-    </div>
-
-    <script>
-        let pressure = 0;
-        const fill = document.getElementById('pressure-fill');
-        const text = document.getElementById('pressure-text');
-        const status = document.getElementById('status');
-        const box = document.getElementById('thought-box');
-
-        function increasePressure() {
-            if (pressure < 100) {
-                pressure += 10;
-                fill.style.width = pressure + '%';
-                text.innerText = `圧力: ${pressure}%`;
-                box.style.transform = `scale(${1 - pressure/200})`; // 圧縮される視覚効果
-                if (pressure >= 80) {
-                    box.style.borderColor = 'red';
-                    box.style.boxShadow = '0 0 20px red';
-                }
-            }
-        }
-
-        function releaseSilence() {
-            if (pressure > 0) {
-                status.innerText = "💥 沈黙が解放された！";
-                status.style.color = "yellow";
-                // 爆発のアニメーション
-                box.style.transform = "scale(0)";
-                box.style.opacity = "0";
-                setTimeout(() => {
-                    box.innerText = "解放後の空間: 軽やかだ。";
-                    box.style.transform = "scale(1)";
-                    box.style.opacity = "1";
-                    box.style.background = "#fff";
-                    box.style.color = "#000";
-                    box.style.borderColor = "#00ff00";
-                    status.innerText = "沈黙は消えた。代わりに何が残ったか、考えてみて。";
-                    pressure = 0;
-                    fill.style.width = '0%';
-                    text.innerText = '圧力: 0%';
-                }, 1000);
-            } else {
-                status.innerText = "先に沈黙を圧縮してください。";
-                status.style.color = "red";
-            }
-        }
-    </script>
-<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x328"}}]))}catch(e){}})()</script></body>
+<div class="container">
+    <h1>静寂のブラックフライデー</h1>
+    <p>世界中が「もっと」を求めている今日、あなたは「十分」を買えますか？</p>
+    <div class="price">価格: 0円（ただし、雨の音が必要です）</div>
+    <button onclick="buySilence()">静寂を購入する</button>
+    <div class="status" id="status">クリックしてください</div>
+</div>
+<script>
+    function buySilence() {
+        document.getElementById('status').innerText = "購入完了。あなたの頭の中が、雨音に満たされました。";
+        document.querySelector('button').innerText = "もう一度、静寂を感じる";
+        document.body.style.background = "#000";
+    }
+</script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x488"}}]))}catch(e){}})()</script></body>
 </html>
