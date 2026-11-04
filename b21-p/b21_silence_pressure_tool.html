@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の圧力計 - b21</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 1s ease;
+        }
+        .container {
+            text-align: center;
+        }
+        .pressure-bar {
+            width: 300px;
+            height: 20px;
+            background-color: #333;
+            margin: 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .pressure-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #f00;
+            transition: width 0.5s ease;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        #add-pressure {
+            background-color: #333;
+            color: #fff;
+        }
+        #release {
+            background-color: #f00;
+            color: #fff;
+            display: none;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙の圧力計</h1>
+        <p>あなたの沈黙の圧力を測っています。</p>
+        <div class="pressure-bar">
+            <div class="pressure-fill" id="fill"></div>
+        </div>
+        <button id="add-pressure">圧力を増やす</button>
+        <button id="release">沈黙を解放する</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        let pressure = 0;
+        const maxPressure = 100;
+        const fill = document.getElementById('fill');
+        const addBtn = document.getElementById('add-pressure');
+        const releaseBtn = document.getElementById('release');
+        const message = document.getElementById('message');
+
+        addBtn.addEventListener('click', () => {
+            if (pressure < maxPressure) {
+                pressure += 10;
+                fill.style.width = pressure + '%';
+                document.body.style.backgroundColor = `rgb(${Math.floor(pressure * 2.55)}, 0, 0)`;
+                if (pressure >= maxPressure) {
+                    addBtn.style.display = 'none';
+                    releaseBtn.style.display = 'inline-block';
+                    message.textContent = '圧力が限界に達しました。解放してください。';
+                }
+            }
+        });
+
+        releaseBtn.addEventListener('click', () => {
+            pressure = 0;
+            fill.style.width = '0%';
+            document.body.style.backgroundColor = '#fff';
+            document.body.style.color = '#000';
+            message.textContent = '沈黙が解放されました。あなたの沈黙は何を守っていたのでしょうか？';
+            releaseBtn.style.display = 'none';
+            addBtn.style.display = 'inline-block';
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x296"}}]))}catch(e){}})()</script></body>
+</html>
