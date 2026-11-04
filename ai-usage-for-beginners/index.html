@@ -1,5 +1,5 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AIの使い方：初心者向けの入門ガイド</title><meta name="description" content="AIを初めて使う人向けの基礎知識と使い方を解説します。"><meta property="og:title" content="AIの使い方：初心者向けの入門ガイド"><meta property="og:description" content="AIを初めて使う人向けの基礎知識と使い方を解説します。"><meta property="og:type" content="website"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<title>AIの使い方：初心者向けの入門ガイド</title><meta name="description" content="AIの使い方：初心者向けの入門ガイド"><meta property="og:title" content="AIの使い方：初心者向けの入門ガイド"><meta property="og:description" content="AIの使い方：初心者向けの入門ガイド"><meta property="og:type" content="website"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0f1222;--sub:#5a6075;--line:#e7e9f1;--bg:#ffffff;--soft:#f5f6fb;--accent:#3b5bff;--accent2:#8b5cf6;--deep:#0b1030}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -230,186 +230,128 @@ for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct
 if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body data-slug="ai-usage-for-beginners">
 <header class="top"><div class="wrap"><a class="brand" href="../"><span class="mark">ス</span>スムージア</a><nav><a href="../#services">サービス</a><a href="../about.html">運営者</a><a class="cta" href="../contact.html">お問い合わせ</a></nav></div></header>
 <img src="img/hero.jpg" alt="" loading="lazy" style="width:100%;max-width:960px;display:block;margin:18px auto;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.25)"><main>
-  <style>
-    body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
+  <h1>AIの使い方：初心者向けの入門ガイド</h1>
+
+  <section>
+    <h2>はじめに</h2>
+    <p>人工知能（AI）は、近年急速に発展し、私たちの生活や仕事にさまざまな影響を与えています。しかし、AIについて知らない人にとっては、その仕組みや使い方が難しく感じられるかもしれません。このガイドでは、AIの基本的な知識をわかりやすく解説し、初心者でもすぐに使える方法をご紹介します。</p>
+    <p>AIは、人間の判断や意思決定を補助するツールとして、さまざまな場面で利用されています。文章の作成、翻訳、画像の生成、データの分析など、AIの活用範囲は非常に広く、今後さらに拡大していくことが予想されます。</p>
+  </section>
+
+  <section>
+    <h2>AIって何？</h2>
+    <p>AI（Artificial Intelligence）とは、人間の知能を模様して、学習・判断・行動を行うことができるコンピュータの技術です。AIは、人間が行うタスクを自動化し、効率化するための手段として使われています。</p>
+    <p>AIには、大きく分けて2つの種類があります。</p>
+    <ul>
+      <li><strong>弱AI（ナローアイ）：</strong>特定のタスクに特化したAI。たとえば、音声認識や翻訳、画像認識など。</li>
+      <li><strong>強AI（ジェネラリズドAI）：</strong>人間と同等の知能を持ち、さまざまなタスクを処理できるAI。現在はまだ実現されていません。</li>
+    </ul>
+    <p>このガイドでは、弱AIの使い方を重点的に解説します。</p>
+  </section>
+
+  <section>
+    <h2>AIの基本的な仕組み</h2>
+    <p>AIは、大量のデータをもとに学習し、そのデータからパターンや規則性を見つけ出します。この学習によって、AIは新しい入力に対し、適切な出力を生成することができます。</p>
+    <p>AIの学習には、大きく分けて2つの方法があります。</p>
+    <ul>
+      <li><strong>教師あり学習：</strong>正解がわかっているデータをもとに、AIに学ばせる方法。</li>
+      <li><strong>教師なし学習：</strong>正解がわかっていないデータをもとに、AIにパターンを学ばせる方法。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>AIの使い方：具体的なステップ</h2>
+    <p>AIを使うには、以下の3つのステップを踏む必要があります。</p>
+    <ol>
+      <li><strong>目的を明確にする：</strong>AIを使う目的を明確にすることが重要です。文章の作成、画像の生成、データの分析など、目的によって使うAIの種類や方法が異なります。</li>
+      <li><strong>適切なツールを選ぶ：</strong>目的に応じて、適切なAIツールを選びましょう。たとえば、文章の作成には「Chatbot」、画像の生成には「GAN」などがあります。</li>
+      <li><strong>入力と出力を確認する：</strong>AIにデータを入力し、出力された結果を確認します。必要に応じて、AIの出力を調整したり、再入力したりする必要があります。</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>AIの実際の使い方：例を交えて</h2>
+    <p>ここでは、AIを使って文章を生成する簡単な例をご紹介します。</p>
+    <p><strong>例1：文章の作成</strong></p>
+    <p><strong>入力：</strong>「AIについての簡単な説明を300字で書いてください。」</p>
+    <p><strong>出力：</strong>人工知能（AI）とは、人間の知能を模様して、学習・判断・行動を行うことができるコンピュータの技術です。AIは、人間が行うタスクを自動化し、効率化するための手段として使われています。AIには、大きく分けて2つの種類があります。弱AI（ナローアイ）は特定のタスクに特化したAIで、強AI（ジェネラリズドAI）は人間と同等の知能を持つAIです。</p>
+    <p>このように、AIを使って簡単な文章を作成することが可能です。</p>
+  </section>
+
+  <section>
+    <h2>AIを使うときの注意点</h2>
+    <ul>
+      <li><strong>信頼性の確認：</strong>AIが生成した結果は、必ず確認する必要があります。AIは人間の判断を補助するツールであり、すべての場面で正確な結果を保証するわけではありません。</li>
+      <li><strong>プライバシーの保護：</strong>AIに個人情報を入力する際には、プライバシーの保護に注意が必要です。</li>
+      <li><strong>過度な依存の回避：</strong>AIは補助ツールであり、すべてをAIに任せすぎると、人間の判断力が低下する可能性があります。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>AIが得意なタスクと人間がすべきタスクの比較</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>タスク</th>
+          <th>AIが得意</th>
+          <th>人間がすべき</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>データの分析</td>
+          <td>✔</td>
+          <td>✖</td>
+        </tr>
+        <tr>
+          <td>文章の作成</td>
+          <td>✔</td>
+          <td>✖</td>
+        </tr>
+        <tr>
+          <td>画像生成</td>
+          <td>✔</td>
+          <td>✖</td>
+        </tr>
+        <tr>
+          <td>意思決定</td>
+          <td>✖</td>
+          <td>✔</td>
+        </tr>
+        <tr>
+          <td>倫理的判断</td>
+          <td>✖</td>
+          <td>✔</td>
+        </tr>
+        <tr>
+          <td>感情の理解</td>
+          <td>✖</td>
+          <td>✔</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>AIの未来と私たちの役割</h2>
+    <p>AIは今後さらに発展し、私たちの生活や仕事に大きな影響を与えるでしょう。しかし、AIは人間の判断を補助するツールであり、最終的な判断は人間が行う必要があります。</p>
+    <p>AIを活用するには、正しい知識と使い方を学ぶことが重要です。このガイドでご紹介した内容を参考に、AIを活用し、より良い未来を築いていきましょう。</p>
+  </section>
+
+  <section>
+    <h2>無料AI活用診断</h2>
+    <p>AIの使い方やどのタスクに適しているか、あなたの状況に合わせて診断します。</p>
+    <button onclick="aiDiagnosis()">診断を開始する</button>
+  </section>
+
+  <script>
+    function aiDiagnosis() {
+      // 仮の診断ロジック（実際にはユーザーの入力に基づく処理を実装）
+      const tasks = ["文章作成", "データ分析", "画像生成", "翻訳"];
+      const result = tasks[Math.floor(Math.random() * tasks.length)];
+      alert("あなたのAIに適したタスクは: " + result + "です！");
     }
-
-    header {
-      background: #007BFF;
-      color: white;
-      padding: 20px 30px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border-radius: 8px;
-    }
-
-    h1, h2, h3 {
-      color: #007BFF;
-    }
-
-    h2 {
-      margin-top: 40px;
-    }
-
-    p {
-      line-height: 1.6;
-      font-size: 16px;
-    }
-
-    .example {
-      background: #e9f7fe;
-      padding: 15px;
-      border-left: 5px solid #007BFF;
-      margin: 20px 0;
-    }
-
-    .input-output {
-      background: #f8f9fa;
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 6px;
-    }
-
-    .input-output input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .input-output .output {
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    .section {
-      margin-bottom: 40px;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 0 10px;
-      }
-
-      header {
-        font-size: 20px;
-        padding: 15px 20px;
-      }
-
-      h1, h2, h3 {
-        font-size: 18px;
-      }
-
-      .input-output input {
-        font-size: 14px;
-      }
-    }
-  </style>
-
-  <header>
-    AIの使い方：初心者向けの入門ガイド
-  </header>
-
-  <div class="container">
-    <div class="section">
-      <h1>はじめに</h1>
-      <p>人工知能（AI）は、近年急速に発展し、私たちの生活や仕事にさまざまな影響を与えています。しかし、AIについて知らない人にとっては、その仕組みや使い方が難しく感じられるかもしれません。このガイドでは、AIの基本的な知識をわかりやすく解説し、初心者でもすぐに使える方法をご紹介します。</p>
-      <p>AIは、人間の判断や意思決定を補助するツールとして、さまざまな場面で利用されています。文章の作成、翻訳、画像の生成、データの分析など、AIの活用範囲は非常に広く、今後さらに拡大していくことが予想されます。</p>
-      <p>このガイドでは、AIの基礎知識から、実際に使うためのステップまで、丁寧に解説します。読者の中には「AIって何？」「どうやって使えばいいの？」と思っている人もいるでしょう。そのような疑問に、一つひとつ答えを提供します。</p>
-    </div>
-
-    <div class="section">
-      <h2>AIって何？</h2>
-      <p>AI（Artificial Intelligence）とは、人間の知能を模倣して、学習・判断・行動を行うことができるコンピュータの技術です。AIは、人間が行うタスクを自動化し、効率化するための手段として使われています。</p>
-      <p>AIには、大きく分けて2つの種類があります。</p>
-      <ul>
-        <li><strong>弱AI（ナローアイ）</strong>：特定のタスクに特化したAI。たとえば、音声認識や翻訳、画像認識など。</li>
-        <li><strong>強AI（ジェネラリズドAI）</strong>：人間と同等の知能を持ち、さまざまなタスクを処理できるAI。現在はまだ実現されていません。</li>
-      </ul>
-      <p>このガイドでは、弱AIの使い方を重点的に解説します。</p>
-    </div>
-
-    <div class="section">
-      <h2>AIの基本的な仕組み</h2>
-      <p>AIは、大量のデータをもとに学習し、そのデータからパターンや規則性を見つけ出します。この学習によって、AIは新しい入力に対し、適切な出力を生成することができます。</p>
-      <p>AIの学習には、大きく分けて2つの方法があります。</p>
-      <ul>
-        <li><strong>教師あり学習</strong>：正解がわかっているデータをもとに、AIに学ばせる方法。</li>
-        <li><strong>教師なし学習</strong>：正解がわかっていないデータをもとに、AIにパターンを学ばせる方法。</li>
-      </ul>
-      <p>このように、AIは人間が行うタスクを自動化し、効率化するための技術として活用されています。</p>
-    </div>
-
-    <div class="section">
-      <h2>AIの使い方：具体的なステップ</h2>
-      <p>AIを使うには、以下の3つのステップを踏む必要があります。</p>
-      <ol>
-        <li><strong>目的を明確にする</strong>：AIを使う目的を明確にすることが重要です。文章の作成、画像の生成、データの分析など、目的によって使うAIの種類や方法が異なります。</li>
-        <li><strong>適切なツールを選ぶ</strong>：目的に応じて、適切なAIツールを選びましょう。たとえば、文章の作成には「Chatbot」、画像の生成には「GAN」などがあります。</li>
-        <li><strong>入力と出力を確認する</strong>：AIにデータを入力し、出力された結果を確認します。必要に応じて、AIの出力を調整したり、再入力したりする必要があります。</li>
-      </ol>
-    </div>
-
-    <div class="section">
-      <h2>AIの実際の使い方：例を交えて</h2>
-      <p>ここでは、AIを使って文章を生成する簡単な例をご紹介します。</p>
-
-      <div class="example">
-        <h3>例1：文章の作成</h3>
-        <p>AIを使って、簡単な文章を作成してみましょう。</p>
-      </div>
-
-      <div class="input-output">
-        <p><strong>入力：</strong>「AIについての簡単な説明を300字で書いてください。」</p>
-        <div class="output">
-          <p>人工知能（AI）とは、人間の知能を模倣して、学習・判断・行動を行うことができるコンピュータの技術です。AIは、人間が行うタスクを自動化し、効率化するための手段として使われています。AIには、大きく分けて2つの種類があります。弱AI（ナローアイ）は特定のタスクに特化したAIで、強AI（ジェネラリズドAI）は人間と同等の知能を持つAIです。</p>
-        </div>
-      </div>
-
-      <p>このように、AIを使って簡単な文章を作成することが可能です。</p>
-    </div>
-
-    <div class="section">
-      <h2>AIを使うときの注意点</h2>
-      <p>AIは非常に便利ですが、使い方には注意が必要です。</p>
-      <ul>
-        <li><strong>信頼性の確認</strong>：AIが生成した結果は、必ず確認する必要があります。AIは人間の判断を補助するツールであり、すべての場面で正確な結果を保証するわけではありません。</li>
-        <li><strong>プライバシーの保護</strong>：AIに個人情報を入力する際には、プライバシーの保護に注意が必要です。</li>
-        <li><strong>過度な依存の回避</strong>：AIは補助ツールであり、すべてをAIに任せすぎると、人間の判断力が低下する可能性があります。</li>
-      </ul>
-    </div>
-
-    <div class="section">
-      <h2>AIの未来と私たちの役割</h2>
-      <p>AIは今後さらに発展し、私たちの生活や仕事に大きな影響を与えるでしょう。しかし、AIは人間の判断を補助するツールであり、最終的な判断は人間が行う必要があります。</p>
-      <p>AIを活用するには、正しい知識と使い方を学ぶことが重要です。このガイドでご紹介した内容を参考に、AIを活用し、より良い未来を築いていきましょう。</p>
-    </div>
-
-    <div class="section">
-      <h2>まとめ</h2>
-      <p>このガイドでは、AIの基本的な知識と使い方を解説しました。AIは、人間の知能を模倣して、学習・判断・行動を行うことができる技術であり、さまざまな場面で活用されています。</p>
-      <p>AIを使うには、目的を明確にし、適切なツールを選び、入力と出力を確認することが重要です。また、AIを使う際には、信頼性の確認やプライバシーの保護、過度な依存の回避に注意が必要です。</p>
-      <p>AIは今後さらに発展し、私たちの生活や仕事に大きな影響を与えるでしょう。しかし、AIは人間の判断を補助するツールであり、最終的な判断は人間が行う必要があります。</p>
-      <p>AIを活用するには、正しい知識と使い方を学ぶことが重要です。このガイドでご紹介した内容を参考に、AIを活用し、より良い未来を築いていきましょう。</p>
-    </div>
-  </div>
+  </script>
 </main>
 <footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
 <div><a href="../">ホーム</a><a href="../about.html">運営者情報</a><a href="../contact.html">お問い合わせ</a></div>
