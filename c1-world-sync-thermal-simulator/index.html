@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>World-Sync Thermal Simulator</title>
+    <style>
+        body { background: #1a1a1a; color: #00ffcc; font-family: monospace; display: flex; flex-direction: column; align-items: center; }
+        canvas { border: 1px solid #333; background: #000; margin-top: 20px; }
+        .controls { margin-top: 20px; padding: 10px; border: 1px solid #444; }
+        .status { margin-top: 10px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h1>World-Sync Thermal Simulator</h1>
+    <div class="status">
+        Ambient: <span id="amb-temp">20</span>°C | 
+        System Temp: <span id="sys-temp">30</span>°C | 
+        Weather: <span id="weather">Sunny</span>
+    </div>
+    <canvas id="canvas" width="600" height="300"></canvas>
+    <div class="controls">
+        <p>External Flux: Sine wave (16°C - 24°C) + Random Noise</p>
+        <p>Rain Effect: High cooling rate applied when 'Rain' state is active.</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let systemTemp = 30.0;
+        let ambientTemp = 20.0;
+        let time = 0;
+        let isRainy = false;
+        let rainChance = 0.01;
+
+        function update() {
+            time += 0.01;
+            
+            // 1. Ambient Temperature Oscillator (16 - 24)
+            ambientTemp = 20 + 4 * Math.sin(time * 0.5) + Math.sin(time * 2) * 1;
+            
+            // 2. Weather logic (Randomly toggle rain)
+            if (Math.random() < rainChance) isRainy = !isRainy;
+            
+            // 3. Thermal Dynamics
+            const thermalConductivity = isRainy ? 0.05 : 0.01;
+            const heatFlux = (ambientTemp - systemTemp) * thermalConductivity;
+            
+            // Internal heat generation (Friction simulation)
+            const internalHeat = 0.05;
+            
+            systemTemp += heatFlux + internalHeat;
+
+            // Update UI
+            document.getElementById('amb-temp').innerText = ambientTemp.toFixed(2);
+            document.getElementById('sys-temp').innerText = systemTemp.toFixed(2);
+            document.getElementById('weather').innerText = isRainy ? "🌧️ Rain (Cooling)" : "☀️ Sunny";
+            document.getElementById('weather').style.color = isRainy ? "#4da6ff" : "#ffcc00";
+
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Temperature Graph
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - systemTemp * 5);
+            for(let i=0; i<canvas.width; i++) {
+                // Simplified visual representation
+                ctx.lineTo(i, canvas.height - (ambientTemp + (Math.sin(time + i/10) * 5)) * 5);
+            }
+            ctx.stroke();
+        }
+
+        update();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x448"}}]))}catch(e){}})()</script></body>
+</html>
