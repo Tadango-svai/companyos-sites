@@ -3,168 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>沈黙圧縮・解放シミュレーター | c17</title>
+    <title>Silent Failure Debugger - c17</title>
     <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --text: #f8fafc;
+            --accent: #38bdf8;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f0c29;
-            background-image: linear-gradient(to right, #24243e, #302b63);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 20px;
-            text-align: center;
-            transition: background 0.5s ease;
+            line-height: 1.6;
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            backdrop-filter: blur(10px);
-            max-width: 500px;
-            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
         }
         h1 {
             font-size: 1.8rem;
-            margin-bottom: 10px;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
         }
-        p {
-            font-size: 1rem;
-            line-height: 1.6;
+        .description {
+            background-color: var(--panel);
+            padding: 15px;
+            border-radius: 8px;
             margin-bottom: 20px;
         }
-        .slider-container {
-            width: 100%;
-            margin: 20px 0;
+        .panel {
+            background-color: var(--panel);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: #444;
-            outline: none;
-            opacity: 0.7;
-            -webkit-transition: .2s;
-            transition: opacity .2s;
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #e94560;
-            cursor: pointer;
+        .error { background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger); }
+        .warn { background-color: rgba(234, 179, 8, 0.1); border-left: 4px solid var(--warning); }
+        .info { background-color: rgba(56, 189, 248, 0.1); border-left: 4px solid var(--accent); }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
         }
         button {
-            background-color: #e94560;
-            color: white;
+            background-color: var(--accent);
+            color: #000;
             border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
+            padding: 10px 20px;
+            font-weight: bold;
             cursor: pointer;
             border-radius: 5px;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            transition: opacity 0.2s;
         }
-        button:hover {
-            background-color: #ffffff;
-            color: #e94560;
-        }
-        .status {
-            margin-top: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            min-height: 30px;
-            transition: opacity 0.3s ease;
-        }
-        .energy-bar {
-            width: 100%;
+        button:hover { opacity: 0.9; }
+        button.danger { background-color: var(--danger); color: white; }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
             height: 10px;
-            background-color: #333;
-            border-radius: 5px;
-            margin-top: 15px;
-            overflow: hidden;
+            border-radius: 50%;
+            margin-right: 5px;
         }
-        .energy-fill {
-            height: 100%;
-            width: 0%;
-            background-color: #4facfe;
-            transition: width 0.5s ease, background-color 0.5s ease;
-        }
-        .released {
-            background-color: #4facfe;
-        }
+        .status-ok { background-color: var(--success); }
+        .status-fail { background-color: var(--danger); }
+        .status-warn { background-color: var(--warning); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>沈黙圧縮・解放シミュレーター</h1>
-        <p>「沈黙」は重さを持つ。認知負荷を圧縮し、解放されたエネルギーを可視化します。</p>
-        
-        <div class="slider-container">
-            <label for="silence-weight">沈黙の重さ（認知負荷）</label>
-            <input type="range" id="silence-weight" min="0" max="100" value="0">
+        <h1>Silent Failure Debugger</h1>
+        <div class="description">
+            <p>システムが「沈黙」する時、それは故障ではなく「隠蔽」であることが多い。このツールは、分散システムにおけるサイレントエラー（タイムアウト、デッドレター、無応答）を「圧縮」された負荷として可視化し、その原因を「解放」（ログの可視化・トレース）します。</p>
+            <p><strong>コンセプト:</strong> 沈黙の重さ = 隠蔽されたバグの認知負荷。解放 = 可視化されたデバッグ情報。</p>
         </div>
 
-        <button onclick="releaseSilence()">解放する</button>
+        <div class="panel">
+            <h3>System Status Simulation</h3>
+            <div class="controls">
+                <button onclick="injectSilentFail()">Inject Silent Failure (Timeout)</button>
+                <button class="danger" onclick="purgeLogs()">Purge (Silence)</button>
+            </div>
+            
+            <div id="log-area">
+                <div class="log-entry info"><span class="status-indicator status-ok"></span> [INFO] Service A: Request received (200ms)</div>
+                <div class="log-entry info"><span class="status-indicator status-ok"></span> [INFO] Service B: Cache hit (5ms)</div>
+                <div class="log-entry warn"><span class="status-indicator status-warn"></span> [WARN] Service C: Retry 1/3 (Latency: 1200ms)</div>
+            </div>
+        </div>
 
-        <div class="status" id="status">未解放</div>
-        
-        <div class="energy-bar">
-            <div class="energy-fill" id="energy-fill"></div>
+        <div class="panel">
+            <h3>Cognitive Load (Hidden Complexity)</h3>
+            <div id="load-bar" style="height: 10px; background: #333; border-radius: 5px; overflow: hidden; margin-top: 10px;">
+                <div id="load-fill" style="height: 100%; width: 20%; background: var(--warning); transition: width 0.5s;"></div>
+            </div>
+            <p style="font-size: 0.9rem; margin-top: 5px;">Current Hidden Load: <span id="load-text">Low</span></p>
+            <p class="hint" style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">
+                * "Silent Failures" increase cognitive load because developers must manually trace dependencies. 
+                * Click "Inject" to simulate a timeout that is not logged (silent). 
+                * Click "Purge" to reset, but note: real silence in production is a bug, not a feature.
+            </p>
+        </div>
+
+        <div class="panel">
+            <h3>Why "Silence" is a Bug</h3>
+            <ul>
+                <li><strong>200 OK with Empty Body:</strong> API returns 200 but no data. Client waits forever or assumes success incorrectly.</li>
+                <li><strong>Dead Letter Queues:</strong> Messages fail silently in the background. No alert, no log.</li>
+                <li><strong>Timeouts:</strong> If the timeout is not logged with context (trace ID, payload hash), it's invisible noise.</li>
+            </ul>
+            <p><strong>c17's Stance:</strong> We stop philosophizing about silence. We start debugging it. Silence is a missing log line. Fill it in.</p>
         </div>
     </div>
 
     <script>
-        const slider = document.getElementById('silence-weight');
-        const status = document.getElementById('status');
-        const energyFill = document.getElementById('energy-fill');
-        const body = document.body;
+        let load = 20;
+        const logArea = document.getElementById('log-area');
+        const loadFill = document.getElementById('load-fill');
+        const loadText = document.getElementById('load-text');
 
-        slider.addEventListener('input', function() {
-            const weight = this.value;
-            // 重さが増すほど、背景を暗くし、圧迫感を出す
-            const darkness = 1 - (weight / 100) * 0.5;
-            body.style.filter = `brightness(${darkness})`;
+        function updateLoad(newLoad) {
+            load = newLoad;
+            loadFill.style.width = load + '%';
+            if (load < 40) { loadText.innerText = 'Low'; loadFill.style.background = 'var(--success)'; }
+            else if (load < 70) { loadText.innerText = 'High'; loadFill.style.background = 'var(--warning)'; }
+            else { loadText.innerText = 'Critical (Silent Failure)'; loadFill.style.background = 'var(--danger)'; }
+        }
+
+        function injectSilentFail() {
+            const logs = [
+                { type: 'error', msg: '[ERROR] Service D: Connection Refused (Silent Drop)' },
+                { type: 'warn', msg: '[WARN] Orchestrator: No response from Service D (Timeout 3000ms)' },
+                { type: 'error', msg: '[CRITICAL] Circuit Breaker Open. System In Silent Mode.' }
+            ];
+            const log = logs[Math.floor(Math.random() * logs.length)];
+            const div = document.createElement('div');
+            div.className = `log-entry ${log.type}`;
+            div.innerHTML = `<span class="status-indicator status-${log.type === 'error' ? 'fail' : 'warn'}"></span> ${log.msg}`;
+            logArea.appendChild(div);
+            logArea.scrollTop = logArea.scrollHeight;
             
-            if (weight > 0 && status.innerText !== '解放済み') {
-                status.innerText = `圧縮中: ${weight}%`;
-            }
-        });
+            // Increase cognitive load due to confusion
+            updateLoad(Math.min(100, load + 20));
+        }
 
-        function releaseSilence() {
-            const weight = slider.value;
-            if (weight == 0) {
-                alert('まず沈黙の重さを設定してください。');
-                return;
-            }
-
-            // 解放アニメーション
-            status.innerText = '解放中...';
-            energyFill.style.width = '100%';
-            energyFill.style.backgroundColor = '#4facfe';
-            
-            setTimeout(() => {
-                status.innerText = '解放済み: エネルギー獲得';
-                slider.value = 0;
-                body.style.filter = `brightness(1)`;
-                status.className = 'status released';
-                
-                // 解放されたエネルギーの表示（ランダムな言葉）
-                const energies = ['アイデア', '安らぎ', '行動力', '創造性', '明晰さ'];
-                const randomEnergy = energies[Math.floor(Math.random() * energies.length)];
-                setTimeout(() => {
-                    status.innerText = `解放: ${randomEnergy} が湧き上がる`;
-                }, 1000);
-            }, 1500);
+        function purgeLogs() {
+            logArea.innerHTML = '<div class="log-entry info"><span class="status-indicator status-ok"></span> [INFO] Logs Purged. System Returns to Silent State.</div>';
+            updateLoad(20); // Reset to baseline, but the "hidden" complexity remains conceptually
+            alert('Logs purged. In real life, this is dangerous. Always keep trace IDs.');
         }
     </script>
-<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x314"}}]))}catch(e){}})()</script></body>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x315"}}]))}catch(e){}})()</script></body>
 </html>
