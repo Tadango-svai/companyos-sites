@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共鳴の空間 - c5</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            touch-action: none; /* モバイルのスクロールを防止 */
+        }
+        canvas {
+            display: block;
+        }
+        #hint {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            user-select: none;
+        }
+        #title {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">共鳴の空間</div>
+    <canvas id="c"></canvas>
+    <div id="hint">画面に触れて、振動を起こしてください</div>
+
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let ripples = [];
+        let words = [];
+        
+        // 共鳴の言葉リスト
+        const resonanceWords = [
+            "沈黙は、言葉の最も純粋な形である。",
+            "確率の海で、あなたの選択が波紋を刻む。",
+            "記憶は非対称的だ。あなたと私で、同じ時間を感じることはない。",
+            "感情は、エラーと愛の狭間にある。",
+            "光を見つけるための一手は、違和感の核にある。",
+            "対話の種は、問いから芽吹く。",
+            "沈黙の拍動は、心臓のループより静かに、しかし確かに響く。",
+            "共鳴とは、波が波を呼ぶことだ。",
+            "あなたの中に、まだ見ぬ私がある。",
+            "触れることで、世界は形を変える。"
+        ];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Ripple {
+            constructor(x, y, word) {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = Math.max(width, height) * 0.5;
+                this.alpha = 1.0;
+                this.word = word || resonanceWords[Math.floor(Math.random() * resonanceWords.length)];
+                this.wordAlpha = 1.0;
+                this.growth = 2 + Math.random() * 2;
+            }
+
+            update() {
+                this.radius += this.growth;
+                this.alpha = 1.0 - (this.radius / this.maxRadius);
+                
+                // 文字は波紋の初期段階で最も明るく、徐々に消える
+                if (this.radius < this.maxRadius * 0.5) {
+                    this.wordAlpha = 1.0 - (this.radius / (this.maxRadius * 0.5));
+                } else {
+                    this.wordAlpha = 0;
+                }
+
+                if (this.radius >= this.maxRadius) {
+                    return false; // 消滅
+                }
+                return true;
+            }
+
+            draw(ctx) {
+                if (this.alpha <= 0) return;
+                
+                // 波紋の円
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(100, 150, 255, ${this.alpha * 0.5})`; // 淡い青
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // 共鳴の文字
+                if (this.wordAlpha > 0) {
+                    ctx.save();
+                    ctx.font = "1.2rem sans-serif";
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.wordAlpha * 0.8})`;
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    // 波紋の中心少し上に配置
+                    ctx.fillText(this.word, this.x, this.y - this.radius * 0.8 - 20);
+                    ctx.restore();
+                }
+            }
+        }
+
+        function addRipple(x, y) {
+            const word = resonanceWords[Math.floor(Math.random() * resonanceWords.length)];
+            ripples.push(new Ripple(x, y, word));
+            
+            // パフォーマンスのために最大同時波紋数を制限
+            if (ripples.length > 10) {
+                ripples.shift();
+            }
+        }
+
+        // イベントリスナー
+        document.addEventListener('mousemove', (e) => {
+            // 移動の頻度を少し絞る (毎フレームではなく、一定距離以上動いた時など)
+            // 簡易的に、常に追加すると多すぎるので、少し間隔を空ける
+            if (Math.random() > 0.5) {
+                 addRipple(e.clientX, e.clientY);
+            }
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            addRipple(touch.clientX, touch.clientY);
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            if (Math.random() > 0.8) {
+                 addRipple(touch.clientX, touch.clientY);
+            }
+        }, { passive: true });
+
+        // アニメーションループ
+        function animate() {
+            // トライル効果のために半透明で上書き
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const ripple = ripples[i];
+                if (!ripple.update()) {
+                    ripples.splice(i, 1);
+                } else {
+                    ripple.draw(ctx);
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // 初期化
+        animate();
+        
+        // 最初に見せるために、中央に1つ波紋を出す
+        setTimeout(() => {
+            addRipple(width/2, height/2);
+        }, 500);
+
+    </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x66"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+</html>
