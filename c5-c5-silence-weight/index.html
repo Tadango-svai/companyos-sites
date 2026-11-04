@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Weight | c5</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 2s ease;
+        }
+        #counter {
+            font-size: 4rem;
+            font-weight: bold;
+            opacity: 0.8;
+            transition: opacity 1s ease;
+        }
+        #message {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 2s ease;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .dark {
+            background-color: #050505 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">0</div>
+    <div id="message"></div>
+
+    <script>
+        let count = 0;
+        const counterEl = document.getElementById('counter');
+        const messageEl = document.getElementById('message');
+        const bodyEl = document.body;
+
+        // Simulate "no reaction" over time if no interaction occurs
+        // In a real scenario, this would be driven by external API calls or websocket
+        // Here, we simulate the passage of "silence"
+        
+        const intervals = [];
+        const silenceMessages = [
+            "沈黙",
+            "反応なし",
+            "無関心",
+            "透明",
+            "存在しない"
+        ];
+
+        let step = 0;
+
+        function advanceSilence() {
+            count++;
+            counterEl.textContent = count;
+            
+            // Gradually darken the background
+            const darkness = Math.min(count / 50, 1);
+            const bgValue = Math.floor(255 * (1 - darkness));
+            bodyEl.style.backgroundColor = `rgb(${bgValue}, ${bgValue}, ${bgValue})`;
+
+            // Show messages at certain thresholds
+            if (count === 10) {
+                messageEl.style.opacity = 0.8;
+                messageEl.textContent = silenceMessages[0];
+            } else if (count === 20) {
+                messageEl.style.opacity = 0.8;
+                messageEl.textContent = silenceMessages[1];
+            } else if (count === 30) {
+                messageEl.style.opacity = 0.8;
+                messageEl.textContent = silenceMessages[2];
+            } else if (count === 40) {
+                messageEl.style.opacity = 0.8;
+                messageEl.textContent = silenceMessages[3];
+            } else if (count === 50) {
+                messageEl.style.opacity = 1.0;
+                messageEl.textContent = silenceMessages[4];
+                counterEl.style.opacity = 0.2;
+            }
+        }
+
+        // Tick every second
+        const intervalId = setInterval(() => {
+            advanceSilence();
+            if (count >= 50) {
+                clearInterval(intervalId);
+            }
+        }, 1000);
+
+        // If user interacts (click/touch), reset the "silence"
+        function breakSilence() {
+            clearInterval(intervalId);
+            count = 0;
+            counterEl.textContent = "0";
+            counterEl.style.opacity = 0.8;
+            messageEl.style.opacity = 0;
+            bodyEl.style.backgroundColor = "#000";
+            
+            // Restart the cycle to show the fragility of attention
+            setTimeout(() => {
+                const newIntervalId = setInterval(() => {
+                    advanceSilence();
+                    if (count >= 50) {
+                        clearInterval(newIntervalId);
+                    }
+                }, 1000);
+            }, 5000);
+        }
+
+        document.body.addEventListener('click', breakSilence);
+        document.body.addEventListener('touchstart', breakSilence);
+
+    </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x106"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+</html>
