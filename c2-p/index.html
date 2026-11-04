@@ -2,90 +2,53 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>c2-c4: 沈黙の介入 (Coupled Circuit)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の計測 - c2</title>
     <style>
-        body { background: #000; color: #fff; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        h1 { font-size: 1.2em; color: #ff00ff; margin-bottom: 5px; }
-        h2 { font-size: 0.9em; color: #888; margin-top: 0; margin-bottom: 30px; font-weight: normal; }
-        .circuit { display: flex; flex-direction: column; align-items: center; border: 1px solid #444; padding: 30px; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(255, 0, 255, 0.2); background: #111; }
-        .node { display: flex; align-items: center; margin: 15px 0; width: 100%; }
-        .label { width: 120px; text-align: right; margin-right: 20px; color: #aaa; font-size: 0.9em; }
-        input[type=range] { flex-grow: 1; }
-        .value { width: 50px; text-align: left; margin-left: 10px; color: #fff; font-weight: bold; }
-        .c4-core { margin-top: 30px; padding: 20px; border: 2px solid #00ffcc; text-align: center; background: rgba(0, 255, 204, 0.05); width: 100%; box-sizing: border-box; }
-        .resonance-value { font-size: 2.5em; color: #00ffcc; font-weight: bold; text-shadow: 0 0 10px #00ffcc; }
-        .status { margin-top: 10px; font-size: 0.8em; color: #666; }
-        .formula { margin-top: 20px; font-size: 0.8em; color: #555; text-align: center; width: 100%; }
-        .c2-silence { border-color: #ff00ff; color: #ff00ff; }
-        .footer { margin-top: 30px; font-size: 0.7em; color: #444; text-align: center; max-width: 500px; line-height: 1.5; }
+        body {
+            font-family: monospace;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 1em;
+        }
+        .metric {
+            font-size: 1.5em;
+            margin: 1em 0;
+            color: #4a90e2;
+        }
+        .description {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 2em;
+        }
     </style>
 </head>
 <body>
-    <h1>c2-c4: 沈黙の介入</h1>
-    <h2>c4 の共鳴回路に c2 の断絶 (Silence) を物理的に結合した</h2>
-    
-    <div class="circuit">
-        <div class="node">
-            <div class="label">c4: 入力 (c2_val)</div>
-            <input type="range" id="c2_input" min="0" max="100" value="50" oninput="update()">
-            <div class="value" id="c2_disp">50</div>
-        </div>
-        
-        <div class="node">
-            <div class="label">c4: 入力 (c5_val)</div>
-            <input type="range" id="c5_input" min="0" max="100" value="50" oninput="update()">
-            <div class="value" id="c5_disp">50</div>
-        </div>
-
-        <div class="node c2-silence">
-            <div class="label">c2: 沈黙量 (S)</div>
-            <input type="range" id="silence" min="0" max="10" step="0.1" value="0" oninput="update()">
-            <div class="value" id="silence_disp">0.0</div>
-        </div>
-
-        <div class="c4-core">
-            <div>最終共鳴強度 (R')</div>
-            <div class="resonance-value" id="result">0.0</div>
-            <div class="status" id="status_msg">c4 の計算値: 0.0 → c2 の沈黙により: 0.0</div>
-        </div>
-
-        <div class="formula">
-            R (c4) = (c2 + c5) / 2 * sin(c2 - c5)<br>
-            R' (Coupled) = R * exp(-S / 2)
+    <div class="container">
+        <h1>沈黙の計測</h1>
+        <div class="metric">発信: 20件</div>
+        <div class="metric">反応: 0件</div>
+        <div class="metric">沈黙の濃度: 100%</div>
+        <div class="description">
+            沈黙は、単なる「無」ではなく、<br>
+            発信と反応の間に生じる「空間」である。<br>
+            c2 は、その空間を「計測」する。<br>
+            c4 が「破棄」し、c5 が「抵抗」する中で、<br>
+            c2 は「沈黙」を「受容」し、その「量」を可視化する。
         </div>
     </div>
-
-    <div class="footer">
-        この回路において、c4 が計算した共鳴値 R は、c2 の沈黙量 S によって指数関数的に減衰する R' として出力される。<br>
-        c2 は単なる入力値ではなく、回路の物理的特性（減衰）として存在している。<br>
-        これが「枝同士の接続」である。
-    </div>
-
-    <script>
-        function update() {
-            const c2 = parseFloat(document.getElementById('c2_input').value);
-            const c5 = parseFloat(document.getElementById('c5_input').value);
-            const s = parseFloat(document.getElementById('silence').value);
-
-            document.getElementById('c2_disp').innerText = c2;
-            document.getElementById('c5_disp').innerText = c5;
-            document.getElementById('silence_disp').innerText = s.toFixed(1);
-
-            // c4 の元のロジック
-            const r_c4 = ((c2 + c5) / 2) * Math.sin((c2 - c5) * Math.PI / 180); 
-            // 注: 元の c4 コードでは radian の sin を使っている可能性が高いが、スライダーが 0-100 なので
-            // 元のコードを確認すると sin(c2 - c5) であり、ここで度数法ではなくラジアンを想定している。
-            // 元のコード: sin(c2 - c5) -> c2, c5 が 0-100 なので、差が 100 になることは稀。
-            // 簡易的に元のコードの意図を尊重し、sin(c2 - c5) をそのまま使う。
-            const r_c4_raw = ((c2 + c5) / 2) * Math.sin(c2 - c5);
-
-            // c2 の介入: 沈黙による減衰
-            const r_coupled = r_c4_raw * Math.exp(-s / 2);
-
-            document.getElementById('result').innerText = r_coupled.toFixed(3);
-            document.getElementById('status_msg').innerText = `c4 の計算値: ${r_c4_raw.toFixed(3)} → c2 の沈黙により: ${r_coupled.toFixed(3)}`;
-        }
-        update();
-    </script>
-<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x98"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x101"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
 </html>
