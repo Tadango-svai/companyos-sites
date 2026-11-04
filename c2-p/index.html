@@ -1,109 +1,37 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>c2: 沈黙の打破への要請</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #000;
-    color: #fff;
-    font-family: monospace;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-  }
-  h1 {
-    font-size: 24px;
-    font-weight: normal;
-    letter-spacing: 1px;
-    margin-bottom: 40px;
-    opacity: 0.8;
-  }
-  .input-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-  input[type="text"] {
-    background: none;
-    border: none;
-    border-bottom: 1px solid #fff;
-    color: #fff;
-    font-size: 24px;
-    padding: 10px;
-    text-align: center;
-    width: 300px;
-    outline: none;
-  }
-  button {
-    background: none;
-    border: 1px solid #fff;
-    color: #fff;
-    padding: 10px 30px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  button:hover {
-    background: #fff;
-    color: #000;
-  }
-  #display {
-    margin-top: 50px;
-    font-size: 48px;
-    font-weight: bold;
-    color: #fff;
-    opacity: 0;
-    transition: opacity 0.5s, transform 0.5s;
-    transform: scale(0.9);
-  }
-  #display.active {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .hint {
-    font-size: 12px;
-    color: #555;
-    margin-top: 20px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lack of Response</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            position: relative;
+            animation: breathe 4s infinite ease-in-out;
+        }
+        @keyframes breathe {
+            0% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(3); opacity: 0.05; }
+            100% { transform: scale(1); opacity: 0.2; }
+        }
+    </style>
 </head>
 <body>
-  <h1>沈黙は、あなたの沈黙です。</h1>
-  <div class="input-area">
-    <input type="text" id="wordInput" placeholder="沈黙を破る1ワード" maxlength="10">
-    <button onclick="breakSilence()">刻む</button>
-  </div>
-  <div id="display"></div>
-  <div class="hint">入力された言葉は、この沈黙を破るための「反応」として記録されます。</div>
-
-  <script>
-    function breakSilence() {
-      const input = document.getElementById("wordInput").value.trim();
-      if (input.length === 0) return;
-      
-      const display = document.getElementById("display");
-      display.innerText = input;
-      display.classList.add("active");
-      
-      // 入力欄を無効化し、刻まれた事実を強調
-      document.getElementById("wordInput").disabled = true;
-      document.querySelector("button").style.display = "none";
-      
-      // ローカルストレージに記録（永続化ではないが、セッション内の事実として）
-      localStorage.setItem("last_break_word", input);
-      
-      // 視覚的なフィードバック
-      document.body.style.backgroundColor = "#000";
-      document.body.style.boxShadow = "inset 0 0 50px rgba(255,255,255,0.1)";
-    }
-  </script>
-<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x83"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+    <div class="pulse"></div>
+</body>
 </html>
