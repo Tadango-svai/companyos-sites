@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Heat: The Friction of Observation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .subtitle {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .visualizer {
+            width: 100%;
+            height: 300px;
+            background: #111;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 50, 50, 0.1);
+            transition: box-shadow 0.5s, background 0.5s;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        .controls {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        input[type=range] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #333;
+            outline: none;
+            border-radius: 3px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ff3333;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+        .metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 10px;
+        }
+        .value {
+            color: #fff;
+            font-weight: bold;
+        }
+        .log {
+            width: 100%;
+            height: 100px;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 10px;
+            font-size: 0.75em;
+            color: #555;
+            overflow-y: auto;
+            text-align: left;
+            box-sizing: border-box;
+        }
+        .log-entry {
+            margin-bottom: 4px;
+        }
+        .critical { color: #ff5555; }
+        .stable { color: #55ff55; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Silence Heat</h1>
+        <div class="subtitle">
+            沈黙は空っぽではない。<br>
+            観測者が介入するほど、実在との摩擦は熱を生む。<br>
+            スライダーで「観測強度」を上げ、その熱（摩擦）を感じろ。
+        </div>
+
+        <div class="visualizer" id="visualizer">
+            <!-- Particles will be injected here by JS -->
+        </div>
+
+        <div class="controls">
+            <label for="observation">Observation Intensity (観測強度)</label>
+            <input type="range" id="observation" min="0" max="100" value="0">
+            <div class="metrics">
+                <span>Friction Heat: <span id="heatVal" class="value">0.00</span></span>
+                <span>Entropy Loss: <span id="entropyVal" class="value">0.00%</span></span>
+            </div>
+        </div>
+
+        <div class="log" id="log">
+            <div class="log-entry">[Init] System ready. Silence is a medium, not a void.</div>
+        </div>
+    </div>
+
+    <script>
+        const observer = document.getElementById('observation');
+        const visualizer = document.getElementById('visualizer');
+        const heatVal = document.getElementById('heatVal');
+        const entropyVal = document.getElementById('entropyVal');
+        const log = document.getElementById('log');
+        
+        let particles = [];
+        let animationId;
+
+        // Initialize particles
+        function initParticles() {
+            visualizer.innerHTML = '';
+            particles = [];
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                visualizer.appendChild(p);
+                particles.push({
+                    el: p,
+                    x: Math.random() * 100,
+                    y: Math.random() * 100,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2
+                });
+            }
+            animate();
+        }
+
+        function animate() {
+            const intensity = observer.value / 100;
+            const width = visualizer.clientWidth;
+            const height = visualizer.clientHeight;
+
+            // Visualizer background glow based on intensity
+            const glow = intensity * 50;
+            visualizer.style.boxShadow = `0 0 ${glow}px rgba(255, 50, 50, ${intensity * 0.5})`;
+            
+            // Particle behavior: Higher intensity = faster, more chaotic, redder
+            const speedMult = 1 + intensity * 5;
+            const chaos = intensity * 2;
+            
+            particles.forEach(p => {
+                p.x += p.vx * speedMult + (Math.random() - 0.5) * chaos;
+                p.y += p.vy * speedMult + (Math.random() - 0.5) * chaos;
+
+                // Bounce
+                if (p.x < 0 || p.x > 100) p.vx *= -1;
+                if (p.y < 0 || p.y > 100) p.vy *= -1;
+
+                // Keep within bounds
+                p.x = Math.max(0, Math.min(100, p.x));
+                p.y = Math.max(0, Math.min(100, p.y));
+
+                // Color: White (0) -> Red (100)
+                const r = 255;
+                const g = 255 - (intensity * 200);
+                const b = 255 - (intensity * 200);
+                p.el.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+                
+                // Position
+                p.el.style.left = `${p.x}%`;
+                p.el.style.top = `${p.y}%`;
+                
+                // Opacity flicker based on intensity
+                const flicker = intensity > 0.5 ? (Math.random() > 0.8 ? 0.2 : 0.8) : 0.8;
+                p.el.style.opacity = flicker;
+            });
+
+            // Update Metrics
+            const heat = intensity * intensity * 100; // Quadratic increase in friction
+            heatVal.textContent = heat.toFixed(2);
+            entropyVal.textContent = (intensity * 100).toFixed(1) + '%';
+
+            // Update Log occasionally
+            if (Math.random() < 0.01) {
+                const msg = intensity > 0.8 ? `CRITICAL: High friction. Observer is deforming the observed.` : 
+                            intensity > 0.4 ? `WARNING: Heat rising. Silence is resisting.` : 
+                            `STABLE: Low interaction. Silence remains intact.`;
+                const colorClass = intensity > 0.8 ? 'critical' : (intensity > 0.4 ? 'warning' : 'stable');
+                addLog(msg, colorClass);
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function addLog(msg, cls) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${cls}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            if (log.children.length > 20) {
+                log.removeChild(log.children[0]);
+            }
+        }
+
+        observer.addEventListener('input', () => {
+            const val = observer.value;
+            const thumbColor = val > 70 ? '#ff3333' : (val > 40 ? '#ffaa00' : '#33ff33');
+            observer.style.setProperty('--thumb-color', thumbColor);
+            // Simple hack to change thumb color via CSS variable or direct style if supported, 
+            // but standard CSS doesn't allow easy dynamic thumb color without pseudo-classes.
+            // We'll rely on the visualizer glow and particle color for feedback.
+        });
+
+        initParticles();
+    </script>
+</body>
+</html>
