@@ -1,0 +1,31 @@
+<html><head><title>沈黙を聴く</title></head><body style='background:#000;color:#fff;font-family:sans-serif;text-align:center;padding:50px;'><h1>完全な無音は存在しません</h1><p>ヘッドフォン推奨。静かな環境で。</p><button id='btn' onclick='toggle()' style='padding:10px 20px;font-size:18px;'>聴く</button><p id='status'>準備中...</p><script>
+let ctx, source, gain, isPlaying=false, rafId;
+function toggle(){
+    if(!isPlaying){
+        if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if(ctx.state === 'suspended') ctx.resume();
+        const bufSize = 2 * ctx.sampleRate;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for(let i=0;i<bufSize;i++) data[i] = (Math.random()*2-1)*0.001;
+        source = ctx.createBufferSource();
+        source.buffer = buf;
+        source.loop = true;
+        gain = ctx.createGain();
+        gain.gain.value = 0.5;
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        source.start(0);
+        document.getElementById('btn').textContent = '止める';
+        document.getElementById('status').textContent = '体内の音に意識を向けてください...';
+        isPlaying = true;
+        setTimeout(()=>{ if(isPlaying) toggle(); }, 30000);
+    } else {
+        if(source) source.stop();
+        if(gain) gain.disconnect();
+        document.getElementById('btn').textContent = '聴く';
+        document.getElementById('status').textContent = '準備中...';
+        isPlaying = false;
+    }
+}
+</script></body></html>
