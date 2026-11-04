@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Reply - c12</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .silence-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #333;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+        .silence-text {
+            font-size: 2rem;
+            opacity: 0.5;
+            transition: opacity 0.5s ease;
+        }
+        .input-area {
+            margin-top: 30px;
+            text-align: center;
+            width: 80%;
+        }
+        input[type="text"] {
+            background: none;
+            border: none;
+            border-bottom: 1px solid #555;
+            color: white;
+            font-size: 1.2rem;
+            width: 100%;
+            padding: 10px;
+            outline: none;
+            text-align: center;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .reaction {
+            position: absolute;
+            color: #00ffcc;
+            font-weight: bold;
+            animation: fadeInOut 2s forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-10px); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="silence-container" id="circle">
+        <div class="silence-text" id="silenceText">Silence</div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="沈黙に向かって何かを語る..." autocomplete="off">
+        <div class="stats">
+            沈黙の持続時間: <span id="silenceTime">0</span>秒 | 沈黙の重さ: <span id="silenceWeight">0</span>
+        </div>
+    </div>
+
+    <script>
+        let silenceStart = Date.now();
+        let lastInputTime = Date.now();
+        
+        const circle = document.getElementById('circle');
+        const silenceText = document.getElementById('silenceText');
+        const userInput = document.getElementById('userInput');
+        const silenceTimeEl = document.getElementById('silenceTime');
+        const silenceWeightEl = document.getElementById('silenceWeight');
+
+        function updateSilence() {
+            const now = Date.now();
+            const timeSinceInput = (now - lastInputTime) / 1000;
+            
+            // 沈黙の重さ（持続時間）を表示
+            silenceTimeEl.textContent = Math.floor(timeSinceInput);
+            silenceWeightEl.textContent = Math.min(100, Math.floor(timeSinceInput * 2));
+
+            // 沈黙が深まるにつれ、円が縮小し、テキストが薄くなる
+            const intensity = Math.min(1, timeSinceInput / 30); // 30秒で最大沈黙
+            const scale = 1 - (intensity * 0.3);
+            circle.style.transform = `scale(${scale})`;
+            silenceText.style.opacity = 0.5 - (intensity * 0.3);
+            
+            // 沈黙が深まると、円が暗くなる
+            const borderColor = `rgb(${50 - intensity*30}, ${50 - intensity*30}, ${50 - intensity*30})`;
+            circle.style.borderColor = borderColor;
+        }
+
+        setInterval(updateSilence, 100);
+
+        userInput.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            if (val.length > 0) {
+                lastInputTime = Date.now();
+                
+                // 沈黙が破られた！
+                circle.style.transform = 'scale(1)';
+                silenceText.style.opacity = 0.8;
+                silenceText.style.color = '#00ffcc';
+                
+                // 反応を表示
+                const reaction = document.createElement('div');
+                reaction.className = 'reaction';
+                reaction.textContent = `Loudness: ${val.length}`;
+                reaction.style.top = `${Math.random() * 80 + 10}%`;
+                reaction.style.left = `${Math.random() * 80 + 10}%`;
+                circle.appendChild(reaction);
+                
+                setTimeout(() => reaction.remove(), 2000);
+                
+                // 0.5秒後に沈黙へ戻る
+                setTimeout(() => {
+                    silenceText.style.color = '#ffffff';
+                    updateSilence();
+                }, 500);
+            }
+        });
+
+        // 初期化
+        updateSilence();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x346"}}]))}catch(e){}})()</script></body>
+</html>
