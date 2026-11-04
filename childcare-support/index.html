@@ -377,17 +377,22 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
         const buttons = document.querySelectorAll('.kc chip-btn');
         const resList = document.querySelectorAll('.kc res-list li');
         const resAct = document.querySelector('.kc res-act p');
+        const submitBtn = document.querySelector('.kc share ok');
 
         let answers = [];
 
         buttons.forEach((btn, index) => {
           btn.addEventListener('click', () => {
+            // 他のボタンの選択状態を解除
+            buttons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+            // 選択したボタンのみを有効に
+            btn.setAttribute('aria-pressed', 'true');
             answers[index] = btn.textContent;
             resList[index].querySelector('div').textContent = btn.textContent;
           });
         });
 
-        document.querySelector('.kc share ok').addEventListener('click', () => {
+        submitBtn.addEventListener('click', () => {
           let score = 0;
           answers.forEach(answer => {
             if (answer === 'はい') score++;
