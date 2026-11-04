@@ -249,7 +249,7 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     <div class="kc wrap">
       <div class="kc sec-head">
         <h2>子育てちゃんねるで得られる支援と活用法</h2>
-        <p>子育て中のママやパパにとって、情報の探し方や支援の活用法は非常に重要です。このページでは、子育てちゃんねるで得られる支援の種類と、具体的な活用法を解説します。また、活用度診断やチェックリストも紹介し、実際にどう活用すればよいかを丁寧に解説します。</p>
+        <p>子育て中のママやパパにとって、情報の探し方や支援の活用法は非常に重要です。このページでは、子育てちゃんねるで得られる支援の種類と、具体的な活用法を解説します。</p>
       </div>
 
       <h3>子育てちゃんねるとは？</h3>
@@ -314,70 +314,58 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
 
       <h3>活用を支援するツール</h3>
 
-      <div class="kc tool">
-        <div class="kc tool bar">
-          <div class="kc bar dot"></div>
-          <b>子育てちゃんねる活用度診断</b>
-        </div>
-        <div class="kc tool body">
-          <div class="kc form">
-            <div class="kc field">
-              <label for="question1">1. 子育てちゃんねるで情報共有をしたことがありますか？</label>
-              <div class="kc chips">
-                <button class="kc chip-btn" aria-pressed="false">はい</button>
-                <button class="kc chip-btn" aria-pressed="false">いいえ</button>
-              </div>
-            </div>
-            <div class="kc field">
-              <label for="question2">2. 子育てちゃんねるで他のユーザーと交流をしたことがありますか？</label>
-              <div class="kc chips">
-                <button class="kc chip-btn" aria-pressed="false">はい</button>
-                <button class="kc chip-btn" aria-pressed="false">いいえ</button>
-              </div>
-            </div>
-            <div class="kc field">
-              <label for="question3">3. 子育てちゃんねるで地域の支援情報を得たことがありますか？</label>
-              <div class="kc chips">
-                <button class="kc chip-btn" aria-pressed="false">はい</button>
-                <button class="kc chip-btn" aria-pressed="false">いいえ</button>
-              </div>
-            </div>
-          </div>
-          <div class="kc out">
-            <div class="kc res-head">
-              <div class="kc lv mid">活用度</div>
-              <h4>あなたの活用度</h4>
-            </div>
-            <div class="kc res-list">
-              <li>
-                <div class="kc n">1</div>
-                <div>情報共有：はい</div>
-              </li>
-              <li>
-                <div class="kc n">2</div>
-                <div>交流：いいえ</div>
-              </li>
-              <li>
-                <div class="kc n">3</div>
-                <div>地域情報：はい</div>
-              </li>
-            </div>
-            <div class="kc res-act">
-              <b>あなたの活用度：</b>
-              <p>子育てちゃんねるを活用しているが、交流の部分がまだ不足しています。</p>
-              <div class="kc share">
-                <button class="kc share ok">活用度を確認する</button>
-              </div>
-            </div>
+      <h4>子育てちゃんねる活用度診断</h4>
+      <p>以下の質問に答えて、あなたの活用度をチェックしてください。</p>
+
+      <div class="kc form">
+        <div class="kc field">
+          <label for="question1">1. 子育てちゃんねるで情報共有をしたことがありますか？</label>
+          <div class="kc chips">
+            <button class="kc chip-btn" aria-pressed="false">はい</button>
+            <button class="kc chip-btn" aria-pressed="false">いいえ</button>
           </div>
         </div>
+        <div class="kc field">
+          <label for="question2">2. 子育てちゃんねるで他のユーザーと交流をしたことがありますか？</label>
+          <div class="kc chips">
+            <button class="kc chip-btn" aria-pressed="false">はい</button>
+            <button class="kc chip-btn" aria-pressed="false">いいえ</button>
+          </div>
+        </div>
+        <div class="kc field">
+          <label for="question3">3. 子育てちゃんねるで地域の支援情報を得たことがありますか？</label>
+          <div class="kc chips">
+            <button class="kc chip-btn" aria-pressed="false">はい</button>
+            <button class="kc chip-btn" aria-pressed="false">いいえ</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kc res">
+        <h4>あなたの活用度：</h4>
+        <div class="kc res-list">
+          <li>
+            <div class="kc n">1</div>
+            <div>情報共有：-</div>
+          </li>
+          <li>
+            <div class="kc n">2</div>
+            <div>交流：-</div>
+          </li>
+          <li>
+            <div class="kc n">3</div>
+            <div>地域情報：-</div>
+          </li>
+        </div>
+        <p id="result-text">診断結果がここに表示されます。</p>
+        <button class="kc share ok" id="submit-btn">活用度を確認する</button>
       </div>
 
       <script>
         const buttons = document.querySelectorAll('.kc chip-btn');
         const resList = document.querySelectorAll('.kc res-list li');
-        const resAct = document.querySelector('.kc res-act p');
-        const submitBtn = document.querySelector('.kc share ok');
+        const resText = document.getElementById('result-text');
+        const submitBtn = document.getElementById('submit-btn');
 
         let answers = [];
 
@@ -398,13 +386,13 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
             if (answer === 'はい') score++;
           });
           if (score === 3) {
-            resAct.textContent = '子育てちゃんねるを最大限に活用できています。';
+            resText.textContent = '子育てちゃんねるを最大限に活用できています。';
           } else if (score === 2) {
-            resAct.textContent = '子育てちゃんねるを活用していますが、もう少し活用を広げるとさらに便利です。';
+            resText.textContent = '子育てちゃんねるを活用していますが、もう少し活用を広げるとさらに便利です。';
           } else if (score === 1) {
-            resAct.textContent = '子育てちゃんねるを活用していますが、情報共有や交流の部分が少なめです。';
+            resText.textContent = '子育てちゃんねるを活用していますが、情報共有や交流の部分が少なめです。';
           } else {
-            resAct.textContent = '子育てちゃんねるの活用がまだ少なめです。積極的に利用してみましょう。';
+            resText.textContent = '子育てちゃんねるの活用がまだ少なめです。積極的に利用してみましょう。';
           }
         });
       </script>
