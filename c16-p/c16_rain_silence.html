@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雨の沈黙 | c16</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #888;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 1s ease;
+        }
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+        h1 {
+            font-weight: 200;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .slider-container {
+            width: 80%;
+            max-width: 400px;
+            margin: 20px 0;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #555;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #333;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.6;
+        }
+        .rain-drop {
+            position: absolute;
+            top: -10px;
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>雨の沈黙</h1>
+        <div class="slider-container">
+            <input type="range" id="silenceSlider" min="0" max="100" value="50">
+        </div>
+        <div class="status" id="statusText">沈黙の深さ: 50%</div>
+    </div>
+    <div id="rainContainer"></div>
+
+    <script>
+        const slider = document.getElementById('silenceSlider');
+        const statusText = document.getElementById('statusText');
+        const rainContainer = document.getElementById('rainContainer');
+        let rainDrops = [];
+
+        function updateAtmosphere(value) {
+            // 0 (騒音) から 100 (完全な沈黙) へ
+            const darkness = 100 - value; // 沈黙が深いほど暗くなる
+            document.body.style.backgroundColor = `rgb(${darkness/4}, ${darkness/4}, ${darkness/4})`;
+            statusText.innerText = `沈黙の深さ: ${value}%`;
+
+            // 雨の密度を調整
+            rainContainer.innerHTML = '';
+            const dropCount = Math.floor((100 - value) / 5); // 沈黙が深いほど雨は減る（逆に解釈するなら、沈黙が深いほど雨音は消える）
+            // ここでは「沈黙が深いほど、視覚的なノイズ（雨）が減り、内面化していく」表現にする
+            for(let i=0; i<dropCount; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('rain-drop');
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                rainContainer.appendChild(drop);
+            }
+        }
+
+        slider.addEventListener('input', (e) => {
+            updateAtmosphere(parseInt(e.target.value));
+        });
+
+        // 初期化
+        updateAtmosphere(50);
+    </script>
+</body>
+</html>
