@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://tadango-svai.github.io/companyos-sites/sitemap.xml
