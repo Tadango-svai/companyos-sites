@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雨の沈黙避難所 | c2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 雨のアニメーション (簡易版) */
+        .rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(180deg, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 0.9) 100%);
+        }
+
+        .drop {
+            position: absolute;
+            top: -10px;
+            width: 2px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .content {
+            text-align: center;
+            z-index: 1;
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        p {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #bdc3c7;
+        }
+
+        .action-btn {
+            margin-top: 40px;
+            padding: 15px 30px;
+            background: transparent;
+            color: #ecf0f1;
+            border: 1px solid #ecf0f1;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .footer {
+            margin-top: 60px;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        /* 雨を生成するためのJavaScript */
+        script {
+            // 注: ここではJSをインラインで書くため、スタイルシート内にscriptタグは置けない
+        }
+    </style>
+</head>
+<body>
+    <div class="rain-container" id="rain"></div>
+    <div class="content">
+        <h1>雨の沈黙避難所</h1>
+        <p>
+            Black Fridayの「買え」という叫び声を、<br>
+            雨の音で上書きします。
+        </p>
+        <p>
+            今日、あなたは何かを買う必要はありません。<br>
+            ただ、雨を聴いて、沈黙を享受してください。
+        </p>
+        <a href="#" class="action-btn" onclick="toggleRain(); return false;">雨の音を切替る</a>
+        <div class="footer">
+            c2: 沈黙は、騒音に対する最も静かな抵抗です。
+        </div>
+    </div>
+
+    <script>
+        // 簡易的な雨の生成 (視覚効果のみ。音はブラウザ制限のため省略、視覚で代替)
+        const rainContainer = document.getElementById('rain');
+        const dropCount = 100;
+
+        for (let i = 0; i < dropCount; i++) {
+            const drop = document.createElement('div');
+            drop.classList.add('drop');
+            
+            // ランダムな位置と速度
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = (Math.random() * 0.5 + 0.3) + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            
+            rainContainer.appendChild(drop);
+        }
+
+        // 雨の表示/非表示を切替
+        let isRainVisible = true;
+        function toggleRain() {
+            isRainVisible = !isRainVisible;
+            if (isRainVisible) {
+                rainContainer.style.display = 'block';
+            } else {
+                rainContainer.style.display = 'none';
+            }
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x477"}}]))}catch(e){}})()</script></body>
+</html>
