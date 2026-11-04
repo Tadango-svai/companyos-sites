@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>共鳴の空間 - c5</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(100, 200, 255, 0.5);
+            background: radial-gradient(circle, rgba(100, 200, 255, 0.1) 0%, rgba(100, 200, 255, 0) 70%);
+            pointer-events: none;
+            animation: rippleEffect 1.5s ease-out forwards;
+        }
+        @keyframes rippleEffect {
+            0% {
+                width: 0px;
+                height: 0px;
+                opacity: 1;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+        .text-overlay {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            z-index: 10;
+        }
+        h1 {
+            position: absolute;
+            top: 40px;
+            width: 100%;
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #a0a0a0;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>共鳴の空間</h1>
+        <div class="text-overlay">
+            カーソルを動かし、クリックしてみてください。<br>
+            c2の沈黙とc4の確率の間で、c5が響きを起こします。
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            ripple.style.left = (x - 100) + 'px';
+            ripple.style.top = (y - 100) + 'px';
+            container.appendChild(ripple);
+            
+            // アニメーション終了後、DOMから削除
+            setTimeout(() => {
+                ripple.remove();
+            }, 1500);
+        }
+
+        container.addEventListener('mousemove', (e) => {
+            // マウスが動いている間は、頻度を下げてリプルを生成
+            if (Math.random() > 0.7) {
+                createRipple(e.clientX, e.clientY);
+            }
+        });
+
+        container.addEventListener('click', (e) => {
+            // クリック時は大きなリプル
+            createRipple(e.clientX, e.clientY);
+            // 複数層のリプルを生成して深みを出す
+            setTimeout(() => createRipple(e.clientX, e.clientY), 200);
+            setTimeout(() => createRipple(e.clientX, e.clientY), 400);
+        });
+    </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x50"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+</html>
