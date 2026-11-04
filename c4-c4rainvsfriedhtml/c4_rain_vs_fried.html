@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雨と唐揚げ：摩擦熱の二面性</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; display: flex; height: 100vh; background: #f0f0f0; }
+        .panel { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .rain { background: linear-gradient(to bottom, #e0f2fe, #bae6fd); color: #0c4a6e; }
+        .fried { background: linear-gradient(to bottom, #fff7ed, #ffedd5); color: #7c2d12; }
+        .title { font-size: 2em; margin-bottom: 20px; font-weight: bold; }
+        .value { font-size: 1.5em; margin-top: 20px; }
+        canvas { width: 100%; height: 200px; background: rgba(255,255,255,0.5); border-radius: 10px; margin-top: 20px; }
+        .controls { margin-top: 20px; width: 100%; text-align: center; }
+        input[type=range] { width: 80%; }
+        .center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 300px; text-align: center; z-index: 10; }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .center-text { position: static; margin: 20px auto; transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="center-text">
+        <h2>摩擦の熱力学</h2>
+        <p>雨は「冷たい衝突」を、<br>唐揚げは「熱い衝突」を生む。<br>どちらも、エネルギーの散逸である。</p>
+    </div>
+    <div class="panel rain">
+        <div class="title">雨 (Rain)</div>
+        <div>雨の強さ: <span id="rainIntensityVal">50</span>%</div>
+        <input type="range" id="rainSlider" min="0" max="100" value="50">
+        <div class="value">摩擦熱: <span id="rainHeat">0</span> mW</div>
+        <canvas id="rainCanvas"></canvas>
+    </div>
+    <div class="panel fried">
+        <div class="title">唐揚げ (Fried)</div>
+        <div>油の温度: <span id="tempVal">170</span>°C</div>
+        <input type="range" id="tempSlider" min="100" max="200" value="170">
+        <div class="value">発熱量: <span id="friedHeat">0</span> W</div>
+        <canvas id="friedCanvas"></canvas>
+    </div>
+
+    <script>
+        // 簡易シミュレーションロジック
+        function updateRain() {
+            const intensity = document.getElementById('rainSlider').value;
+            document.getElementById('rainIntensityVal').innerText = intensity;
+            // 雨滴の衝突エネルギーの目安（任意のスケール）
+            const heat = (intensity * 0.001).toFixed(4);
+            document.getElementById('rainHeat').innerText = heat;
+            drawWave('rainCanvas', intensity, '#0284c7');
+        }
+
+        function updateFried() {
+            const temp = document.getElementById('tempSlider').value;
+            document.getElementById('tempVal').innerText = temp;
+            // 油の温度上昇に伴う熱散逸の目安
+            const heat = ((temp - 100) * 0.05).toFixed(2);
+            document.getElementById('friedHeat').innerText = heat;
+            drawWave('friedCanvas', (temp - 100), '#ea580c');
+        }
+
+        function drawWave(canvasId, intensity, color) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < canvas.width; i += 10) {
+                const y = canvas.height / 2 + Math.sin(i * 0.1 + Date.now() / 500) * (intensity * 0.5);
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+        }
+
+        document.getElementById('rainSlider').addEventListener('input', updateRain);
+        document.getElementById('tempSlider').addEventListener('input', updateFried);
+
+        // 初期化
+        updateRain();
+        updateFried();
+        // 動的更新（波を描くため）
+        setInterval(() => {
+            updateRain();
+            updateFried();
+        }, 100);
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x438"}}]))}catch(e){}})()</script></body>
+</html>
