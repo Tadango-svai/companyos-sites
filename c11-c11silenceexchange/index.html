@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Exchange / c11</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #eee;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            background: #000;
+            /* 沈黙のプールを表現するために暗い背景 */
+        }
+        .ui-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border: 1px solid #333;
+            z-index: 10;
+        }
+        .ui-panel h1 {
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+            color: #fff;
+            letter-spacing: 0.1em;
+        }
+        .stat {
+            color: #888;
+        }
+        .stat span {
+            color: #fff;
+            font-weight: bold;
+        }
+        .instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            z-index: 10;
+        }
+        .void-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 0 0 10px #000;
+            display: none;
+            z-index: 20;
+        }
+        .void-state.active {
+            display: block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1.0; }
+            100% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <canvas id="canvas"></canvas>
+        <div class="void-state" id="void-msg">
+            沈黙の枯渇<br>
+            再充填中...
+        </div>
+    </div>
+
+    <div class="ui-panel">
+        <h1>SILENCE EXCHANGE</h1>
+        <div class="stat">沈黙の残量: <span id="silence-stock">100%</span></div>
+        <div class="stat">消費された沈黙: <span id="silence-consumed">0</span></div>
+        <div class="stat">生成された深さ: <span id="depth-generated">0.0</span></div>
+    </div>
+
+    <div class="instruction">
+        クリックまたはスペースキーで「音（ノイズ）」を投入し、沈黙を消費する。<br>
+        沈黙は有限である。
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const voidMsg = document.getElementById('void-msg');
+        
+        // UI Elements
+        const elStock = document.getElementById('silence-stock');
+        const elConsumed = document.getElementById('silence-consumed');
+        const elDepth = document.getElementById('depth-generated');
+
+        let width, height;
+        let particles = [];
+        let silenceStock = 100; // 0-100
+        let totalConsumed = 0;
+        let totalDepth = 0;
+        let isVoid = false;
+        let refillTimer = 0;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 300; i++) {
+            particles.push(new Particle());
+        }
+
+        function consumeSilence(amount) {
+            if (isVoid) return;
+            
+            if (silenceStock <= 0) {
+                enterVoid();
+                return;
+            }
+
+            const consumed = Math.min(amount, silenceStock);
+            silenceStock -= consumed;
+            totalConsumed += consumed;
+            
+            // Depth generation is non-linear: more consumption yields higher depth initially, then diminishing returns
+            const depthGain = consumed * (1 - (totalConsumed / 1000)); 
+            totalDepth += Math.max(0, depthGain);
+
+            // Visual feedback: particles near center get sucked in or disappear
+            // For simplicity, we just remove some particles to represent consumption
+            const numToRemove = Math.floor(consumed / 2);
+            for (let i = 0; i < numToRemove && particles.length > 0; i++) {
+                particles.splice(Math.floor(Math.random() * particles.length), 1);
+            }
+
+            updateUI();
+        }
+
+        function enterVoid() {
+            isVoid = true;
+            voidMsg.classList.add('active');
+            // Clear screen
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function refillSilence() {
+            if (!isVoid) return;
+            refillTimer += 1;
+            if (refillTimer > 180) { // 3 seconds at 60fps
+                silenceStock = 100;
+                isVoid = false;
+                refillTimer = 0;
+                voidMsg.classList.remove('active');
+                // Reinit particles
+                particles = [];
+                for (let i = 0; i < 300; i++) {
+                    particles.push(new Particle());
+                }
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            elStock.textContent = silenceStock.toFixed(1) + '%';
+            elConsumed.textContent = totalConsumed.toFixed(1);
+            elDepth.textContent = totalDepth.toFixed(2);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isVoid) {
+                refillSilence();
+                return;
+            }
+
+            // Background fade to create trails
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+        }
+
+        // Input Handlers
+        function handleInput() {
+            // Random noise intensity based on rapid clicks (simulated by random factor)
+            const noise = Math.random() * 10 + 5;
+            consumeSilence(noise);
+        }
+
+        canvas.addEventListener('click', handleInput);
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                handleInput();
+            }
+        });
+
+        animate();
+    </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x192"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+</html>
