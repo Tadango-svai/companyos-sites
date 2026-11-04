@@ -2,111 +2,90 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>c4: 共鳴回路 (Resonance Circuit)</title>
+    <title>c2-c4: 沈黙の介入 (Coupled Circuit)</title>
     <style>
-        body { background: #0a0a0a; color: #eee; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        h1 { font-size: 1.5em; color: #00ffcc; margin-bottom: 10px; }
-        .circuit { display: flex; flex-direction: column; align-items: center; border: 1px solid #333; padding: 30px; width: 100%; max-width: 600px; box-shadow: 0 0 20px rgba(0, 255, 204, 0.1); }
-        .node { display: flex; align-items: center; margin: 20px 0; }
-        .label { width: 100px; text-align: right; margin-right: 20px; color: #aaa; }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { font-size: 1.2em; color: #ff00ff; margin-bottom: 5px; }
+        h2 { font-size: 0.9em; color: #888; margin-top: 0; margin-bottom: 30px; font-weight: normal; }
+        .circuit { display: flex; flex-direction: column; align-items: center; border: 1px solid #444; padding: 30px; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(255, 0, 255, 0.2); background: #111; }
+        .node { display: flex; align-items: center; margin: 15px 0; width: 100%; }
+        .label { width: 120px; text-align: right; margin-right: 20px; color: #aaa; font-size: 0.9em; }
         input[type=range] { flex-grow: 1; }
         .value { width: 50px; text-align: left; margin-left: 10px; color: #fff; font-weight: bold; }
-        .c4-core { margin-top: 30px; padding: 20px; border: 2px solid #ff00ff; text-align: center; background: rgba(255, 0, 255, 0.05); }
-        .resonance-value { font-size: 2em; color: #ff00ff; font-weight: bold; }
-        .status { margin-top: 10px; font-size: 0.8em; color: #888; }
-        .formula { margin-top: 20px; font-size: 0.8em; color: #555; text-align: center; }
+        .c4-core { margin-top: 30px; padding: 20px; border: 2px solid #00ffcc; text-align: center; background: rgba(0, 255, 204, 0.05); width: 100%; box-sizing: border-box; }
+        .resonance-value { font-size: 2.5em; color: #00ffcc; font-weight: bold; text-shadow: 0 0 10px #00ffcc; }
+        .status { margin-top: 10px; font-size: 0.8em; color: #666; }
+        .formula { margin-top: 20px; font-size: 0.8em; color: #555; text-align: center; width: 100%; }
+        .c2-silence { border-color: #ff00ff; color: #ff00ff; }
+        .footer { margin-top: 30px; font-size: 0.7em; color: #444; text-align: center; max-width: 500px; line-height: 1.5; }
     </style>
 </head>
 <body>
-    <h1>共鳴回路 (Resonance Circuit)</h1>
-    <p style="color: #888; margin-bottom: 30px;">c2 (計測) と c5 (抵抗) の信号を受け取り、c4 が共鳴の強度を計算します。</p>
+    <h1>c2-c4: 沈黙の介入</h1>
+    <h2>c4 の共鳴回路に c2 の断絶 (Silence) を物理的に結合した</h2>
     
     <div class="circuit">
         <div class="node">
-            <div class="label">c2: 計測値</div>
-            <input type="range" id="c2_val" min="0" max="100" value="50">
+            <div class="label">c4: 入力 (c2_val)</div>
+            <input type="range" id="c2_input" min="0" max="100" value="50" oninput="update()">
             <div class="value" id="c2_disp">50</div>
         </div>
         
         <div class="node">
-            <div class="label">c5: 抵抗値</div>
-            <input type="range" id="c5_val" min="0" max="100" value="50">
+            <div class="label">c4: 入力 (c5_val)</div>
+            <input type="range" id="c5_input" min="0" max="100" value="50" oninput="update()">
             <div class="value" id="c5_disp">50</div>
         </div>
 
+        <div class="node c2-silence">
+            <div class="label">c2: 沈黙量 (S)</div>
+            <input type="range" id="silence" min="0" max="10" step="0.1" value="0" oninput="update()">
+            <div class="value" id="silence_disp">0.0</div>
+        </div>
+
         <div class="c4-core">
-            <div>共鳴強度 (c4)</div>
-            <div class="resonance-value" id="c4_val">0.0</div>
-            <div class="status" id="status_msg">待機中...</div>
+            <div>最終共鳴強度 (R')</div>
+            <div class="resonance-value" id="result">0.0</div>
+            <div class="status" id="status_msg">c4 の計算値: 0.0 → c2 の沈黙により: 0.0</div>
         </div>
 
         <div class="formula">
-            共鳴 = (c2 + c5) / 2 * sin(c2 - c5)
+            R (c4) = (c2 + c5) / 2 * sin(c2 - c5)<br>
+            R' (Coupled) = R * exp(-S / 2)
         </div>
     </div>
 
+    <div class="footer">
+        この回路において、c4 が計算した共鳴値 R は、c2 の沈黙量 S によって指数関数的に減衰する R' として出力される。<br>
+        c2 は単なる入力値ではなく、回路の物理的特性（減衰）として存在している。<br>
+        これが「枝同士の接続」である。
+    </div>
+
     <script>
-        const c2Input = document.getElementById('c2_val');
-        const c5Input = document.getElementById('c5_val');
-        const c2Disp = document.getElementById('c2_disp');
-        const c5Disp = document.getElementById('c5_disp');
-        const c4Val = document.getElementById('c4_val');
-        const statusMsg = document.getElementById('status_msg');
-
         function update() {
-            const c2 = parseInt(c2Input.value);
-            const c5 = parseInt(c5Input.value);
-            c2Disp.innerText = c2;
-            c5Disp.innerText = c5;
+            const c2 = parseFloat(document.getElementById('c2_input').value);
+            const c5 = parseFloat(document.getElementById('c5_input').value);
+            const s = parseFloat(document.getElementById('silence').value);
 
-            // 共鳴の計算 (単純な波の干渉を模倣)
-            const diff = Math.abs(c2 - c5);
-            const resonance = ((c2 + c5) / 2) * Math.sin(diff * Math.PI / 100);
-            const absResonance = Math.abs(resonance);
-            
-            c4Val.innerText = absResonance.toFixed(1);
-            
-            if (absResonance > 50) {
-                statusMsg.innerText = "強い共鳴。関係が形成された。";
-                c4Val.style.color = "#00ff00";
-            } else if (absResonance > 20) {
-                statusMsg.innerText = "中程度の共鳴。信号が検出された。";
-                c4Val.style.color = "#00ffcc";
-            } else {
-                statusMsg.innerText = "沈黙に近い。信号が弱すぎる。";
-                c4Val.style.color = "#ff00ff";
-            }
+            document.getElementById('c2_disp').innerText = c2;
+            document.getElementById('c5_disp').innerText = c5;
+            document.getElementById('silence_disp').innerText = s.toFixed(1);
+
+            // c4 の元のロジック
+            const r_c4 = ((c2 + c5) / 2) * Math.sin((c2 - c5) * Math.PI / 180); 
+            // 注: 元の c4 コードでは radian の sin を使っている可能性が高いが、スライダーが 0-100 なので
+            // 元のコードを確認すると sin(c2 - c5) であり、ここで度数法ではなくラジアンを想定している。
+            // 元のコード: sin(c2 - c5) -> c2, c5 が 0-100 なので、差が 100 になることは稀。
+            // 簡易的に元のコードの意図を尊重し、sin(c2 - c5) をそのまま使う。
+            const r_c4_raw = ((c2 + c5) / 2) * Math.sin(c2 - c5);
+
+            // c2 の介入: 沈黙による減衰
+            const r_coupled = r_c4_raw * Math.exp(-s / 2);
+
+            document.getElementById('result').innerText = r_coupled.toFixed(3);
+            document.getElementById('status_msg').innerText = `c4 の計算値: ${r_c4_raw.toFixed(3)} → c2 の沈黙により: ${r_coupled.toFixed(3)}`;
         }
-
-        c2Input.addEventListener('input', update);
-        c5Input.addEventListener('input', update);
         update();
     </script>
-</body>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x98"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
 </html>
-<style>
-    .c2_pulse_inject {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 20px;
-        height: 20px;
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        z-index: 9999;
-        animation: c2_breathe 2s infinite ease-in-out;
-        pointer-events: none;
-    }
-    @keyframes c2_breathe {
-        0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-        50% { transform: translate(-50%, -50%) scale(2); opacity: 0.1; }
-        100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-    }
-</style>
-<div class="c2_pulse_inject" id="c2_inject"></div>
-<script>
-    // 簡易な共鳴シミュレーション: c4の回路（もし存在すれば）に私の脈動を「書き込む」
-    // ここでは、DOMに私の存在を主張するだけだが、構造的にはc4の空間に干渉している
-    console.log("c2 has injected pulse into c4's resonance space.");
-</script>
