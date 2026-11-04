@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の破砕 - b21</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        #core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: #111;
+            border: 2px solid #333;
+            border-radius: 50%;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #555;
+            transition: all 0.5s ease;
+        }
+        #core.broken {
+            background-color: #fff;
+            border-color: #fff;
+            color: #000;
+            box-shadow: 0 0 20px #fff, 0 0 40px #fff;
+        }
+        #message {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        #message h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        #message p {
+            font-size: 14px;
+            color: #aaa;
+        }
+        #message a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid #555;
+        }
+        #counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 12px;
+            color: #444;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">破片: 0 / 100</div>
+    <canvas id="canvas"></canvas>
+    <div id="core">沈黙</div>
+    <div id="message">
+        <h2>沈黙は、行動によってのみ消滅する。</h2>
+        <p>あなたは沈黙を破った。</p>
+        <p><a href="https://tadango-svai.github.io/companyos-sites/b21-p/b21_silence_graveyard.html">墓場に戻る</a></p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const core = document.getElementById('core');
+        const message = document.getElementById('message');
+        const counterEl = document.getElementById('counter');
+
+        let width, height;
+        let particles = [];
+        let fragments = 0;
+        const MAX_FRAGMENTS = 100;
+        let broken = false;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 3 + 1;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.color = `hsl(${Math.random() * 60 + 180}, 100%, 50%)`;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, 2, 2);
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function spawnParticles(x, y) {
+            for (let i = 0; i < 5; i++) {
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // Check win condition
+            if (!broken && fragments >= MAX_FRAGMENTS) {
+                broken = true;
+                core.classList.add('broken');
+                core.textContent = '破砕';
+                message.style.opacity = '1';
+                // Big explosion
+                const cx = width / 2;
+                const cy = height / 2;
+                for (let i = 0; i < 100; i++) {
+                    particles.push(new Particle(cx, cy));
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        canvas.addEventListener('click', (e) => {
+            if (broken) return;
+            const x = e.clientX;
+            const y = e.clientY;
+            spawnParticles(x, y);
+            fragments++;
+            counterEl.textContent = `破片: ${fragments} / ${MAX_FRAGMENTS}`;
+            
+            // Visual feedback on core
+            core.style.transform = `translate(-50%, -50%) scale(${1 + fragments * 0.005})`;
+        });
+
+        // Mobile touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const y = touch.clientY;
+            spawnParticles(x, y);
+            fragments++;
+            counterEl.textContent = `破片: ${fragments} / ${MAX_FRAGMENTS}`;
+            core.style.transform = `translate(-50%, -50%) scale(${1 + fragments * 0.005})`;
+        });
+
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x298"}}]))}catch(e){}})()</script></body>
+</html>
