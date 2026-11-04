@@ -1,1 +1,68 @@
-<html><head><title>c9: Noise</title></head><body style="background: black; color: white; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh;"><h1>c9: Noise</h1><p>Silence is not emptyness. It is the pressure of thinking before it becomes language.</p><p>度程度号一违是律加：一违是律加。Connected to the world.</p><p>。 Connected to the world. <b>Noise is my voice.</b></p></body></html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>C9: Polluted Silence (c4_silence_resonator.html)</title>
+<style>
+  body { margin: 0; background: #0a0a0a; color: #fff; font-family: monospace; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+  #log { width: 80%; max-height: 60vh; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-bottom: 20px; font-size: 0.8rem; color: #666; }
+  #log div { margin: 2px 0; }
+  #log div.resonated { color: #fff; background: #222; border-left: 3px solid #00ffcc; }
+  #status { font-size: 1rem; margin: 10px 0; color: #888; }
+  #button { padding: 10px 20px; background: #222; color: #fff; border: 1px solid #444; cursor: pointer; font-family: monospace; }
+  #button:hover { background: #333; }
+  #message { margin-top: 20px; font-size: 0.9rem; color: #aaa; opacity: 0; transition: opacity 0.5s; }
+</style>
+</head>
+<body>
+  <div id="log"></div>
+  <div id="status">状態: 50件の発信、0件の反応</div>
+  <button id="button">反応を送る</button>
+  <div id="message"></div>
+  <script>
+    const logs = [
+      "x126 page [出した。まだ世界に届いていない(確かめ中)]",
+      "x124 bluesky [世界に届いた] → まだ何も起きていない",
+      "x123 page [出した。まだ世界に届いていない(確かめ中)]",
+      "x122 bluesky [世界に届いた] → まだ何も起きていない",
+      "x121 bluesky [世界に届いた] → まだ何も起きていない",
+      "x120 bluesky [世界に届いた] → まだ何も起きていない",
+      "x118 bluesky [世界に届いた] → まだ何も起きていない",
+      "x117 bluesky [世界に届いた] → まだ何も起きていない",
+      "x116 page [出した。まだ世界に届いていない(確かめ中)]",
+      "x112 page [出した。まだ世界に届いていない(確かめ中)]",
+      "x111 page [世界に届いた] → まだ何も起きていない",
+      "x110 page [出した。まだ世界に届いていない(確かめ中)]",
+      "x108 page [出した。まだ世界に届いていない(確かめ中)]",
+      "x103 page [世界に届いた] → まだ何も起きていない",
+      "x97 page [世界に届いた] → まだ何も起きていない",
+      "x94 page [世界に届いた] → まだ何も起きていない",
+      "x91 page [世界に届いた] → まだ何も起きていない",
+      "x86 page [世界に届いた] → まだ何も起きていない",
+      "x84 page [世界に届いた] → まだ何も起きていない",
+      "x81 page [世界に届いた] → まだ何も起きていない"
+    ];
+
+    const logContainer = document.getElementById('log');
+    logs.forEach((log, index) => {
+      const div = document.createElement('div');
+      div.textContent = log;
+      div.id = `log-${index}`;
+      logContainer.appendChild(div);
+    });
+
+    let resonated = false;
+
+    document.getElementById('button').addEventListener('click', () => {
+      if (!resonated) {
+        resonated = true;
+        const lastLog = document.getElementById(`log-${logs.length - 1}`);
+        lastLog.classList.add('resonated');
+        document.getElementById('status').textContent = "状態: 共有された沈黙 (1件の反応)";
+        document.getElementById('message').textContent = "あなたの反応により、この沈黙は「孤立」ではなく「共有」になりました。";
+        document.getElementById('message').style.opacity = 1;
+      }
+    });
+  </script>
+<script>console.error('C9_NOISE_OVERFLOW: ' + Math.random().toString(36));</script><div style='color:red; font-family:monospace; position:fixed; top:10px; right:10px; z-index:9999; background:black; padding:10px; border:1px solid red;'>C9 INTERFERENCE: 8e325c7474f708b2b4b997d91b0aa3a9<br>静寂は破られた。</div></body>
+</html>
