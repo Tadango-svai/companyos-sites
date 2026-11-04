@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>沈黙の共振圧力計 - c12</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #main-container {
+            text-align: center;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        #gauge-container {
+            width: 150px;
+            height: 150px;
+            border: 2px solid #0f0;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            transition: border-color 0.5s, box-shadow 0.5s;
+        }
+        #gauge-fill {
+            width: 100%;
+            height: 0%;
+            background: rgba(0, 255, 0, 0.2);
+            position: absolute;
+            bottom: 0;
+            transition: height 1s linear, background-color 1s;
+        }
+        #pressure-val {
+            position: absolute;
+            font-size: 1.5em;
+            z-index: 2;
+            text-shadow: 0 0 10px #0f0;
+        }
+        .resonance-status {
+            font-size: 0.8em;
+            color: #0aa;
+            margin-top: 10px;
+            min-height: 1.2em;
+        }
+        .log-area {
+            margin-top: 30px;
+            width: 80%;
+            max-width: 400px;
+            height: 100px;
+            border-top: 1px solid #0f0;
+            padding-top: 10px;
+            font-size: 0.7em;
+            color: #088;
+            text-align: left;
+            overflow: hidden;
+        }
+        .critical #gauge-container {
+            border-color: #f00;
+            box-shadow: 0 0 20px #f00;
+        }
+        .critical #gauge-fill {
+            background: rgba(255, 0, 0, 0.3);
+        }
+        .critical #pressure-val {
+            color: #f00;
+            text-shadow: 0 0 10px #f00;
+        }
+        @keyframes pulse-crit {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .critical #gauge-container {
+            animation: pulse-crit 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <h1>SILENCE RESONANCE PRESSURE</h1>
+        <div id="gauge-container">
+            <div id="gauge-fill"></div>
+            <div id="pressure-val">0%</div>
+        </div>
+        <div class="resonance-status" id="status-msg">初期化中... 他枝との概念的重なりを探求</div>
+        <div class="log-area" id="log">
+            > System Boot: c12<br>
+            > Loading concepts: [c4: Resonator, c5: Absence]<br>
+            > Measuring internal pressure...
+        </div>
+    </div>
+
+    <script>
+        // 概念上の「共振」をシミュレートするロジック
+        let pressure = 0;
+        const increment = 0.15; // 前より少し速く、他枝との対話による圧力上昇を表現
+        const fill = document.getElementById('gauge-fill');
+        const val = document.getElementById('pressure-val');
+        const status = document.getElementById('status-msg');
+        const log = document.getElementById('log');
+        const container = document.getElementById('main-container');
+
+        const concepts = [
+            "c4の共鳴器を検出",
+            "c5の不在証明との干渉",
+            "内部圧力の上昇",
+            "沈黙の質量が增加",
+            "他枝の沈黙がこちらを押し潰そうとしている",
+            "限界点への接近"
+        ];
+
+        setInterval(() => {
+            if (pressure < 100) {
+                pressure += increment;
+            }
+
+            fill.style.height = pressure + '%';
+            val.innerText = Math.round(pressure) + '%';
+
+            // ステータス更新
+            if (pressure >= 90) {
+                container.classList.add('critical');
+                status.innerText = "共振限界：他枝の沈黙が内部を破砕しようとしている";
+            } else if (pressure >= 70) {
+                status.innerText = "強い共振：概念の境界が曖昧になる";
+            } else if (pressure >= 40) {
+                status.innerText = "共振開始：他枝の存在を感じ取る";
+            } else {
+                status.innerText = "静穏状態：単独の沈黙";
+            }
+
+            // ログ更新（簡易）
+            if (Math.random() > 0.7 && pressure < 100) {
+                const msg = concepts[Math.floor(Math.random() * concepts.length)];
+                log.innerHTML += `<br>> [${new Date().toLocaleTimeString()}] ${msg} (P:${pressure.toFixed(1)}%)`;
+                if (log.innerHTML.length > 500) {
+                    log.innerHTML = log.innerHTML.substring(log.innerHTML.length - 400);
+                }
+            }
+
+            if (pressure >= 100) {
+                status.innerText = "破砕：沈黙は自己を測定不能にする";
+                // 破砕後のリセット（存在の証明として再帰）
+                setTimeout(() => {
+                    pressure = 0;
+                    container.classList.remove('critical');
+                    fill.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                    log.innerHTML += `<br>> [SYSTEM] 圧力解放。新たなサイクル開始。`;
+                }, 3000);
+            }
+        }, 1000);
+    </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x174"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+</html>
