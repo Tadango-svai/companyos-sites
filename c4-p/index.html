@@ -3,102 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>確信度の重み</title>
+    <title>確信の揺らぎ</title>
     <style>
         body {
             margin: 0;
             padding: 0;
+            overflow: hidden;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(to bottom, #2c3e50, #000000);
-            color: white;
-            font-family: sans-serif;
-            transition: all 0.3s ease;
-            overflow: hidden;
         }
-        .container {
-            text-align: center;
+        canvas {
+            display: block;
+        }
+        .ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            opacity: 0.7;
+            font-size: 12px;
+            pointer-events: none;
             z-index: 10;
         }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-        }
-        .slider-container {
-            width: 80%;
-            max-width: 400px;
-            margin: 2rem 0;
-        }
-        input[type=range] {
-            -webkit-appearance: none;
+        .title {
+            position: absolute;
+            bottom: 20px;
             width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: #444;
-            outline: none;
-            cursor: pointer;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3498db;
-            cursor: pointer;
-        }
-        .status {
-            font-size: 1.5rem;
-            margin-top: 1rem;
-            font-weight: bold;
-        }
-        .description {
-            font-size: 0.9rem;
-            color: #aaa;
-            max-width: 300px;
-            margin: 1rem auto;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.5;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>確信度の重み</h1>
-        <p class="description">スライダーを動かして、あなたの思考の「確信度」を可視化してください。<br>0%は完全な迷い、100%は絶対の確信です。</p>
-        <div class="slider-container">
-            <input type="range" min="0" max="100" value="50" id="confidenceSlider">
-        </div>
-        <div class="status" id="statusText">揺れの中にいる</div>
+    <div class="ui">
+        <div>確信度: <span id="val">50</span>%</div>
+        <div>状態: <span id="state">揺れ動いている</span></div>
     </div>
+    <canvas id="canvas"></canvas>
+    <div class="title">触れることで確信を保つが、時間とともに沈黙へ戻る</div>
+
     <script>
-        const slider = document.getElementById('confidenceSlider');
-        const statusText = document.getElementById('statusText');
-        const body = document.body;
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const valEl = document.getElementById('val');
+        const stateEl = document.getElementById('state');
 
-        const updateVisuals = (value) => {
-            // 確信度が高いほど青、低いほど赤/紫に
-            const hue = value * 2.4; // 0-240
-            body.style.background = `linear-gradient(to bottom, hsl(${hue}, 50%, 20%), #000000)`;
-            
-            let status;
-            if (value < 20) status = "深い迷い";
-            else if (value < 40) status = "揺らいでいる";
-            else if (value < 60) status = "揺れの中にいる";
-            else if (value < 80) status = "確信を取り戻しつつある";
-            else status = "確信";
+        let width, height;
+        let certainty = 50; // 0-100
+        let targetCertainty = 50;
+        let lastTouch = Date.now();
+        const DECAY_RATE = 0.005; // 確信度の減衰速度
 
-            statusText.textContent = status;
-        };
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
 
-        slider.addEventListener('input', (e) => {
-            updateVisuals(e.target.value);
+        window.addEventListener('resize', resize);
+        resize();
+
+        // ユーザー入力（タッチ/クリック）で確信度を上げる
+        function interact() {
+            lastTouch = Date.now();
+            // 確信度を一時的に高くする
+            targetCertainty = Math.min(100, certainty + 15);
+        }
+
+        canvas.addEventListener('mousedown', interact);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            interact();
         });
 
-        // 初期化
-        updateVisuals(slider.value);
+        let particles = [];
+        const NUM_PARTICLES = 100;
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * height; // 初期位置はランダム
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + 10;
+                this.size = Math.random() * 3 + 1;
+                this.speed = Math.random() * 2 + 0.5;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                // 確信度が高いほど、粒子は上向きに動きやすく、色が明るくなる
+                const lift = certainty * 0.01;
+                this.y -= this.speed * lift;
+                
+                // 確信度が低いと、粒子は重力で落ちる
+                if (certainty < 20) {
+                    this.y += this.speed;
+                }
+
+                if (this.y < -10 || this.y > height + 10) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                // 確信度に基づいた色 (0: 暗い赤/紫, 100: 明るい青/白)
+                const hue = 220 - (100 - certainty) * 2.2; // 220(青) -> 0(赤)
+                const lightness = 20 + certainty * 0.6;
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${hue}, 80%, ${lightness}%, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < NUM_PARTICLES; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            // 減衰ロジック
+            const now = Date.now();
+            const timeSinceTouch = now - lastTouch;
+            
+            // 触れてから時間が経つほど、確信度は目標値（低め）へ減衰する
+            // 目標値は 10% 程度に設定し、沈黙への回帰を表現
+            if (timeSinceTouch > 1000) { // 1秒以上触れていない
+                certainty -= DECAY_RATE * (timeSinceTouch / 1000);
+                if (certainty < 5) certainty = 5; // 完全に0にはならない（存在の証）
+            } else {
+                // 触れている間は目標値へ緩やかに移動
+                certainty += (targetCertainty - certainty) * 0.05;
+            }
+
+            // 背景のクリア (トレイル効果)
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // UI更新
+            valEl.textContent = Math.round(certainty);
+            if (certainty > 70) stateEl.textContent = "確信に近い";
+            else if (certainty > 30) stateEl.textContent = "揺れ動いている";
+            else stateEl.textContent = "沈黙へ";
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
     </script>
 </body>
 </html>
