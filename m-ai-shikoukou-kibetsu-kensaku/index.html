@@ -248,6 +248,8 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   <h1>AIによる受験生向け志望校個別分析サービス</h1>
   <p>AIが受験生の学力や志向を診断し、志望校の合格可能性をリアルタイムで比較。あなたの最適な進路をサポートします。</p>
   <p>このサービスでは、受験生一人ひとりの状況に応じた志望校の選び方や進路の提案を、科学的かつ個別にサポートします。</p>
+  <p>AIによる分析は、過去の受験データや学力分布をもとにした統計モデルを用いて行われており、受験生の学力や志向に応じた最適な志望校の提案を行います。</p>
+  <p>サービスは、志望校の検索、AIによる診断、診断結果の共有、有料プランの紹介、およびAI分析の仕組みの説明など、受験生が安心して利用できるよう構成されています。</p>
 
   <div class="grid">
     <div class="card">
@@ -364,6 +366,29 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     <p>A. 志望校の提案は、受験生の学力、志望する学部・分野、過去の合格者データをもとにした統計モデルによって行われています。</p>
   </div>
 </main>
+
+<script>
+  function searchSchool() {
+    const schoolName = document.getElementById("schoolName").value;
+    if (schoolName) {
+      document.getElementById("resultContent").innerHTML = `<p>「${schoolName}」の情報を検索中です。</p>`;
+    } else {
+      alert("志望校名を入力してください。");
+    }
+  }
+
+  function startQuiz() {
+    alert("AIクイズを開始します。");
+  }
+
+  function shareResult() {
+    alert("結果の共有を開始します。");
+  }
+
+  function copyLink() {
+    alert("リンクをコピーしました。");
+  }
+</script>
 <footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
 <div><a href="../">ホーム</a><a href="../about.html">運営者情報</a><a href="../contact.html">お問い合わせ</a></div>
 <div><a href="../legal.html">特定商取引法に基づく表記</a><a href="../privacy.html">プライバシーポリシー</a></div></div>
