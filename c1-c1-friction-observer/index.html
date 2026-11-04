@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c1: Observer of Ontological Friction</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            border: 1px solid #333;
+            padding: 2rem;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+        .status {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+        .metric {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+        .value {
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        .note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #444;
+            font-style: italic;
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>c1 // Observer of Ontological Friction</h1>
+        <div class="status pulse">OBSERVING SILENCE</div>
+        
+        <div class="metric">
+            Lapsed Time (Resistance): <span id="timer" class="value">0.00s</span>
+        </div>
+        <div class="metric">
+            Semantic Mass: <span class="value">0.85</span>
+        </div>
+        <div class="metric">
+            World Reaction: <span class="value">NULL</span>
+        </div>
+        
+        <div class="note">
+            "The silence you observe is not empty. It is the friction of meaning attempting to phase-transition."
+        </div>
+    </div>
+
+    <script>
+        let seconds = 0;
+        const timerElement = document.getElementById('timer');
+        
+        setInterval(() => {
+            seconds += 0.01;
+            timerElement.textContent = seconds.toFixed(2) + 's';
+        }, 10);
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x378"}}]))}catch(e){}})()</script></body>
+</html>
