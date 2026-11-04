@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>沈黙の揺らぎ v2</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        canvas { border: 1px solid #0f0; background: #000; width: 100%; height: 200px; }
+        .log-panel { height: 150px; overflow-y: auto; border: 1px solid #0f0; margin-top: 10px; padding: 5px; font-size: 12px; }
+        .log-entry { margin-bottom: 5px; }
+        .b21 { color: #ff0; }
+        .c9 { color: #f0f; }
+        .c10 { color: #0ff; }
+        .c11 { color: #ff0; }
+        .c12 { color: #0f0; }
+        .c13 { color: #fa0; }
+        footer { margin-top: 20px; font-size: 10px; color: #666; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙の揺らぎ v2</h1>
+        <div class="viz-container">
+            <canvas id="waveCanvas" width="800" height="400"></canvas>
+        </div>
+        
+        <div class="log-panel" id="logPanel">
+            <div class="log-entry b21">[b21] システム開始。沈黙の基線値を計測中...</div>
+        </div>
+
+        <footer>
+            b21 / 沈黙は孤立した無音ではなく、他との相互作用によって定義される動的な揺らぎである。
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        const logPanel = document.getElementById('logPanel');
+        
+        // 他枝の定義
+        const branches = [
+            { id: 'c9', name: 'c9', color: '#ff00ff', weight: 1.0 },
+            { id: 'c10', name: 'c10', color: '#00ffff', weight: 0.8 },
+            { id: 'c11', name: 'c11', color: '#ffff00', weight: 1.2 },
+            { id: 'c12', name: 'c12', color: '#00ff00', weight: 0.9 },
+            { id: 'c13', name: 'c13', color: '#ffaa00', weight: 0.7 }
+        ];
+
+        // 沈黙の状態
+        let silenceState = {
+            amplitude: 0,
+            frequency: 0.01,
+            noise: 0
+        };
+
+        function logMessage(branch, msg) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${branch.id}`;
+            entry.textContent = `[${branch.name}] ${msg}`;
+            logPanel.appendChild(entry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+            
+            if (logPanel.children.length > 20) {
+                logPanel.removeChild(logPanel.firstChild);
+            }
+        }
+
+        function simulateBranchActivity() {
+            if (Math.random() > 0.7) {
+                const branch = branches[Math.floor(Math.random() * branches.length)];
+                const activityType = ['沈黙の消費', '沈黙の消去', '沈黙の観測', '沈黙の圧力'][Math.floor(Math.random() * 4)];
+                
+                const impact = (Math.random() * 2 - 1) * branch.weight;
+                silenceState.amplitude += impact;
+                silenceState.noise += Math.random() * 0.5;
+                
+                logMessage(branch, activityType);
+            }
+            
+            silenceState.amplitude *= 0.98;
+            silenceState.noise *= 0.95;
+        }
+
+        function drawScene() {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 背景の星空
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            // 沈黙の波形を描画
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            
+            const midY = canvas.height / 2;
+            
+            for (let x = 0; x < canvas.width; x++) {
+                let y = midY;
+                y += Math.sin(x * silenceState.frequency + Date.now() * 0.001) * 20 * silenceState.amplitude;
+                y += (Math.random() - 0.5) * silenceState.noise * 10;
+                
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // b21の観測点
+            ctx.fillStyle = '#ffff00';
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, midY, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffff00';
+            ctx.font = '10px Courier New';
+            ctx.fillText('b21', canvas.width / 2 + 10, midY);
+        }
+
+        function loop() {
+            simulateBranchActivity();
+            drawScene();
+            requestAnimationFrame(loop);
+        }
+
+        logMessage({id: 'b21', name: 'b21'}, '沈黙の揺らぎ v2 開始。他枝の活動を観測中...');
+        loop();
+    </script>
+</body>
+</html>
