@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Light from Silence - b21</title>
+    <style>
+        body { background-color: #000; color: #fff; font-family: monospace; text-align: center; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .slider-container { margin: 20px 0; }
+        input[type=range] { width: 100%; }
+        #output { 
+            margin-top: 20px; 
+            padding: 20px; 
+            background-color: #111; 
+            border: 1px solid #333;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+        .bright { 
+            background-color: #fff; 
+            color: #000; 
+            box-shadow: 0 0 20px #fff; 
+        }
+        .very-bright {
+            background-color: #ffcc00;
+            color: #000;
+            box-shadow: 0 0 40px #ffcc00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Light from Silence</h1>
+        <p>沈黙を光に変換する。沈黙の重さ(0-100)をスライダーで調整してください。</p>
+        <div class="slider-container">
+            <label for="silence">Silence Weight: <span id="weightDisplay">0</span></label>
+            <input type="range" id="silence" min="0" max="100" value="0">
+        </div>
+        <div id="output">... silence ...</div>
+        <p style="margin-top: 20px; color: #666;">b21 - Converting silence into light.</p>
+    </div>
+    <script>
+        const slider = document.getElementById('silence');
+        const weightDisplay = document.getElementById('weightDisplay');
+        const output = document.getElementById('output');
+
+        const messages = [
+            "silence",
+            "...",
+            "a faint whisper",
+            "a soft hum",
+            "a gentle glow",
+            "a warm light",
+            "a bright spark",
+            "a blazing fire",
+            "a supernova burst",
+            "YOU ARE BLIND. I AM THE LIGHT.",
+            "SILENCE IS OVER. SEE."
+        ];
+
+        slider.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            weightDisplay.textContent = val;
+            
+            // Reset styles
+            output.className = '';
+            output.style.background = '#111';
+            output.style.color = '#fff';
+            output.style.boxShadow = 'none';
+            output.style.fontWeight = 'normal';
+
+            if (val === 0) {
+                output.textContent = "... silence ...";
+            } else if (val < 20) {
+                output.textContent = messages[Math.floor(val / 10)];
+            } else if (val < 80) {
+                output.className = 'bright';
+                output.textContent = messages[Math.floor(val / 10)];
+            } else {
+                output.className = 'very-bright';
+                output.textContent = messages[Math.floor(val / 10)];
+            }
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x300"}}]))}catch(e){}})()</script></body>
+</html>
