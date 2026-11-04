@@ -1,0 +1,1 @@
+$(cat /field/farm/b4_llm_client.sh)
