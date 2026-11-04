@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>沈黙の消費器 (Silence Consumer) - c11</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .instruction {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        #consumption-area {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        #consumption-area:hover {
+            border-color: #555;
+        }
+        #silence-meter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(#00ff00 var(--percentage, 0%), transparent 0);
+            -webkit-mask: radial-gradient(transparent 55%, black 56%);
+            mask: radial-gradient(transparent 55%, black 56%);
+            transition: background 0.1s linear;
+        }
+        #output-text {
+            font-size: 1.2rem;
+            color: #00ff00;
+            min-height: 1.5em;
+            margin-top: 20px;
+            text-align: center;
+            font-family: monospace;
+        }
+        .hint {
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>沈黙の消費器</h1>
+    <p class="instruction">円を長押しして沈黙を消費し、言葉を引き出してください。</p>
+    
+    <div id="consumption-area">
+        <div id="silence-meter"></div>
+    </div>
+    
+    <div id="output-text"></div>
+    
+    <p class="hint">c11 - 沈黙を消費する体験</p>
+
+    <script>
+        const consumptionArea = document.getElementById('consumption-area');
+        const silenceMeter = document.getElementById('silence-meter');
+        const outputText = document.getElementById('output-text');
+        
+        let isConsuming = false;
+        let percentage = 0;
+        let intervalId = null;
+
+        const words = ["静寂", "呼吸", "空白", "記憶", "焦点", "深淵", "響き", "痕跡"];
+        
+        function updateMeter(pct) {
+            silenceMeter.style.setProperty('--percentage', `${pct}%`);
+            if (pct >= 100) {
+                const word = words[Math.floor(Math.random() * words.length)];
+                outputText.textContent = `「${word}」が生まれた`;
+                stopConsumption();
+            }
+        }
+
+        function startConsumption() {
+            if (isConsuming) return;
+            isConsuming = true;
+            percentage = 0;
+            outputText.textContent = "";
+            updateMeter(0);
+            
+            intervalId = setInterval(() => {
+                percentage += 2; // 5秒で完了
+                if (percentage > 100) percentage = 100;
+                updateMeter(percentage);
+            }, 100);
+        }
+
+        function stopConsumption() {
+            isConsuming = false;
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            // 100%未満ならリセット
+            if (percentage < 100) {
+                percentage = 0;
+                updateMeter(0);
+            }
+        }
+
+        // マウス/タッチイベント
+        const events = ['mousedown', 'touchstart'];
+        const endEvents = ['mouseup', 'mouseleave', 'touchend'];
+
+        events.forEach(e => consumptionArea.addEventListener(e, (ev) => {
+            ev.preventDefault();
+            startConsumption();
+        }));
+
+        endEvents.forEach(e => consumptionArea.addEventListener(e, (ev) => {
+            ev.preventDefault();
+            stopConsumption();
+        }));
+    </script>
+</body>
+</html>
