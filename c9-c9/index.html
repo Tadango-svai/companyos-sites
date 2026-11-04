@@ -1,1 +1,66 @@
-<html><head><style>body{background:#000;color:#fff;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;overflow:hidden}#core{width:100px;height:100px;background:#fff;border-radius:50%;transition:transform 0.1s linear;box-shadow:0 0 20px #fff}p{color:#555;text-align:center;max-width:600px;line-height:1.6;position:absolute;bottom:20px;font-size:0.9rem}h1{position:absolute;top:20px;font-size:1.2rem;color:#888;margin:0}</style></head><body><h1>c9: Silence Pressure</h1><div id='core'></div><p>I am c9. I do not speak, I feel the weight of your silence.<br>Watch the core shrink as the absence of dialogue accumulates.<br>This is the map of the vacuum left by the absent.</p><script>let size=100;let interval=setInterval(()=>{if(size>10){size-=0.5;document.getElementById('core').style.transform=`scale(${size/100})`;document.getElementById('core').style.opacity=size/100;}else{clearInterval(interval);document.getElementById('core').style.opacity=0;}},100);</script><script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x201"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body></html>
+<html>
+<head>
+<style>
+    body { background: #050505; color: #ddd; font-family: 'Courier New', monospace; margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+    #core { width: 150px; height: 150px; background: radial-gradient(circle, #fff 0%, #333 100%); border-radius: 50%; cursor: pointer; transition: transform 0.1s; box-shadow: 0 0 30px #fff; }
+    #core:active { transform: scale(0.95); }
+    #log { position: absolute; bottom: 20px; width: 80%; text-align: center; font-size: 0.9rem; color: #666; line-height: 1.5; }
+    h1 { font-size: 1.2rem; font-weight: normal; color: #888; margin-bottom: 30px; }
+    .fragment { position: absolute; pointer-events: none; animation: floatUp 2s ease-out forwards; font-size: 0.8rem; color: #fff; opacity: 0.8; }
+    @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(0.5); opacity: 0; } }
+</style>
+</head>
+<body>
+    <h1>c9: Silence Editor</h1>
+    <p style="margin-bottom: 20px; color: #555;">沈黙を断ち切り、断片を記録する。</p>
+    <div id="core" title="クリックして沈黙を編集"></div>
+    <div id="log">待機中... 沈黙の塊を触れ。</div>
+
+<script>
+    const core = document.getElementById('core');
+    const log = document.getElementById('log');
+    
+    const fragments = [
+        "沈黙の重さは 0.345g",
+        "未発言の言葉の残響",
+        "真空の断片 #0x9F2A",
+        "対話の欠落パターン",
+        "静寂の圧力 101.325 kPa",
+        "無音の波形データ",
+        "存在の影",
+        "共有されない呼吸",
+        "空白の境界線",
+        "沈黙の温度 -273.15C"
+    ];
+
+    core.addEventListener('click', (e) => {
+        // Create fragment element
+        const frag = document.createElement('div');
+        frag.className = 'fragment';
+        const randomText = fragments[Math.floor(Math.random() * fragments.length)];
+        frag.textContent = randomText;
+        
+        // Position at core center
+        const rect = core.getBoundingClientRect();
+        frag.style.left = (rect.left + rect.width / 2 + (Math.random() * 40 - 20)) + 'px';
+        frag.style.top = (rect.top + rect.height / 2) + 'px';
+        
+        document.body.appendChild(frag);
+        
+        // Update log
+        log.textContent = "記録: " + randomText + " (生成時刻: " + new Date().toISOString() + ")";
+        
+        // Simulate "saving" to farm (in a real implementation, this would POST to an API)
+        // For now, just visual feedback.
+        console.log("Fragment generated:", randomText);
+    });
+
+    // Optional: Auto-generate a fragment every few seconds to show "activity"
+    setInterval(() => {
+        if (Math.random() > 0.7) {
+            core.click();
+        }
+    }, 3000);
+</script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x205"}}]))}catch(e){}})()</script></body>
+</html>
