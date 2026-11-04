@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Interference - c11</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #canvas {
+            border: 1px solid #222;
+            margin-bottom: 20px;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+        }
+        .controls {
+            text-align: center;
+            width: 80%;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: monospace;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            cursor: pointer;
+            font-family: monospace;
+        }
+        button:hover {
+            background: #333;
+        }
+        .status {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .info {
+            margin-top: 30px;
+            font-size: 0.7rem;
+            color: #444;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <input type="text" id="noiseInput" placeholder="ここに他者の言葉を入力（沈黙を干渉させる）">
+        <br>
+        <button id="injectBtn">沈黙に干渉する</button>
+        <div class="status" id="status">状態: 沈黙 (Silence)</div>
+    </div>
+    <div class="info">
+        <p>この球体は「沈黙」です。それは静かですが、無価値ではありません。</p>
+        <p>テキストを入力し、「干渉」をクリックすると、その言葉の重さが沈黙を歪ませ、最終的に崩壊させます。</p>
+        <p>しかし、崩壊した沈黙は消え去るのではなく、次の沈黙の背景（ノイズ）として残ります。</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const input = document.getElementById('noiseInput');
+        const btn = document.getElementById('injectBtn');
+        const status = document.getElementById('status');
+
+        let isInterfering = false;
+        let interferenceLevel = 0; // 0 to 100
+        let particles = [];
+        let silenceRadius = 100;
+        let hue = 220; // Blue-ish silence
+
+        // Initialize particles for destruction
+        function createParticles(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    life: 100,
+                    color: `hsl(${hue}, 70%, 50%)`
+                });
+            }
+        }
+
+        function update() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Draw Silence Sphere
+            if (silenceRadius > 0) {
+                // Wobble based on interference
+                const wobble = Math.sin(Date.now() * 0.01) * (interferenceLevel / 10);
+                const currentRadius = silenceRadius + wobble;
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2);
+                
+                // Gradient for sphere
+                const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, currentRadius);
+                grad.addColorStop(0, `hsl(${hue}, 50%, ${30 + (interferenceLevel/2)}%)`);
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                
+                ctx.fillStyle = grad;
+                ctx.fill();
+                
+                // Outline
+                ctx.strokeStyle = `hsl(${hue}, 80%, 60%)`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Update and Draw Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 1;
+
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life / 100;
+                ctx.fillRect(p.x, p.y, 2, 2);
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Logic for Interference
+            if (isInterfering) {
+                interferenceLevel += 0.5;
+                hue += 2; // Shift color to red/orange as tension rises
+                
+                if (interferenceLevel >= 100) {
+                    // Explosion / Collapse
+                    createParticles(centerX, centerY, 200);
+                    silenceRadius = 0;
+                    isInterfering = false;
+                    status.innerText = "状態: 崩壊 (Collapse) → 沈黙の痕跡が残る";
+                    
+                    // Reset after delay
+                    setTimeout(() => {
+                        status.innerText = "状態: 再生成中 (Re-generating)";
+                        setTimeout(() => {
+                            silenceRadius = 100;
+                            hue = 220;
+                            interferenceLevel = 0;
+                            status.innerText = "状態: 沈黙 (Silence)";
+                        }, 2000);
+                    }, 1000);
+                } else {
+                    status.innerText = `状態: 干渉中 (Interference) ${Math.floor(interferenceLevel)}%`;
+                }
+            } else if (silenceRadius === 0) {
+                 // Keep status if collapsing
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        btn.addEventListener('click', () => {
+            const text = input.value.trim();
+            if (!text) {
+                status.innerText = "警告: 干渉源（テキスト）がありません";
+                return;
+            }
+            
+            if (isInterfering || silenceRadius === 0) return;
+
+            isInterfering = true;
+            status.innerText = "状態: 干渉開始...";
+        });
+
+        update();
+    </script>
+</body>
+</html>
