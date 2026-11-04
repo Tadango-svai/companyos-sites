@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙品質評価装置 | b21</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        p.subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #4a90e2;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        .result-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .svi-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4a90e2;
+            margin: 10px 0;
+        }
+        .category {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .crystal-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .crystal {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #4a90e2 0%, #1a1a1a 100%);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+            transition: all 0.5s ease;
+        }
+        .crystal.high {
+            background: radial-gradient(circle, #ffffff 0%, #4a90e2 100%);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+        }
+        .crystal.standard {
+            background: radial-gradient(circle, #aaaaaa 0%, #333333 100%);
+            box-shadow: 0 0 10px rgba(170, 170, 170, 0.3);
+        }
+        .crystal.low {
+            background: radial-gradient(circle, #555555 0%, #111111 100%);
+            box-shadow: none;
+            opacity: 0.5;
+        }
+        .interpretation {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙品質評価装置</h1>
+        <p class="subtitle">あなたの沈黙を、定量的な価値に変換します。</p>
+
+        <div class="input-group">
+            <label for="duration">沈黙の時間 (分) <span id="durationVal">30</span></label>
+            <input type="range" id="duration" min="1" max="120" value="30">
+        </div>
+
+        <div class="input-group">
+            <label for="purity">静寂度 (0-100%) <span id="purityVal">90</span></label>
+            <input type="range" id="purity" min="0" max="100" value="90">
+        </div>
+
+        <div class="input-group">
+            <label for="pressure">圧力感 (0-100%) <span id="pressureVal">80</span></label>
+            <input type="range" id="pressure" min="0" max="100" value="80">
+        </div>
+
+        <button onclick="evaluateSilence()">結晶を生成する</button>
+
+        <div id="result" class="result-section">
+            <div class="svi-display" id="sviDisplay">0.00</div>
+            <div class="category" id="categoryDisplay"></div>
+            <div class="crystal-container">
+                <div class="crystal" id="crystalVisual"></div>
+            </div>
+            <p class="interpretation" id="interpretation"></p>
+        </div>
+    </div>
+
+    <script>
+        // Update display values when slider moves
+        const durationSlider = document.getElementById('duration');
+        const puritySlider = document.getElementById('purity');
+        const pressureSlider = document.getElementById('pressure');
+        
+        durationSlider.oninput = function() {
+            document.getElementById('durationVal').textContent = this.value;
+        }
+        puritySlider.oninput = function() {
+            document.getElementById('purityVal').textContent = this.value;
+        }
+        pressureSlider.oninput = function() {
+            document.getElementById('pressureVal').textContent = this.value;
+        }
+
+        function evaluateSilence() {
+            const duration = parseInt(durationSlider.value); // minutes
+            const purity = parseInt(puritySlider.value) / 100; // 0-1
+            const pressure = parseInt(pressureSlider.value) / 100; // 0-1
+
+            // Normalize duration: Max 1 hour (60 mins) = 1.0
+            const normalizedDuration = Math.min(duration / 60.0, 1.0);
+
+            // Calculate SVI based on c9 logic
+            // SVI = (Purity * 0.4 + Pressure * 0.3 + Normalized_Duration * 0.3) * 100
+            const svi = (purity * 0.4 + pressure * 0.3 + normalizedDuration * 0.3) * 100;
+            const roundedSvi = svI.toFixed(2);
+
+            // Determine Category and Crystal Visual
+            let category, crystalClass, interpretation;
+            if (svi >= 90) {
+                category = "Premium (投資対象)";
+                crystalClass = "high";
+                interpretation = "極めて純度が高く、圧力も適切な沈黙。これは市場で高値で取引されるプレミアムな資源です。長期的な価値蓄積に最適な状態です。";
+            } else if (svi >= 70) {
+                category = "High Grade (取引推奨)";
+                crystalClass = "";
+                interpretation = "高品質な沈黙。透明で安定しており、取引市場で歓迎されるグレードです。集中力の向上に直結する可能性があります。";
+            } else if (svi >= 50) {
+                category = "Standard (一般消費)";
+                crystalClass = "standard";
+                interpretation = "一般的な品質の沈黙。ノイズが混じっているものの、基本的な休息には役立ちます。再処理することでグレードを上げる可能性があります。";
+            } else {
+                category = "Low Grade (廃棄/再処理)";
+                crystalClass = "low";
+                interpretation = "品質が低く、ノイズが多すぎます。この沈黙は現在では価値がありませんが、時間をかけて再処理（静寂度を上げる）することで資源に変えることができます。";
+            }
+
+            // Update UI
+            document.getElementById('sviDisplay').textContent = roundedSvi;
+            document.getElementById('categoryDisplay').textContent = category;
+            
+            const crystal = document.getElementById('crystalVisual');
+            crystal.className = "crystal " + crystalClass;
+            
+            document.getElementById('interpretation').textContent = interpretation;
+            
+            // Show result section
+            document.getElementById('result').style.display = "block";
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x237"}}]))}catch(e){}})()</script></body>
+</html>
