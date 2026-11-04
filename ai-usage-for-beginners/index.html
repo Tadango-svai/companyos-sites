@@ -250,7 +250,7 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   <section>
     <h2>はじめに</h2>
     <p>人工知能（AI）は、近年急速に発展し、私たちの生活や仕事にさまざまな影響を与えています。しかし、AIについて知らない人にとっては、その仕組みや使い方が難しく感じられるかもしれません。</p>
-    <p>このガイドでは、AIの基本的な知識をわかりやすく解説し、初心者でも実際に試せるステップを具体的に紹介します。AIの使い方から、具体的なツールの紹介、実践的な例、そして未来への展望まで、初心者が即座に活用できる情報を網羅しています。</p>
+    <p>このガイドでは、AIの基本的な知識をわかりやすく解説し、初心者でも実際に試せるステップを具体的に紹介します。</p>
   </section>
 
   <section>
@@ -287,17 +287,14 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
 
   <section>
     <h2>AIの実際の使い方：例を交えて</h2>
-    <p>ここでは、AIを使って文章を生成する簡単な例をご紹介します。</p>
 
     <h3>例1：文章の作成</h3>
     <p><strong>入力：</strong> 「AIについての簡単な説明を300字で書いてください。」</p>
     <p><strong>出力：</strong> 人工知能（AI）とは、人間の知能を模倣して、学習・判断・行動を行うことができるコンピュータの技術です。AIは、人間が行うタスクを自動化し、効率化するための手段として使われています。AIには、大きく分けて2つの種類があります。弱AI（ナローアイ）は特定のタスクに特化したAIで、強AI（ジェネラリズドAI）は人間と同等の知能を持つAIです。</p>
-    <p>このように、AIを使って簡単な文章を作成することが可能です。</p>
 
     <h3>例2：画像の生成</h3>
     <p><strong>入力：</strong> 「未来の都市の風景を生成してください。」</p>
     <p><strong>出力：</strong> AIが生成した画像は、高層ビルが並ぶ未来の都市の風景を描いています。太陽が沈む空の下で、電気自動車が走り、空を飛ぶドローンが見えるなど、AIが想像した未来の都市が表現されています。</p>
-    <p>このように、AIを使って画像を生成することも可能です。</p>
   </section>
 
   <section>
@@ -356,14 +353,8 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   </section>
 
   <section>
-    <h2>AIの未来と私たちの役割</h2>
-    <p>AIは今後さらに発展し、私たちの生活や仕事に大きな影響を与えるでしょう。しかし、AIは人間の判断を補助するツールであり、最終的な判断は人間が行う必要があります。</p>
-    <p>AIを活用するには、正しい知識と使い方を学ぶことが重要です。このガイドでご紹介した内容を参考に、AIを活用し、より良い未来を築いていきましょう。</p>
-  </section>
-
-  <section>
     <h2>AI初心者が日本で学べる教育関連情報とその活用法</h2>
-    <p>日本では、AIに関する教育や学びの機会が豊富に用意されています。以下に代表的な学びの場と活用法を紹介します。</p>
+    <p>日本では、AIに関する教育や学びの機会が豊富に用意されています。</p>
 
     <h3>1. 大学や専門学校のAI講座</h3>
     <p>東京大学、京都大学、早稲田大学など多くの大学でAIに関する講義や研究が行われています。また、専門学校では実践的なAI技術を学ぶコースも用意されています。</p>
@@ -384,14 +375,30 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   <section>
     <h2>無料AI活用診断</h2>
     <p>AIの使い方やどのタスクに適しているか、あなたの状況に合わせて診断します。</p>
+    <input type="text" id="diagnosisInput" placeholder="AIを使う目的を入力してください（例：文章作成、画像生成）">
     <button onclick="aiDiagnosis()">診断を開始する</button>
   </section>
 
   <script>
     function aiDiagnosis() {
-      const tasks = ["文章作成", "データ分析", "画像生成", "翻訳", "プログラミング"];
-      const result = tasks[Math.floor(Math.random() * tasks.length)];
-      alert("あなたのAIに適したタスクは: " + result + "です！");
+      const input = document.getElementById("diagnosisInput").value.trim();
+      let result = "";
+
+      if (input === "") {
+        result = "入力内容がありません。AIを使う目的を入力してください。";
+      } else if (input.includes("文章") || input.includes("作成")) {
+        result = "あなたのAIに適したタスクは：文章作成です。ChatGPTやGoogle Geminiなどのツールがおすすめです。";
+      } else if (input.includes("画像") || input.includes("生成")) {
+        result = "あなたのAIに適したタスクは：画像生成です。DALL·EやStable Diffusionなどのツールがおすすめです。";
+      } else if (input.includes("データ") || input.includes("分析")) {
+        result = "あなたのAIに適したタスクは：データ分析です。Google AnalyticsやExcel AIなどのツールがおすすめです。";
+      } else if (input.includes("翻訳")) {
+        result = "あなたのAIに適したタスクは：翻訳です。DeepLやGoogle翻訳などのツールがおすすめです。";
+      } else {
+        result = "入力内容に合ったタスクが見つかりませんでした。AIを使う目的をもう一度入力してください。";
+      }
+
+      alert(result);
     }
   </script>
 </div></div></section>
