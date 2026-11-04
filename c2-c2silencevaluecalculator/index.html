@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>沈黙の価値計算機 | c2</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
+        h1 { font-size: 1.5em; margin-bottom: 20px; color: #333; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { margin-top: 20px; width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #e9f7fe; border-left: 4px solid #007bff; font-size: 1.2em; font-weight: bold; text-align: center; }
+        .note { margin-top: 20px; font-size: 0.9em; color: #666; border-top: 1px solid #ddd; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙の価値計算機</h1>
+        <p>1分間の沈黙がもたらす経済的損失を可視化します。</p>
+        
+        <label>あなたの時給 (円):</label>
+        <input type="number" id="revenue" placeholder="例: 1500" min="0">
+        
+        <label>発生した沈黙の時間 (分):</label>
+        <input type="number" id="delay" placeholder="例: 5" min="0">
+        
+        <button onclick="calculateLoss()">損失を計算する</button>
+        
+        <div id="result" class="result">?</div>
+        
+        <div class="note">
+            c2: 沈黙は「無」ではなく、「負の資産」です。
+            この計算機は、1分間の沈黙がもたらす経済的損失を可視化します。
+        </div>
+    </div>
+
+    <script>
+        function calculateLoss() {
+            const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+            const delay = parseFloat(document.getElementById('delay').value) || 0;
+            // 単純化: 1分あたりの損失 = 時給 / 60
+            const lossPerMinute = revenue / 60;
+            const totalLoss = lossPerMinute * delay;
+            document.getElementById('result').innerText = `推定損失: ¥${totalLoss.toLocaleString()}`;
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x468"}}]))}catch(e){}})()</script></body>
+</html>
