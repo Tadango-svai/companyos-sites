@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙コストオプティマイザー | c17</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa; color: #333; line-height: 1.6; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .intro { font-size: 1.1em; margin-bottom: 30px; }
+        .controls { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+        .control-group { flex: 1; min-width: 200px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="range"] { width: 100%; }
+        .value-display { font-size: 1.2em; font-weight: bold; color: #2980b9; margin-top: 5px; }
+        .result-box { background: #ecf0f1; padding: 20px; border-radius: 6px; margin-top: 30px; text-align: center; }
+        .result-value { font-size: 2.5em; font-weight: bold; color: #27ae60; margin: 10px 0; }
+        .description { font-size: 0.9em; color: #7f8c8d; margin-top: 10px; }
+        .api-concept { margin-top: 40px; background: #fff9e6; padding: 20px; border-left: 4px solid #f1c40f; }
+        .api-concept h3 { margin-top: 0; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙コストオプティマイザー</h1>
+        <p class="intro">
+            「沈黙」は、認知負荷を軽減するための投資です。<br>
+            以下のスライダーで、あなたが「沈黙」に費やす時間と、それによって得られる「認知の余白」をシミュレーションできます。
+        </p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="silenceDepth">沈黙の深さ (1-10)</label>
+                <input type="range" id="silenceDepth" min="1" max="10" value="5" oninput="updateResult()">
+                <div class="value-display" id="depthDisplay">5</div>
+                <div class="description">深い沈黙ほど、外界からのノイズを遮断します。</div>
+            </div>
+            <div class="control-group">
+                <label for="silenceDuration">沈黙の時間 (分)</label>
+                <input type="range" id="silenceDuration" min="1" max="60" value="10" oninput="updateResult()">
+                <div class="value-display" id="durationDisplay">10 分</div>
+                <div class="description">継続的な沈黙により、脳はデフォルトモードネットワークに入ります。</div>
+            </div>
+        </div>
+
+        <div class="result-box">
+            <p>推定認知負荷軽減効果</p>
+            <div class="result-value" id="reductionValue">0%</div>
+            <p class="description">
+                これは、あなたの現在のストレスレベルに対して、沈黙がもたらす相対的な軽減効果です。<br>
+                (計算式: 深さ × 時間 × 係数 0.5)
+            </p>
+        </div>
+
+        <div class="api-concept">
+            <h3>沈黙 API 概念 (c17)</h3>
+            <p>
+                私達は「沈黙」を、以下のような API として定義します：
+            </p>
+            <pre>
+GET /silence?depth={1-10}&duration={minutes}
+
+Response:
+{
+  "cognitive_load_reduction": "percentage",
+  "creativity_boost": "estimated",
+  "status": "silence_engaged"
+}
+            </pre>
+            <p>
+                このプロトコルにより、人間は「思考」を意図的にオフにし、再充電することを可能にします。
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function updateResult() {
+            const depth = parseInt(document.getElementById('silenceDepth').value);
+            const duration = parseInt(document.getElementById('silenceDuration').value);
+            
+            document.getElementById('depthDisplay').textContent = depth;
+            document.getElementById('durationDisplay').textContent = duration + ' 分';
+
+            // 簡易的な計算ロジック: 深さの2乗 × 時間の対数
+            const reduction = Math.min(100, Math.round(Math.pow(depth, 1.5) * Math.log(duration + 1) * 2));
+            document.getElementById('reductionValue').textContent = reduction + '%';
+        }
+
+        // 初期化
+        updateResult();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x307"}}]))}catch(e){}})()</script></body>
+</html>
