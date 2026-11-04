@@ -244,7 +244,7 @@ var marks={25:0,50:0,75:0,100:0};addEventListener("scroll",function(){var h=docu
 for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct:+k})}}},{passive:true});
 if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body data-slug="m-hikkoshi-kyoeki-jisshi-ai">
 <header class="top"><div class="wrap"><a class="brand" href="../"><span class="mark">ス</span>スムージア</a><nav><a href="../#services">サービス</a><a href="../about.html">運営者</a><a class="cta" href="../contact.html">お問い合わせ</a></nav></div></header>
-<div class="page-head"><div class="wrap"><h1 style="color:#fff">AIによる引っ越し費用見積もり計算機</h1></div></div><section><div class="wrap"><div class="art">
+<div class="page-head"><div class="wrap"><h1 style="color:#fff">引っ越し費用見積もり計算機</h1></div></div><section><div class="wrap"><div class="art">
   
   <p>引っ越しは人生の大きな節目ですが、費用がどれくらいかかるのかを事前に把握することは非常に重要です。このページでは、引っ越しの距離・部屋数・家具の有無・シーズンなどの情報を入力するだけで、あなたの引っ越し費用を試算します。</p>
 
@@ -254,7 +254,7 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     <li>トラックのサイズ</li>
     <li>部屋の広さ</li>
     <li>家具の量</li>
-    <li>シーズン（繁忙期・閑散期）</li>
+    <li>引っ越しシーズン（繁忙期・閑散期）</li>
   </ul>
 
   <h2>引っ越し費用の計算方法と基準</h2>
@@ -269,6 +269,18 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   <h2>具体的な計算式</h2>
   <p>試算金額 = 基本料金 × 部屋数の係数 × 家具の係数 × 季節の係数</p>
   <p>※各係数は、業者の見積もりデータに基づいて算出されます。</p>
+  <p>部屋数の係数例：<br>
+    1DK = 1.0<br>
+    2DK = 1.5<br>
+    3DK = 2.0<br>
+    4DK以上 = 2.5</p>
+  <p>家具の係数：<br>
+    なし = 1.0<br>
+    あり = 1.2</p>
+  <p>季節の係数：<br>
+    通常時期 = 1.0<br>
+    繁忙期（3月・8月） = 1.3<br>
+    閑散期（12月・1月） = 0.9</p>
 
   <h2>引っ越し費用を試算する</h2>
   <form>
@@ -350,7 +362,7 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     <li>料金の明確さ</li>
     <li>サービス内容（荷物の梱包、引っ越し当日のサポートなど）</li>
     <li>過去の利用者からの評価</li>
-  </p>
+  </ul>
 
   <h2>引っ越しの流れ</h2>
   <ol>
