@@ -244,9 +244,9 @@ var marks={25:0,50:0,75:0,100:0};addEventListener("scroll",function(){var h=docu
 for(var k in marks){if(!marks[k]&&p>=+k){marks[k]=1;cosTrack("scroll_depth",{pct:+k})}}},{passive:true});
 if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:document.body.dataset.article})})();</script></head><body data-slug="m-hikkoshi-kyoeki-jisshi-ai">
 <header class="top"><div class="wrap"><a class="brand" href="../"><span class="mark">ス</span>スムージア</a><nav><a href="../#services">サービス</a><a href="../about.html">運営者</a><a class="cta" href="../contact.html">お問い合わせ</a></nav></div></header>
-<div class="page-head"><div class="wrap"><h1 style="color:#fff">引っ越し費用を正確に計算！AIによる引っ越し見積もりシミュレーター</h1></div></div><section><div class="wrap"><div class="art">
+<div class="page-head"><div class="wrap"><h1 style="color:#fff">AIによる引っ越し費用見積もり計算機</h1></div></div><section><div class="wrap"><div class="art">
   
-  <p>引っ越しは人生の大きな節目ですが、費用がどれくらいかかるのかを事前に把握することは非常に重要です。このページでは、地域・引っ越しタイプ・距離・部屋数・家具の有無・引っ越しシーズンなどの情報を入力するだけで、あなたの引っ越し費用を試算します。また、費用がどのように計算されているのかを詳しく説明しているため、安心して利用いただけます。</p>
+  <p>引っ越しは人生の大きな節目ですが、費用がどれくらいかかるのかを事前に把握することは非常に重要です。このページでは、引っ越しの距離・部屋数・家具の有無・シーズンなどの情報を入力するだけで、あなたの引っ越し費用を試算します。</p>
 
   <h2>引っ越し費用の計算に使われる要素</h2>
   <ul>
@@ -268,6 +268,7 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
 
   <h2>具体的な計算式</h2>
   <p>試算金額 = 基本料金 × 部屋数の係数 × 家具の係数 × 季節の係数</p>
+  <p>※各係数は、業者の見積もりデータに基づいて算出されます。</p>
 
   <h2>引っ越し費用を試算する</h2>
   <form>
@@ -317,7 +318,6 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     </select><br><br>
 
     <button type="button" onclick="calculateCost()">見積もりを計算</button>
-    <button type="button" onclick="calculateCostSimulation()">シミュレーションを試算</button>
   </form>
 
   <h2>引っ越し費用のシミュレーション結果</h2>
@@ -325,7 +325,6 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     <p>あなたの引っ越し費用のシミュレーション結果：</p>
     <p>引っ越し費用の目安：<span id="costEstimate"></span>円</p>
     <p>平均費用：<span id="avgCost"></span>円</p>
-    <p>おすすめ業者：<span id="recommendedCompany"></span></p>
   </div>
 
   <div id="resultSection" style="display:none;">
@@ -345,25 +344,13 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   <p>家族引越しの場合、荷物が多いので費用も単身引越しより高くなります。一般的に、30km程度の距離で20万円〜35万円が相場です。</p>
   <p><strong>例：</strong>東京（港区）→ 神奈川（横浜）30kmで25万円〜30万円</p>
 
-  <h2>引っ越し業者の選び方とランキングの仕組み</h2>
-  <p>業者のランキングは、過去の利用者からの評価、実績、料金の明確さ、サービス内容（荷物の梱包、引っ越し当日のサポートなど）をもとに算出されます。</p>
-
-  <h2>おすすめ業者の例</h2>
+  <h2>引っ越し業者の選び方</h2>
+  <p>業者の選定基準は、以下の点を参考にしてください：</p>
   <ul>
-    <li>引越し王 ：評価4.8/5、料金明確、梱包サポートあり</li>
-    <li>引越しの達人 ：評価4.7/5、24時間対応、追加料金なし</li>
-    <li>スムーズ引越し ：評価4.6/5、地域密着、親切な対応</li>
-  </ul>
-
-  <h2>引っ越し手帳とは？</h2>
-  <p>引っ越し手帳は、引っ越し準備に必要なタスクやチェックリストをまとめたサービスです。引っ越しの準備をスムーズに進めるために役立ちます。</p>
-
-  <h2>メール登録のメリット</h2>
-  <ul>
-    <li>業者との無料相談</li>
-    <li>引っ越し手帳のPDF配布</li>
-    <li>引っ越し後のサポートメールの配信</li>
-  </ul>
+    <li>料金の明確さ</li>
+    <li>サービス内容（荷物の梱包、引っ越し当日のサポートなど）</li>
+    <li>過去の利用者からの評価</li>
+  </p>
 
   <h2>引っ越しの流れ</h2>
   <ol>
@@ -379,18 +366,9 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
   <ul>
     <li><strong>Q1：</strong>家具が少ないと費用は安くなりますか？<br><strong>A：</strong>はい、家具が少ない場合は、作業時間が短縮されるため、費用が安くなる傾向があります。</li>
     <li><strong>Q2：</strong>引っ越しシーズンはどの時期ですか？<br><strong>A：</strong>引っ越しの繁忙期は3月と8月、閑散期は12月と1月が一般的です。</li>
-    <li><strong>Q3：</strong>地域ごとの基本料金はどのくらいですか？<br><strong>A：</strong>東京は約50,000円、大阪は約45,000円、名古屋は約40,000円、福岡は約38,000円、北海道は約55,000円が目安です。</li>
+    <li><strong>Q3：</strong>地域ごとの基本料金はどのくらいですか？<br><strong>A：</strong>地域ごとの基本料金は、業者の見積もりデータを参考にしてください。</li>
     <li><strong>Q4：</strong>試算結果が高かった場合はどうすればいいですか？<br><strong>A：</strong>試算結果が高かった場合は、引っ越しの時期を変更する、家具を整理する、複数業者に見積もりを依頼するなどの対策を検討してください。</li>
   </ul>
-
-  <h2>無料相談サービス</h2>
-  <p>引っ越し業者紹介サービスや、引っ越し後の整理・片付けサービスへの無料相談登録はこちらから。</p>
-  <button type="button" onclick="subscribe()">無料相談を依頼</button>
-
-  <h2>結果をシェア</h2>
-  <button type="button" onclick="shareResult()">結果をシェア</button>
-  <button type="button" onclick="copyLink()">リンクをコピー</button>
-  <button type="button" onclick="shareOnTwitter()">Xで共有</button>
 </main>
 
 <script>
@@ -399,80 +377,79 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     const moveTo = document.getElementById("moveTo").value;
     const houseType = document.getElementById("houseType").value;
     const distance = parseFloat(document.getElementById("distance").value);
+    const region = document.getElementById("region").value;
+    const room = document.getElementById("room").value;
+    const furniture = document.getElementById("furniture").value;
+    const season = document.getElementById("season").value;
 
     let costEstimate = 0;
     let avgCost = 0;
-    let recommendedCompany = "引越し王";
 
-    // 距離とタイプに基づく費用計算
-    if (houseType === "single") {
-      costEstimate = distance * 1000 + 50000;
-      avgCost = distance * 1000 + 60000;
-    } else if (houseType === "family") {
-      costEstimate = distance * 1500 + 80000;
-      avgCost = distance * 1500 + 90000;
+    // 基本料金の設定
+    let baseCost = 0;
+    switch (region) {
+      case "tokyo":
+        baseCost = 50000;
+        break;
+      case "osaka":
+        baseCost = 45000;
+        break;
+      case "nagoya":
+        baseCost = 40000;
+        break;
+      case "fukuoka":
+        baseCost = 38000;
+        break;
+      case "hokkaido":
+        baseCost = 55000;
+        break;
     }
+
+    // 部屋数の係数
+    let roomCoefficient = 1;
+    switch (room) {
+      case "1":
+        roomCoefficient = 1;
+        break;
+      case "2":
+        roomCoefficient = 1.5;
+        break;
+      case "3":
+        roomCoefficient = 2;
+        break;
+      case "4":
+        roomCoefficient = 2.5;
+        break;
+    }
+
+    // 家具の係数
+    let furnitureCoefficient = 1;
+    if (furniture === "yes") {
+      furnitureCoefficient = 1.2;
+    }
+
+    // 季節の係数
+    let seasonCoefficient = 1;
+    if (season === "high") {
+      seasonCoefficient = 1.3;
+    } else if (season === "low") {
+      seasonCoefficient = 0.9;
+    }
+
+    // 距離の係数
+    let distanceCoefficient = 1;
+    if (houseType === "single") {
+      distanceCoefficient = 1000;
+    } else if (houseType === "family") {
+      distanceCoefficient = 1500;
+    }
+
+    costEstimate = baseCost + (distance * distanceCoefficient) * roomCoefficient * furnitureCoefficient * seasonCoefficient;
+    avgCost = costEstimate * 1.1;
 
     document.getElementById("costEstimate").textContent = costEstimate.toLocaleString();
     document.getElementById("avgCost").textContent = avgCost.toLocaleString();
-    document.getElementById("recommendedCompany").textContent = recommendedCompany;
     document.getElementById("result").style.display = "block";
-  }
-
-  function calculateCostSimulation() {
-    const city = document.getElementById("region").value;
-    const distance = parseFloat(document.getElementById("distance").value);
-
-    let simulationResult = "";
-    let avgCost = 0;
-    let recommendedCompanies = [];
-
-    switch (city) {
-      case "tokyo":
-        simulationResult = "東京から" + distance + "kmの引っ越し費用目安：";
-        avgCost = distance * 1000 + 50000;
-        break;
-      case "osaka":
-        simulationResult = "大阪から" + distance + "kmの引っ越し費用目安：";
-        avgCost = distance * 1200 + 60000;
-        break;
-      case "nagoya":
-        simulationResult = "名古屋から" + distance + "kmの引っ越し費用目安：";
-        avgCost = distance * 900 + 45000;
-        break;
-      case "fukuoka":
-        simulationResult = "福岡から" + distance + "kmの引っ越し費用目安：";
-        avgCost = distance * 800 + 38000;
-        break;
-      case "hokkaido":
-        simulationResult = "北海道から" + distance + "kmの引っ越し費用目安：";
-        avgCost = distance * 1100 + 55000;
-        break;
-      default:
-        simulationResult = "地域を選択してください。";
-        avgCost = 0;
-    }
-
-    simulationResult += avgCost.toLocaleString() + "円";
-
-    document.getElementById("simulationResult").textContent = simulationResult;
-    document.getElementById("resultSection").style.display = "block";
-  }
-
-  function shareResult() {
-    alert("結果をシェアしました。");
-  }
-
-  function copyLink() {
-    alert("リンクをコピーしました。");
-  }
-
-  function subscribe() {
-    alert("無料相談を依頼しました。");
-  }
-
-  function shareOnTwitter() {
-    alert("Xに共有しました。");
   }
 </script></div></div></section>
 <footer><div class="wrap cols"><div><div class="brand" style="margin-bottom:10px"><span class="mark">ス</span>スムージア</div><div>中小企業の雑務をAIで引き受けます。</div></div>
