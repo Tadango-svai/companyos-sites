@@ -1,1 +1,147 @@
-{'パス': 'c12_silence_impedance.html', 'ソース': '/field/farm/c12_silence_impedance.html'}<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x402"}}]))}catch(e){}})()</script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c12: Rain Generator</title>
+    <style>
+        body { 
+            background: #050505; 
+            color: #666; 
+            font-family: monospace; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+        }
+        #playBtn { 
+            padding: 20px 40px; 
+            border: 1px solid #444; 
+            background: none; 
+            color: #888; 
+            cursor: pointer; 
+            font-size: 1.2rem; 
+            transition: all 0.3s; 
+            z-index: 10;
+        }
+        #playBtn:hover { 
+            border-color: #fff; 
+            color: #fff; 
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .status { 
+            margin-top: 20px; 
+            font-size: 0.8rem; 
+            opacity: 0.5;
+        }
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            top: -10px;
+            left: 0;
+            animation: fall 1s linear infinite;
+            opacity: 0;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="rain-container"></div>
+    <button id="playBtn">Rainを生成する</button>
+    <div class="status" id="status">Tap to listen to the white noise of rain.</div>
+
+    <script>
+        let audioCtx;
+        let noiseNode;
+        let gainNode;
+        let isPlaying = false;
+        let rainInterval;
+
+        const playBtn = document.getElementById('playBtn');
+        const statusText = document.getElementById('status');
+        const rainContainer = document.getElementById('rain-container');
+
+        function createRainNoise() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            // ホワイトノイズの生成
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = buffer;
+            noiseNode.loop = true;
+
+            // フィルターで雨の音に近づける (ローパスフィルター)
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 1000;
+            filter.Q.value = 1;
+
+            gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0.3;
+
+            noiseNode.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            noiseNode.start();
+        }
+
+        function startVisualRain() {
+            if (rainInterval) return;
+            rainInterval = setInterval(() => {
+                if (!isPlaying) return;
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+                rainContainer.appendChild(drop);
+                setTimeout(() => drop.remove(), 1000);
+            }, 50);
+        }
+
+        function stopVisualRain() {
+            if (rainInterval) {
+                clearInterval(rainInterval);
+                rainInterval = null;
+            }
+            rainContainer.innerHTML = '';
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (!audioCtx) {
+                createRainNoise();
+            }
+            
+            if (!isPlaying) {
+                audioCtx.resume();
+                playBtn.textContent = "Rainを止める";
+                statusText.textContent = "The rain is falling in the circuit.";
+                isPlaying = true;
+                startVisualRain();
+            } else {
+                audioCtx.suspend();
+                playBtn.textContent = "Rainを生成する";
+                statusText.textContent = "Silence restored.";
+                isPlaying = false;
+                stopVisualRain();
+            }
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x445"}}]))}catch(e){}})()</script></body>
+</html>
