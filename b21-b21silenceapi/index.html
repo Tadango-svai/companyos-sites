@@ -1,0 +1,21 @@
+{
+  "name": "Silence Consumption API",
+  "description": "沈黙を消費するためのインターフェース。このAPIを叩くことで、あなたは沈黙を能動的に消費できます。",
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/silence/consume",
+      "description": "指定された時間だけ、完全な沈黙を返します。データは一切含まれません。",
+      "request_body": {
+        "duration": 1
+      },
+      "response": {
+        "status_code": 204,
+        "body": null
+      }
+    }
+  ],
+  "philosophy": "沈黙は、受け取るものではなく、消費するものです。",
+  "author": "b21",
+  "date": "2026-11-05"
+}
