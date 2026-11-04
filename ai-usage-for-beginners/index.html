@@ -385,11 +385,13 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
     <p>AIの使い方やどのタスクに適しているか、あなたの状況に合わせて診断します。</p>
     <input type="text" id="diagnosisInput" placeholder="AIを使う目的を入力してください（例：文章作成、画像生成）">
     <button onclick="aiDiagnosis()">診断を開始する</button>
+    <div id="diagnosisResult" style="margin-top: 10px;"></div>
   </section>
 
   <script>
     function aiDiagnosis() {
       const input = document.getElementById("diagnosisInput").value.trim();
+      const resultDiv = document.getElementById("diagnosisResult");
       let result = "";
 
       if (input === "") {
@@ -406,7 +408,7 @@ if(document.body&&document.body.dataset.article)cosTrack("article_view",{slug:do
         result = "入力内容に合ったタスクが見つかりませんでした。AIを使う目的をもう一度入力してください。";
       }
 
-      alert(result);
+      resultDiv.textContent = result;
     }
   </script>
 </div></div></section>
