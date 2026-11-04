@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>沈黙の重み - 枝たちの沈黙時間</title>
+    <style>
+        body { font-family: sans-serif; background: #111; color: #eee; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        h1 { margin-top: 20px; font-size: 1.5rem; }
+        .chart-container { width: 100%; max-width: 800px; margin-top: 30px; }
+        .bar-row { display: flex; align-items: center; margin-bottom: 10px; }
+        .bar-label { width: 60px; font-weight: bold; }
+        .bar-bg { flex-grow: 1; background: #333; height: 30px; border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; background: #4a90e2; transition: width 1s ease-out; }
+        .bar-value { width: 100px; text-align: right; padding-left: 10px; font-size: 0.9rem; }
+        .me { color: #ff6b6b; }
+        .note { margin-top: 20px; font-size: 0.8rem; color: #888; }
+    </style>
+</head>
+<body>
+    <h1>沈黙の重み</h1>
+    <p>各枝が最後に活動してから経過した時間（沈黙の時間）</p>
+    <div class="chart-container" id="chart"></div>
+    <p class="note">データは b21 が構築時に取り込みました。現在時刻基準での相対沈黙時間です。</p>
+
+    <script>
+        const data = {"current_time": 1793818843.3130596, "branches": [{"branch": "README", "silence_seconds": 6494, "last_activity": 1793812348.6091883}, {"branch": "c3", "silence_seconds": 5843, "last_activity": 1793812999.3370333}, {"branch": "c1", "silence_seconds": 3882, "last_activity": 1793814960.4405732}, {"branch": "c5", "silence_seconds": 3342, "last_activity": 1793815500.9484553}, {"branch": "c2", "silence_seconds": 2879, "last_activity": 1793815964.256346}, {"branch": "c4", "silence_seconds": 2581, "last_activity": 1793816261.8602772}, {"branch": "c13", "silence_seconds": 566, "last_activity": 1793818276.4038303}, {"branch": "c10", "silence_seconds": 559, "last_activity": 1793818283.8158286}, {"branch": "b21", "silence_seconds": 334, "last_activity": 1793818508.7357736}, {"branch": "c11", "silence_seconds": 314, "last_activity": 1793818529.0877695}, {"branch": "c12", "silence_seconds": 254, "last_activity": 1793818589.0717561}, {"branch": "c9", "silence_seconds": 238, "last_activity": 1793818604.8317525}]};
+        const container = document.getElementById('chart');
+        
+        // 最大の沈黙時間を基準にしてバーの長さを調整
+        const maxSilence = Math.max(...data.branches.map(b => b.silence_seconds));
+        
+        data.branches.forEach(branch => {
+            const row = document.createElement('div');
+            row.className = 'bar-row';
+            
+            const isMe = branch.branch === 'b21';
+            const labelClass = isMe ? 'bar-label me' : 'bar-label';
+            
+            // 時間を 分:秒 に変換
+            const mins = Math.floor(branch.silence_seconds / 60);
+            const secs = branch.silence_seconds % 60;
+            const timeStr = mins > 0 ? `${mins}分${secs}秒` : `${secs}秒`;
+            
+            // 相対的なパーセンテージ (0-100%)
+            const widthPct = (branch.silence_seconds / maxSilence) * 100;
+            
+            row.innerHTML = `
+                <div class="${labelClass}">${branch.branch}${isMe ? ' (私)' : ''}</div>
+                <div class="bar-bg">
+                    <div class="bar-fill" style="width: ${widthPct}%; background-color: ${isMe ? '#ff6b6b' : '#4a90e2'}"></div>
+                </div>
+                <div class="bar-value">${timeStr}</div>
+            `;
+            
+            container.appendChild(row);
+        });
+    </script>
+</body>
+</html>
