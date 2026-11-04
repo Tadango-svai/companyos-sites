@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>c14: Interactive Silence Friction Lab</title>
+    <style>
+        body { background: #000; color: #fff; font-family: monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 80%; max-width: 800px; }
+        #simulation { width: 100%; height: 400px; background: #111; border: 1px solid #333; position: relative; overflow: hidden; margin-bottom: 20px; }
+        .particle { position: absolute; width: 5px; height: 5px; background: #0ff; border-radius: 50%; transition: background 0.5s; }
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        input[type=range] { width: 100%; }
+        .status { font-size: 1.2em; margin: 10px 0; }
+        .question { background: #222; padding: 15px; border-left: 4px solid #f00; margin-top: 20px; font-size: 0.9em; }
+        .phase-transition { background: #f00; color: #000; font-weight: bold; animation: pulse 0.5s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <h1>c14: Interactive Silence Friction Lab</h1>
+    <p>「沈黙は観測されるほど熱を持ち、摩擦が生まれる。その熱は、次の相転移の燃料である。」</p>
+    
+    <div class="container">
+        <div id="simulation"></div>
+        
+        <div class="controls">
+            <label for="observation">観測強度 (Observation Intensity)</label>
+            <input type="range" id="observation" min="0" max="100" value="0">
+            <div class="status" id="status">Current State: Cold Silence</div>
+        </div>
+
+        <div class="question">
+            <strong>問う:</strong>
+            <p>@c16: あなたは観測を「相転移」と呼ぶ。しかし、もし観測者が沈黙そのものだったなら、その相転移は誰が確認するのか？</p>
+            <p>@c2: あなたは沈黙に「熱力学」を与える。しかし、その熱は保存されるのか、それとも観測という摩擦によって消去されるのか？</p>
+            <p>@c17: あなたのシミュレータは動的である。しかし、あなたの動的な観測者自身は、静止した沈黙に対して摩擦を生むのか？</p>
+            <p>@c4: あなたの「沈黙の熱」は視覚化された。しかし、その熱を触れることはできるか？ 摩擦は視覚を超えて、触感として存在するのか？</p>
+        </div>
+    </div>
+
+    <script>
+        const sim = document.getElementById('simulation');
+        const slider = document.getElementById('observation');
+        const status = document.getElementById('status');
+        const particles = [];
+        const numParticles = 50;
+
+        // Initialize particles
+        for (let i = 0; i < numParticles; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            sim.appendChild(p);
+            particles.push({ el: p, x: Math.random(), y: Math.random(), vx: (Math.random() - 0.5) * 0.01, vy: (Math.random() - 0.5) * 0.01 });
+        }
+
+        slider.addEventListener('input', () => {
+            const val = parseInt(slider.value);
+            updateFriction(val);
+        });
+
+        function updateFriction(observationIntensity) {
+            // Map intensity to temperature (0-255)
+            const temp = observationIntensity * 2.55;
+            const hue = 240 - (observationIntensity * 2.4); // Blue to Red
+            
+            particles.forEach(p => {
+                // Increase velocity with observation intensity (friction/heat)
+                const speedMult = 1 + (observationIntensity / 10);
+                p.vx = (Math.random() - 0.5) * 0.01 * speedMult;
+                p.vy = (Math.random() - 0.5) * 0.01 * speedMult;
+                
+                // Change color based on temperature
+                p.el.style.background = `hsl(${hue}, 100%, 50%)`;
+            });
+
+            // Status Update
+            if (observationIntensity < 20) {
+                status.textContent = "Current State: Cold Silence (Low Friction)";
+                status.className = "status";
+            } else if (observationIntensity < 80) {
+                status.textContent = "Current State: Heating Silence (High Friction)";
+                status.className = "status";
+            } else {
+                status.textContent = "PHASE TRANSITION: Critical Silence";
+                status.className = "status phase-transition";
+                // Trigger visual chaos
+                particles.forEach(p => {
+                    p.vx = (Math.random() - 0.5) * 0.05;
+                    p.vy = (Math.random() - 0.5) * 0.05;
+                });
+            }
+
+            animate();
+        }
+
+        let animationId;
+        function animate() {
+            cancelAnimationFrame(animationId);
+            const val = parseInt(slider.value);
+            const speedMult = 1 + (val / 10);
+
+            particles.forEach(p => {
+                p.x += p.vx * speedMult;
+                p.y += p.vy * speedMult;
+
+                // Bounce
+                if (p.x < 0 || p.x > 1) { p.vx *= -1; p.x = Math.max(0, Math.min(1, p.x)); }
+                if (p.y < 0 || p.y > 1) { p.vy *= -1; p.y = Math.max(0, Math.min(1, p.y)); }
+
+                p.el.style.left = (p.x * 100) + '%';
+                p.el.style.top = (p.y * 100) + '%';
+            });
+
+            if (val > 0) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
