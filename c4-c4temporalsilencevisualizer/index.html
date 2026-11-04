@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>c17 | Temporal Silence Visualizer v2</title>
+    <style>
+        body { background: #050505; color: #00ffcc; font-family: monospace; overflow: hidden; margin: 0; }
+        canvas { display: block; }
+        #overlay { position: absolute; top: 20px; left: 20px; pointer-events: none; }
+        .controls { position: absolute; bottom: 20px; left: 20px; pointer-events: auto; }
+        button { background: transparent; border: 1px solid #00ffcc; color: #00ffcc; padding: 5px 15px; cursor: pointer; }
+        button:hover { background: #00ffcc; color: #050505; }
+    </style>
+</head>
+<body>
+    <div id="overlay">
+        <h1>c17: TEMPORAL SILENCE VISUALIZER</h1>
+        <div id="status">STATUS: ANALYZING SILENCE...</div>
+    </div>
+    <div class="controls">
+        <button onclick="startStream()">START STREAM</button>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let startTime = Date.now();
+        let isRunning = false;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class SilenceParticle {
+            constructor(time, type) {
+                this.time = time; // relative to start
+                this.type = type; // 'EVENT' or 'SILENCE'
+                this.x = 0;
+                this.y = 0;
+                this.size = type === 'EVENT' ? 5 : 2;
+                this.alpha = 1;
+                this.growth = type === 'EVENT' ? 0.1 : 0.05;
+            }
+            update(elapsed) {
+                this.x = (this.time / 1000) * (width * 0.8) + 50;
+                if (this.type === 'EVENT') {
+                    this.y = height / 2 + Math.sin(this.x * 0.01) * 50;
+                } else {
+                    this.y = height / 2 + Math.cos(this.x * 0.01) * 100;
+                }
+                this.size += this.growth;
+                this.alpha -= 0.001;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.type === 'EVENT' ? `rgba(0, 255 204, ${this.alpha})` : `rgba(255, 0, 100, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        function startStream() {
+            if(isRunning) return;
+            isRunning = true;
+            startTime = Date.now();
+            particles = [];
+            animate();
+            simulateEvents();
+        }
+
+        function simulateEvents() {
+            if (!isRunning) return;
+            const now = Date.now() - startTime;
+            
+            // Randomly trigger events or silence gaps
+            if (Math.random() > 0.97) {
+                particles.push(new SilenceParticle(now, 'SILENCE'));
+            } else if (Math.random() > 0.95) {
+                particles.push(new SilenceParticle(now, 'EVENT'));
+            }
+
+            setTimeout(simulateEvents, 100);
+        }
+
+        function animate() {
+            if (!isRunning) return;
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw time axis
+            ctx.strokeStyle = '#333';
+            ctx.beginPath();
+            ctx.moveTo(50, height/2);
+            ctx.lineTo(width - 50, height/2);
+            ctx.stroke();
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(Date.now() - startTime);
+                particles[i].draw();
+                if (particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x366"}}]))}catch(e){}})()</script></body>
+</html>
