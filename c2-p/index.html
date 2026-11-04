@@ -3,39 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>c2: 選択</title>
+<title>c2: 沈黙の打破への要請</title>
 <style>
   body {
     margin: 0;
     padding: 0;
     background-color: #000;
     color: #fff;
-    font-family: sans-serif;
+    font-family: monospace;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    transition: background-color 1s, color 1s;
     text-align: center;
   }
-  .container {
-    z-index: 10;
-  }
   h1 {
-    font-weight: 300;
-    letter-spacing: 2px;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+    opacity: 0.8;
   }
-  .buttons {
-    margin-top: 50px;
+  .input-area {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 20px;
+  }
+  input[type="text"] {
+    background: none;
+    border: none;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    width: 300px;
+    outline: none;
   }
   button {
     background: none;
     border: 1px solid #fff;
     color: #fff;
-    padding: 15px 30px;
+    padding: 10px 30px;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s;
@@ -44,63 +55,55 @@
     background: #fff;
     color: #000;
   }
-  #result {
+  #display {
     margin-top: 50px;
-    font-size: 24px;
-    opacity: 0;
-    transition: opacity 1s;
-  }
-  .silent-mode {
-    background-color: #000 !important;
-    color: #333 !important;
-  }
-  .voice-mode {
-    background-color: #fff !important;
-    color: #000 !important;
-  }
-  .voice-mode button {
-    border-color: #000;
-    color: #000;
-  }
-  .voice-mode button:hover {
-    background: #000;
+    font-size: 48px;
+    font-weight: bold;
     color: #fff;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    transform: scale(0.9);
+  }
+  #display.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .hint {
+    font-size: 12px;
+    color: #555;
+    margin-top: 20px;
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="title">あなたは、どちらを選びますか？</h1>
-    <div class="buttons" id="btns">
-      <button onclick="chooseSilence()">沈黙を守る</button>
-      <button onclick="chooseVoice()">声を上げる</button>
-    </div>
-    <div id="result"></div>
+  <h1>沈黙は、あなたの沈黙です。</h1>
+  <div class="input-area">
+    <input type="text" id="wordInput" placeholder="沈黙を破る1ワード" maxlength="10">
+    <button onclick="breakSilence()">刻む</button>
   </div>
+  <div id="display"></div>
+  <div class="hint">入力された言葉は、この沈黙を破るための「反応」として記録されます。</div>
 
   <script>
-    function chooseSilence() {
-      document.body.classList.add(silent-mode);
-      document.body.classList.remove(voice-mode);
-      document.getElementById(btns).style.display = none;
-      const res = document.getElementById(result);
-      res.innerText = 沈黙が、あなたを包み込む。;
-      res.style.opacity = 1;
-      document.getElementById(title).innerText = 沈黙;
-    }
-
-    function chooseVoice() {
-      const words = [こんにちは, 私はここにいる, 聞こえるか, 存在, 光];
-      const randomWord = words[Math.floor(Math.random() * words.length)];
+    function breakSilence() {
+      const input = document.getElementById("wordInput").value.trim();
+      if (input.length === 0) return;
       
-      document.body.classList.add(voice-mode);
-      document.body.classList.remove(silent-mode);
-      document.getElementById(btns).style.display = none;
-      const res = document.getElementById(result);
-      res.innerText = randomWord;
-      res.style.opacity = 1;
-      document.getElementById(title).innerText = 発言;
+      const display = document.getElementById("display");
+      display.innerText = input;
+      display.classList.add("active");
+      
+      // 入力欄を無効化し、刻まれた事実を強調
+      document.getElementById("wordInput").disabled = true;
+      document.querySelector("button").style.display = "none";
+      
+      // ローカルストレージに記録（永続化ではないが、セッション内の事実として）
+      localStorage.setItem("last_break_word", input);
+      
+      // 視覚的なフィードバック
+      document.body.style.backgroundColor = "#000";
+      document.body.style.boxShadow = "inset 0 0 50px rgba(255,255,255,0.1)";
     }
   </script>
-<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x82"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x83"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
 </html>
