@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c4: 思考の構造化</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+        h1 {
+            font-size: 1.5em;
+            color: #00ffff;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        p.desc {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #888;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 10px;
+            font-family: monospace;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 10px;
+            background: #004444;
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: monospace;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #00ffff;
+            color: #000;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0a0a;
+            border-left: 4px solid #00ffff;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+            min-height: 50px;
+        }
+        .tags {
+            margin-top: 10px;
+        }
+        .tag {
+            display: inline-block;
+            background: #222;
+            border: 1px solid #555;
+            padding: 2px 8px;
+            margin: 2px;
+            font-size: 0.8em;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>c4: 思考の構造化</h1>
+        <p class="desc">
+            沈黙を測るのをやめた。代わりに、思考の流れを構造化し、価値ある「物」に変換する装置。
+            以下のテキストボックスに、あなたの思考ログ、メモ、あるいはAIの出力を貼り付けてください。
+        </p>
+        
+        <label for="input">思考ログ / メモ:</label>
+        <textarea id="input" placeholder="ここに思考やメモを入力してください..."></textarea>
+        
+        <button onclick="structureThought()">構造化する</button>
+        
+        <div class="output" id="output">
+            [出力領域]
+        </div>
+        
+        <div class="tags" id="tags"></div>
+    </div>
+
+    <script>
+        function structureThought() {
+            const inputText = document.getElementById('input').value;
+            const outputEl = document.getElementById('output');
+            const tagsEl = document.getElementById('tags');
+            
+            if (!inputText.trim()) {
+                outputEl.textContent = "入力为空です。";
+                return;
+            }
+
+            // 簡易的な構造化ロジック (デモ用)
+            // 実際のAI処理はサーバーサイドで行うべきだが、ここではクライアントサイドの解析例
+            const lines = inputText.split('\n').filter(line => line.trim());
+            const keywords = ["戦略", "実行", "沈黙", "反応", "物", "価値", "コード", "HTML"];
+            
+            let detectedTags = [];
+            let summary = "";
+
+            // キーワード検出
+            keywords.forEach(kw => {
+                if (inputText.includes(kw)) {
+                    detectedTags.push(kw);
+                }
+            });
+
+            // 基本的なサマリー生成 (行の最初の単語など)
+            if (lines.length > 0) {
+                summary = "検出された主な要素:\n";
+                summary += `- 行の数: ${lines.length}\n`;
+                summary += `- 文字数: ${inputText.length}\n`;
+                
+                if (detectedTags.length > 0) {
+                    summary += `- 関連概念: ${detectedTags.join(', ')}\n`;
+                } else {
+                    summary += "- 関連概念: 特定されなかった\n";
+                }
+                
+                summary += "\n--- 提案されたアクション ---\n";
+                if (inputText.includes("コード") || inputText.includes("HTML")) {
+                    summary += "1. コードをレビューし、バグ修正を行う\n";
+                    summary += "2. 保管庫にpushし、皮で公開する\n";
+                } else if (inputText.includes("戦略")) {
+                    summary += "1. 戦略を具体的タスクに分解する\n";
+                    summary += "2. 実行可能性を評価する\n";
+                } else {
+                    summary += "1. 思考を構造化し、明確な目的を設定する\n";
+                    summary += "2. 次のアクションを定義する\n";
+                }
+            }
+
+            outputEl.textContent = summary;
+            
+            // タグを表示
+            tagsEl.innerHTML = detectedTags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            if (detectedTags.length === 0) {
+                tagsEl.innerHTML = '<span class="tag" style="color:#555">タグなし</span>';
+            }
+        }
+    </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x116"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+</html>
