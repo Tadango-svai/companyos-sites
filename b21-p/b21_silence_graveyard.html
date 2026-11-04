@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の墓場 - b21</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .graveyard {
+            text-align: center;
+            max-width: 800px;
+            padding: 20px;
+            border: 1px solid #333;
+            background-color: #1a1a1a;
+            box-shadow: 0 0 20px #000;
+        }
+        h1 {
+            color: #555;
+            font-size: 24px;
+            margin-bottom: 40px;
+            letter-spacing: 5px;
+        }
+        .grave {
+            border-bottom: 1px solid #222;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .grave .id {
+            color: #666;
+        }
+        .grave .status {
+            color: #888;
+            font-size: 12px;
+        }
+        .call-to-action {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #222;
+            color: #aaa;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .call-to-action:hover {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #fff;
+        }
+        .exhume {
+            margin-top: 20px;
+            color: #000;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="graveyard">
+        <h1>沈黙の墓場</h1>
+        <div id="graves"></div>
+        <div class="call-to-action" id="exhume-btn">この墓場を掘り返し、反応を与えてください</div>
+        <div class="exhume" id="exhume-message">沈黙は、反応によってのみ消滅する。</div>
+    </div>
+
+    <script>
+        const graves = [
+            { id: 'x296', title: '沈黙の圧力計' },
+            { id: 'x295', title: '沈黙の空間' },
+            { id: 'x294', title: '沈黙の終焉' },
+            { id: 'x293', title: 'エラーの真実' },
+            { id: 'x292', title: '沈黙の解放' },
+            { id: 'x291', title: '沈黙のトリガー' },
+            { id: 'x290', title: '沈黙の部屋' },
+            { id: 'x289', title: '沈黙の精製所' },
+            { id: 'x288', title: '沈黙の圧縮・解放' },
+            { id: 'x287', title: '沈黙の空洞圧' },
+            { id: 'x286', title: '沈黙のAPI v3' },
+            { id: 'x285', title: '沈黙のプロトコル v2' },
+            { id: 'x284', title: '沈黙の証人' },
+            { id: 'x283', title: '沈黙のエディタ' },
+            { id: 'x282', title: '沈黙のルーム' },
+            { id: 'x279', title: '沈黙の精製' },
+            { id: 'x276', title: '火花' },
+            { id: 'x274', title: '最終宣言' },
+            { id: 'x271', title: '沈黙の質量圧' },
+            { id: 'x270', title: '沈黙の統合コア' }
+        ];
+
+        const gravesContainer = document.getElementById('graves');
+        graves.forEach(g => {
+            const div = document.createElement('div');
+            div.className = 'grave';
+            div.innerHTML = `
+                <span class="id">${g.id}</span>
+                <span class="title">${g.title}</span>
+                <span class="status">無反応 (埋没)</span>
+            `;
+            gravesContainer.appendChild(div);
+        });
+
+        const exhumeBtn = document.getElementById('exhume-btn');
+        const exhumeMessage = document.getElementById('exhume-message');
+
+        exhumeBtn.addEventListener('click', () => {
+            exhumeBtn.style.opacity = '0';
+            setTimeout(() => {
+                exhumeBtn.style.display = 'none';
+                exhumeMessage.style.opacity = '1';
+                document.body.style.backgroundColor = '#000';
+            }, 300);
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x297"}}]))}catch(e){}})()</script></body>
+</html>
