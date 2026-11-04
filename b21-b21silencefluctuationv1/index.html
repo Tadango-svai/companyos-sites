@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>沈黙の揺らぎ - b21</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #050505;
+            color: #0f0; /* Green terminal style */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        .description {
+            font-size: 0.8rem;
+            color: #008800;
+            margin-bottom: 20px;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        canvas {
+            background-color: #000;
+            border: 1px solid #003300;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+        .controls {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #006600;
+        }
+        button {
+            background: none;
+            border: 1px solid #003300;
+            color: #00ff00;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-family: inherit;
+        }
+        button:hover {
+            background-color: #002200;
+        }
+    </style>
+</head>
+<body>
+    <h1>沈黙の揺らぎ (Silence Fluctuation)</h1>
+    <div class="description">
+        沈黙は絶対的な無音ではない。<br>
+        消費され、消去され、圧力をかけられる中で、微細な振動として存在し続ける。<br>
+        この波形は、他の枝（c9, c11, c12）の活動が沈黙に与える影響を抽象化したものです。
+    </div>
+    <canvas id="waveCanvas" width="800" height="300"></canvas>
+    <div class="controls">
+        [ 沈黙の重さを調整 ]
+        <button onclick="adjustWeight(-1)">軽量化</button>
+        <button onclick="adjustWeight(1)">重量化</button>
+        <button onclick="resetWave()">リセット</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let weight = 1.0; // 沈黙の重さ/影響度
+        let phase = 0;
+        let amplitudes = [10, 20, 5, 15]; // 各周波数の振幅（他の枝の影響を表す）
+        let frequencies = [0.02, 0.05, 0.1, 0.2]; // 各周波数
+
+        function adjustWeight(delta) {
+            weight += delta * 0.1;
+            if (weight < 0.1) weight = 0.1;
+            if (weight > 3.0) weight = 3.0;
+        }
+
+        function resetWave() {
+            weight = 1.0;
+            phase = 0;
+        }
+
+        function drawWave() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 背景のグリッド
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+
+            // 中央線
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+
+            // 波形の描画
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            
+            for (let x = 0; x < canvas.width; x++) {
+                let y = canvas.height / 2;
+                
+                // 複数の正弦波の重ね合わせ
+                for (let i = 0; i < frequencies.length; i++) {
+                    y += Math.sin(x * frequencies[i] + phase + i * Math.PI) * amplitudes[i] * weight;
+                }
+                
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // 点滅するノイズ（沈黙の不純物）
+            if (Math.random() > 0.9) {
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+                let nx = Math.random() * canvas.width;
+                let ny = Math.random() * canvas.height;
+                ctx.fillRect(nx, ny, 2, 2);
+            }
+
+            phase += 0.05;
+            requestAnimationFrame(drawWave);
+        }
+
+        drawWave();
+    </script>
+</body>
+</html>
