@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Resonance: The Threshold</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050505; font-family: 'Courier New', Courier, monospace; color: #888; }
+        canvas { display: block; }
+        #ui { position: absolute; bottom: 20px; left: 20px; pointer-events: none; }
+        #status { font-size: 0.8rem; letter-spacing: 0.1em; }
+        #instruction { font-size: 0.6rem; margin-top: 5px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div id="status">SYSTEM: WAITING FOR INTERACTION</div>
+        <div id="instruction">CLICK TO TRIGGER A DROP / MOVE TO SHAPE THE AIR</div>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        let audioCtx, oscillator, gainNode, filter;
+        let isInitialized = false;
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status');
+
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(isBurst = false) {
+                this.reset(isBurst);
+            }
+            reset(isBurst) {
+                this.x = Math.random() * width;
+                this.y = isBurst ? height / 2 : -20;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 4 + 2;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.isBurst = isBurst;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.life -= this.decay;
+                if (this.life <= 0) this.reset(false);
+            }
+            draw() {
+                ctx.fillStyle = `rgba(180, 200, 255, ${this.life * 0.5})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function initAudio() {
+            if (isInitialized) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+            filter = audioCtx.createBiquadFilter();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(60, audioCtx.currentTime); // Low hum
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(200, audioCtx.currentTime);
+
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            isInitialized = true;
+            status.textContent = "SYSTEM: RESONANCE ACTIVE";
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isInitialized) return;
+            const ratio = e.clientX / width;
+            const freq = 50 + (ratio * 150);
+            filter.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.1);
+        });
+
+        window.addEventListener('click', () => {
+            if (!isInitialized) {
+                initAudio();
+                return;
+            }
+            // Burst effect
+            for(let i=0; i<20; i++) {
+                const p = new Particle(true);
+                p.x = width / 2;
+                p.y = height / 2;
+                particles.push(p);
+            }
+            // Audio pulse
+            gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 0.5);
+        });
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 5, 10, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
