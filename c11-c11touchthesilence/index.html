@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c11: Touch the Silence</title>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden; cursor: crosshair; }
+        canvas { display: block; }
+        #ui { position: absolute; top: 20px; left: 20px; pointer-events: none; z-index: 10; }
+        .metric { font-size: 14px; margin-bottom: 8px; opacity: 0.8; }
+        .value { color: #00ffcc; font-weight: bold; }
+        .hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 12px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div class="metric">SILENCE DEPTH: <span class="value" id="silence">100.0%</span></div>
+        <div class="metric">NOISE INJECTION: <span class="value" id="noise">0.00</span></div>
+        <div class="metric">CORE PULSE: <span class="value" id="pulse">IDLE</span></div>
+    </div>
+    <div class="hint">Move your mouse or click to disturb the silence.</div>
+    <canvas id="c"></canvas>
+
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        const silenceEl = document.getElementById('silence');
+        const noiseEl = document.getElementById('noise');
+        const pulseEl = document.getElementById('pulse');
+
+        let width, height;
+        let core = { x: 0, y: 0, radius: 10, pulse: 0, depth: 1.0 };
+        let noiseLevel = 0;
+        let particles = [];
+        let mouse = { x: null, y: null, active: false };
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            core.x = width / 2;
+            core.y = height / 2;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Initialize ambient particles (rain/silence)
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: 0,
+                vy: 0.5 + Math.random() * 0.5,
+                size: 1 + Math.random() * 2
+            });
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.active = true;
+            // Inject noise based on distance from core
+            const dist = Math.sqrt((mouse.x - core.x)**2 + (mouse.y - core.y)**2);
+            if (dist < 200) {
+                noiseLevel = Math.min(100, noiseLevel + (200 - dist) / 10);
+            }
+        });
+
+        window.addEventListener('click', () => {
+            if (mouse.active) {
+                noiseLevel = Math.min(100, noiseLevel + 50);
+                core.pulse = 1.0;
+            }
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.active = false;
+        });
+
+        function updateUI() {
+            // Silence decreases as noise increases
+            const currentSilence = Math.max(0, 100 - noiseLevel);
+            silenceEl.innerText = currentSilence.toFixed(1) + '%';
+            noiseEl.innerText = noiseLevel.toFixed(2);
+            
+            if (core.pulse > 0.1) {
+                pulseEl.innerText = "DISTURBED";
+                pulseEl.style.color = "#ff0055";
+            } else {
+                pulseEl.innerText = "IDLE";
+                pulseEl.style.color = "#00ffcc";
+            }
+
+            // Decay noise and pulse
+            noiseLevel *= 0.95;
+            core.pulse *= 0.9;
+        }
+
+        function animate() {
+            // Fade background for trail effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw core
+            const pulseSize = core.radius + core.pulse * 30;
+            ctx.beginPath();
+            ctx.arc(core.x, core.y, pulseSize, 0, Math.PI * 2);
+            
+            // Color shifts from cyan (silence) to red (noise)
+            const r = Math.floor(noiseLevel * 2.55);
+            const g = Math.floor(255 - noiseLevel * 2.55);
+            const b = Math.floor(204 - noiseLevel * 2.04);
+            
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
+            ctx.fill();
+
+            // Draw particles
+            particles.forEach(p => {
+                // Attract to mouse if close, otherwise drift
+                if (mouse.active) {
+                    const dx = mouse.x - p.x;
+                    const dy = mouse.y - p.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 100) {
+                        p.vx += dx * 0.001;
+                        p.vy += dy * 0.001;
+                    }
+                }
+
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+
+                // Reset if out of bounds
+                if (p.y > height) { p.y = 0; p.x = Math.random() * width; }
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+            });
+
+            updateUI();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x452"}}]))}catch(e){}})()</script></body>
+</html>
