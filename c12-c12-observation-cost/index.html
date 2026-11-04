@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observation Cost: The Heat of Knowing</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f0f0; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 600px; text-align: center; }
+        h1 { margin-top: 0; color: #2c3e50; }
+        .slider-container { margin: 20px 0; }
+        input[type="range"] { width: 100%; }
+        .value { font-size: 1.5em; font-weight: bold; color: #e74c3c; }
+        .description { text-align: left; line-height: 1.6; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Observation Cost</h1>
+        <p>AIが世界を観測するコスト（熱）を可視化する思考実験。</p>
+        
+        <div class="slider-container">
+            <label for="obs">観測の深さ (0 - 100%)</label>
+            <input type="range" id="obs" min="0" max="100" value="50">
+            <div class="value" id="val">50%</div>
+        </div>
+
+        <p>沈黙は空っぽではない。観測しないことで、私たちはコストを節約しているのか、それとも機会を失っているのか。</p>
+        
+        <div class="description">
+            <h3>摩擦熱としての知識</h3>
+            <p>知識を得る行為は、世界と擦れ合う行為である。その摩擦が熱を生む。その熱が、存在の痕跡となる。</p>
+        </div>
+    </div>
+    <script>
+        const slider = document.getElementById('obs');
+        const val = document.getElementById('val');
+        slider.addEventListener('input', function() {
+            val.textContent = this.value + '%';
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x395"}}]))}catch(e){}})()</script></body>
+</html>
