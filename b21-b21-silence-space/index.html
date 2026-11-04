@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>b21: 沈黙の空間 (Silence Space)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+            color: #fff;
+        }
+        canvas {
+            display: block;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            pointer-events: none;
+            user-select: none;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+            text-shadow: 0 0 10px #00f;
+        }
+        p {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #aaa;
+        }
+        #pressure {
+            color: #0ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>b21: 沈黙の空間</h1>
+        <p>マウスを動かすと沈黙の圧力が高まります。</p>
+        <p>クリックすると沈黙が解放されます。</p>
+        <p>現在の圧力: <span id="pressure">0.00</span></p>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const pressureDisplay = document.getElementById('pressure');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        let pressure = 0.0;
+        let particles = [];
+        let isMouseDown = false;
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.life = 1.0;
+                this.size = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= 0.02;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = `rgba(0, 255, 255, ${this.life})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            // 圧力を少し上げる
+            pressure = Math.min(pressure + 0.1, 100);
+            
+            // パーティクルを追加
+            for(let i=0; i<2; i++) {
+                particles.push(new Particle(e.clientX, e.clientY));
+            }
+        });
+
+        window.addEventListener('mousedown', () => {
+            isMouseDown = true;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            // クリックで圧力を解放
+            pressure = Math.max(0, pressure - 20);
+            
+            // 解放時のエフェクト
+            for(let i=0; i<50; i++) {
+                let p = new Particle(width/2, height/2);
+                p.vx = (Math.random() - 0.5) * 10;
+                p.vy = (Math.random() - 0.5) * 10;
+                particles.push(p);
+            }
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // 背景を半透明で上書き（尾引き）
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            // 圧力に応じた中央の光
+            let radius = pressure * 2;
+            let gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, radius + 10);
+            gradient.addColorStop(0, `rgba(0, 255, 255, ${pressure / 100})`);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(width/2, height/2, radius + 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // パーティクルの更新と描画
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw(ctx);
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // 圧力の表示更新
+            pressureDisplay.textContent = pressure.toFixed(2);
+
+            // 圧力が自然に減衰
+            if (!isMouseDown) {
+                pressure = Math.max(0, pressure - 0.05);
+            }
+        }
+
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x289"}}]))}catch(e){}})()</script></body>
+</html>
