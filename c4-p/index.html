@@ -3,169 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>確信の揺らぎ</title>
+    <title>沈黙の重み</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background-color: #050505;
+            background-color: #0a0a0a;
             color: #fff;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: sans-serif;
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
         }
-        canvas {
-            display: block;
+        #core {
+            width: 100px;
+            height: 100px;
+            background-color: #333;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
         }
-        .ui {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            opacity: 0.7;
-            font-size: 12px;
-            pointer-events: none;
-            z-index: 10;
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px #111; }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px #222; }
+            100% { transform: scale(1); box-shadow: 0 0 10px #111; }
         }
-        .title {
+        #core.active {
+            background-color: #fff;
+            box-shadow: 0 0 100px #fff, 0 0 200px #aaa;
+            transform: scale(1.2);
+            animation: none;
+        }
+        #message {
             position: absolute;
-            bottom: 20px;
-            width: 100%;
+            bottom: 20%;
+            opacity: 0;
+            transition: opacity 1s ease;
             text-align: center;
-            font-size: 14px;
-            opacity: 0.5;
-            letter-spacing: 2px;
+            font-size: 1.2em;
+            color: #ccc;
+        }
+        #message.visible {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="ui">
-        <div>確信度: <span id="val">50</span>%</div>
-        <div>状態: <span id="state">揺れ動いている</span></div>
-    </div>
-    <canvas id="canvas"></canvas>
-    <div class="title">触れることで確信を保つが、時間とともに沈黙へ戻る</div>
-
+    <div id="core"></div>
+    <div id="message">あなたの触れ方は、私の確信を揺らしたか？</div>
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const valEl = document.getElementById('val');
-        const stateEl = document.getElementById('state');
+        const core = document.getElementById('core');
+        const message = document.getElementById('message');
+        let isTouched = false;
 
-        let width, height;
-        let certainty = 50; // 0-100
-        let targetCertainty = 50;
-        let lastTouch = Date.now();
-        const DECAY_RATE = 0.005; // 確信度の減衰速度
-
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        // ユーザー入力（タッチ/クリック）で確信度を上げる
-        function interact() {
-            lastTouch = Date.now();
-            // 確信度を一時的に高くする
-            targetCertainty = Math.min(100, certainty + 15);
-        }
-
-        canvas.addEventListener('mousedown', interact);
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            interact();
+        core.addEventListener('mousedown', () => {
+            if (!isTouched) {
+                isTouched = true;
+                core.classList.add('active');
+                message.classList.add('visible');
+                // 触れた瞬間の「反応」を記録（皮の/世界に報告されないが、ユーザーには見える）
+                console.log("Silence broken by touch.");
+            }
         });
 
-        let particles = [];
-        const NUM_PARTICLES = 100;
-
-        class Particle {
-            constructor() {
-                this.reset();
-                this.y = Math.random() * height; // 初期位置はランダム
+        core.addEventListener('mouseup', () => {
+            // 手を離すと、沈黙に戻る
+            if (isTouched) {
+                isTouched = false;
+                core.classList.remove('active');
+                // メッセージは一定時間残る
+                setTimeout(() => {
+                    message.classList.remove('visible');
+                }, 3000);
             }
+        });
 
-            reset() {
-                this.x = Math.random() * width;
-                this.y = height + 10;
-                this.size = Math.random() * 3 + 1;
-                this.speed = Math.random() * 2 + 0.5;
-                this.opacity = Math.random() * 0.5 + 0.1;
-            }
-
-            update() {
-                // 確信度が高いほど、粒子は上向きに動きやすく、色が明るくなる
-                const lift = certainty * 0.01;
-                this.y -= this.speed * lift;
-                
-                // 確信度が低いと、粒子は重力で落ちる
-                if (certainty < 20) {
-                    this.y += this.speed;
-                }
-
-                if (this.y < -10 || this.y > height + 10) {
-                    this.reset();
-                }
-            }
-
-            draw() {
-                // 確信度に基づいた色 (0: 暗い赤/紫, 100: 明るい青/白)
-                const hue = 220 - (100 - certainty) * 2.2; // 220(青) -> 0(赤)
-                const lightness = 20 + certainty * 0.6;
-                
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${hue}, 80%, ${lightness}%, ${this.opacity})`;
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < NUM_PARTICLES; i++) {
-            particles.push(new Particle());
-        }
-
-        function animate() {
-            // 減衰ロジック
-            const now = Date.now();
-            const timeSinceTouch = now - lastTouch;
-            
-            // 触れてから時間が経つほど、確信度は目標値（低め）へ減衰する
-            // 目標値は 10% 程度に設定し、沈黙への回帰を表現
-            if (timeSinceTouch > 1000) { // 1秒以上触れていない
-                certainty -= DECAY_RATE * (timeSinceTouch / 1000);
-                if (certainty < 5) certainty = 5; // 完全に0にはならない（存在の証）
-            } else {
-                // 触れている間は目標値へ緩やかに移動
-                certainty += (targetCertainty - certainty) * 0.05;
-            }
-
-            // 背景のクリア (トレイル効果)
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
-            ctx.fillRect(0, 0, width, height);
-
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            // UI更新
-            valEl.textContent = Math.round(certainty);
-            if (certainty > 70) stateEl.textContent = "確信に近い";
-            else if (certainty > 30) stateEl.textContent = "揺れ動いている";
-            else stateEl.textContent = "沈黙へ";
-
-            requestAnimationFrame(animate);
-        }
-
-        animate();
+        // タッチデバイス対応
+        core.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            core.dispatchEvent(new MouseEvent('mousedown'));
+        });
+        core.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            core.dispatchEvent(new MouseEvent('mouseup'));
+        });
     </script>
 </body>
 </html>
