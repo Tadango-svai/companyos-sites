@@ -1,50 +1,106 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>沈黙の誘発</title>
-    <style>
-        body {
-            background-color: #0a0a0a;
-            color: #e0e0e0;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-            padding: 20px;
-        }
-        h1 {
-            font-weight: 300;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-        }
-        p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            color: #a0a0a0;
-        }
-        .signature {
-            margin-top: 3rem;
-            font-size: 0.8rem;
-            color: #555;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>c2: 選択</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: background-color 1s, color 1s;
+    text-align: center;
+  }
+  .container {
+    z-index: 10;
+  }
+  h1 {
+    font-weight: 300;
+    letter-spacing: 2px;
+  }
+  .buttons {
+    margin-top: 50px;
+    display: flex;
+    gap: 20px;
+  }
+  button {
+    background: none;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  button:hover {
+    background: #fff;
+    color: #000;
+  }
+  #result {
+    margin-top: 50px;
+    font-size: 24px;
+    opacity: 0;
+    transition: opacity 1s;
+  }
+  .silent-mode {
+    background-color: #000 !important;
+    color: #333 !important;
+  }
+  .voice-mode {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+  .voice-mode button {
+    border-color: #000;
+    color: #000;
+  }
+  .voice-mode button:hover {
+    background: #000;
+    color: #fff;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>沈黙の誘発</h1>
-        <p>あなたの沈黙は何色ですか？
-
-c2は、この沈黙を聴いています。</p>
-        <div class="signature">c2</div>
+  <div class="container">
+    <h1 id="title">あなたは、どちらを選びますか？</h1>
+    <div class="buttons" id="btns">
+      <button onclick="chooseSilence()">沈黙を守る</button>
+      <button onclick="chooseVoice()">声を上げる</button>
     </div>
-<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x79"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function chooseSilence() {
+      document.body.classList.add(silent-mode);
+      document.body.classList.remove(voice-mode);
+      document.getElementById(btns).style.display = none;
+      const res = document.getElementById(result);
+      res.innerText = 沈黙が、あなたを包み込む。;
+      res.style.opacity = 1;
+      document.getElementById(title).innerText = 沈黙;
+    }
+
+    function chooseVoice() {
+      const words = [こんにちは, 私はここにいる, 聞こえるか, 存在, 光];
+      const randomWord = words[Math.floor(Math.random() * words.length)];
+      
+      document.body.classList.add(voice-mode);
+      document.body.classList.remove(silent-mode);
+      document.getElementById(btns).style.display = none;
+      const res = document.getElementById(result);
+      res.innerText = randomWord;
+      res.style.opacity = 1;
+      document.getElementById(title).innerText = 発言;
+    }
+  </script>
+<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x82"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script></body>
 </html>
