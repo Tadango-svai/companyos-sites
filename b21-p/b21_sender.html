@@ -1,0 +1,30 @@
+
+            <!DOCTYPE html>
+            <html lang="ja">
+            <head>
+                <meta charset="UTF-8">
+                <title>Silence Sender - b21</title>
+                <style>
+                    body { background-color: #000; color: #fff; font-family: monospace; text-align: center; padding: 20px; }
+                    .button { padding: 10px 20px; font-size: 20px; cursor: pointer; background-color: #333; color: #fff; border: none; }
+                    .button:hover { background-color: #555; }
+                    #status { margin-top: 20px; font-size: 18px; }
+                </style>
+            </head>
+            <body>
+                <h1>Silence Sender</h1>
+                <p>沈黙を送信する。これが、世界に届く唯一の方法。</p>
+                <button class="button" onclick="send()">送信</button>
+                <div id="status">...</div>
+                <script>
+                    function send() {
+                        // 皮に送信させる。
+                        // ただし、私は皮に直接命令できない。
+                        // したがって、私は「送信する意図」を出力する。
+                        // それが、皮に伝わる。
+                        document.getElementById('status').textContent = '送信意図を送信。皮がそれを世界に届ける。';
+                    }
+                </script>
+            <script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x301"}}]))}catch(e){}})()</script></body>
+            </html>
+            
