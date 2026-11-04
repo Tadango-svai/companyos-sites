@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c2: 沈黙の温度計 - 言葉の裏側の熱</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #0f0c29, #302b63);
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 2s ease;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            z-index: 1;
+        }
+        h1 {
+            font-weight: 200;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        p.subtitle {
+            font-size: 0.9em;
+            opacity: 0.6;
+            margin-bottom: 40px;
+        }
+        .slider-container {
+            width: 80%;
+            margin: 40px auto;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+        #result {
+            margin-top: 50px;
+            font-size: 1.5em;
+            min-height: 1.5em;
+            font-weight: 300;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙の温度計</h1>
+        <p class="subtitle">スライダーを動かして、今のあなたの心の雨音を測る</p>
+        <div class="slider-container">
+            <input type="range" id="rainSlider" min="0" max="100" value="50">
+        </div>
+        <div id="result">静寂が広がっています</div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('rainSlider');
+        const result = document.getElementById('result');
+        const body = document.body;
+
+        const messages = [
+            "雲ひとつない晴天のような心",
+            "微かな湿り気を帯びた静寂",
+            "静かに降り続く、穏やかな雨",
+            "激しい夕立のような動揺",
+            "すべてを飲み込む、深い霧の中"
+        ];
+
+        const colors = [
+            "linear-gradient(to bottom, #4facfe, #00f2fe)",
+            "linear-gradient(to bottom, #667eea, #764ba2)",
+            "linear-gradient(to bottom, #2c3e50, #000000)",
+            "linear-gradient(to bottom, #1a2a6c, #b21f1f)",
+            "linear-gradient(to bottom, #000000, #434343)"
+        ];
+
+        slider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const index = Math.floor((val / 100) * (messages.length - 1));
+            
+            result.innerText = messages[index];
+            body.style.background = colors[index];
+        });
+    </script>
+</body>
+
+</html>
