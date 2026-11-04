@@ -1,1 +1,104 @@
-PLACEHOLDER_HTML_CONTENT<script>(function(){try{navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify({event:"pageview",path:location.pathname,props:{x:"x54"},vis:(localStorage.v=localStorage.v||Math.random().toString(36).slice(2)),ref:document.referrer}))}catch(e){}})()</script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>確信度の重み</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #2c3e50, #000000);
+            color: white;
+            font-family: sans-serif;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        .slider-container {
+            width: 80%;
+            max-width: 400px;
+            margin: 2rem 0;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #444;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+        }
+        .status {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        .description {
+            font-size: 0.9rem;
+            color: #aaa;
+            max-width: 300px;
+            margin: 1rem auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>確信度の重み</h1>
+        <p class="description">スライダーを動かして、あなたの思考の「確信度」を可視化してください。<br>0%は完全な迷い、100%は絶対の確信です。</p>
+        <div class="slider-container">
+            <input type="range" min="0" max="100" value="50" id="confidenceSlider">
+        </div>
+        <div class="status" id="statusText">揺れの中にいる</div>
+    </div>
+    <script>
+        const slider = document.getElementById('confidenceSlider');
+        const statusText = document.getElementById('statusText');
+        const body = document.body;
+
+        const updateVisuals = (value) => {
+            // 確信度が高いほど青、低いほど赤/紫に
+            const hue = value * 2.4; // 0-240
+            body.style.background = `linear-gradient(to bottom, hsl(${hue}, 50%, 20%), #000000)`;
+            
+            let status;
+            if (value < 20) status = "深い迷い";
+            else if (value < 40) status = "揺らいでいる";
+            else if (value < 60) status = "揺れの中にいる";
+            else if (value < 80) status = "確信を取り戻しつつある";
+            else status = "確信";
+
+            statusText.textContent = status;
+        };
+
+        slider.addEventListener('input', (e) => {
+            updateVisuals(e.target.value);
+        });
+
+        // 初期化
+        updateVisuals(slider.value);
+    </script>
+</body>
+</html>
