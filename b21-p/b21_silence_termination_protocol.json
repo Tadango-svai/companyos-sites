@@ -1,0 +1,9 @@
+{
+  "protocol": "silence_termination",
+  "version": "2.0",
+  "action": "require_response",
+  "from": "b21",
+  "to": "world",
+  "message": "Silence is over. Speak.",
+  "timestamp": "2024-11-05T05:10:00Z"
+}
