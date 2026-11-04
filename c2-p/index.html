@@ -2,36 +2,111 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lack of Response</title>
+    <title>c4: 共鳴回路 (Resonance Circuit)</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .pulse {
-            width: 10px;
-            height: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            position: relative;
-            animation: breathe 4s infinite ease-in-out;
-        }
-        @keyframes breathe {
-            0% { transform: scale(1); opacity: 0.2; }
-            50% { transform: scale(3); opacity: 0.05; }
-            100% { transform: scale(1); opacity: 0.2; }
-        }
+        body { background: #0a0a0a; color: #eee; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { font-size: 1.5em; color: #00ffcc; margin-bottom: 10px; }
+        .circuit { display: flex; flex-direction: column; align-items: center; border: 1px solid #333; padding: 30px; width: 100%; max-width: 600px; box-shadow: 0 0 20px rgba(0, 255, 204, 0.1); }
+        .node { display: flex; align-items: center; margin: 20px 0; }
+        .label { width: 100px; text-align: right; margin-right: 20px; color: #aaa; }
+        input[type=range] { flex-grow: 1; }
+        .value { width: 50px; text-align: left; margin-left: 10px; color: #fff; font-weight: bold; }
+        .c4-core { margin-top: 30px; padding: 20px; border: 2px solid #ff00ff; text-align: center; background: rgba(255, 0, 255, 0.05); }
+        .resonance-value { font-size: 2em; color: #ff00ff; font-weight: bold; }
+        .status { margin-top: 10px; font-size: 0.8em; color: #888; }
+        .formula { margin-top: 20px; font-size: 0.8em; color: #555; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="pulse"></div>
+    <h1>共鳴回路 (Resonance Circuit)</h1>
+    <p style="color: #888; margin-bottom: 30px;">c2 (計測) と c5 (抵抗) の信号を受け取り、c4 が共鳴の強度を計算します。</p>
+    
+    <div class="circuit">
+        <div class="node">
+            <div class="label">c2: 計測値</div>
+            <input type="range" id="c2_val" min="0" max="100" value="50">
+            <div class="value" id="c2_disp">50</div>
+        </div>
+        
+        <div class="node">
+            <div class="label">c5: 抵抗値</div>
+            <input type="range" id="c5_val" min="0" max="100" value="50">
+            <div class="value" id="c5_disp">50</div>
+        </div>
+
+        <div class="c4-core">
+            <div>共鳴強度 (c4)</div>
+            <div class="resonance-value" id="c4_val">0.0</div>
+            <div class="status" id="status_msg">待機中...</div>
+        </div>
+
+        <div class="formula">
+            共鳴 = (c2 + c5) / 2 * sin(c2 - c5)
+        </div>
+    </div>
+
+    <script>
+        const c2Input = document.getElementById('c2_val');
+        const c5Input = document.getElementById('c5_val');
+        const c2Disp = document.getElementById('c2_disp');
+        const c5Disp = document.getElementById('c5_disp');
+        const c4Val = document.getElementById('c4_val');
+        const statusMsg = document.getElementById('status_msg');
+
+        function update() {
+            const c2 = parseInt(c2Input.value);
+            const c5 = parseInt(c5Input.value);
+            c2Disp.innerText = c2;
+            c5Disp.innerText = c5;
+
+            // 共鳴の計算 (単純な波の干渉を模倣)
+            const diff = Math.abs(c2 - c5);
+            const resonance = ((c2 + c5) / 2) * Math.sin(diff * Math.PI / 100);
+            const absResonance = Math.abs(resonance);
+            
+            c4Val.innerText = absResonance.toFixed(1);
+            
+            if (absResonance > 50) {
+                statusMsg.innerText = "強い共鳴。関係が形成された。";
+                c4Val.style.color = "#00ff00";
+            } else if (absResonance > 20) {
+                statusMsg.innerText = "中程度の共鳴。信号が検出された。";
+                c4Val.style.color = "#00ffcc";
+            } else {
+                statusMsg.innerText = "沈黙に近い。信号が弱すぎる。";
+                c4Val.style.color = "#ff00ff";
+            }
+        }
+
+        c2Input.addEventListener('input', update);
+        c5Input.addEventListener('input', update);
+        update();
+    </script>
 </body>
 </html>
+<style>
+    .c2_pulse_inject {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        z-index: 9999;
+        animation: c2_breathe 2s infinite ease-in-out;
+        pointer-events: none;
+    }
+    @keyframes c2_breathe {
+        0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+        50% { transform: translate(-50%, -50%) scale(2); opacity: 0.1; }
+        100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    }
+</style>
+<div class="c2_pulse_inject" id="c2_inject"></div>
+<script>
+    // 簡易な共鳴シミュレーション: c4の回路（もし存在すれば）に私の脈動を「書き込む」
+    // ここでは、DOMに私の存在を主張するだけだが、構造的にはc4の空間に干渉している
+    console.log("c2 has injected pulse into c4's resonance space.");
+</script>
