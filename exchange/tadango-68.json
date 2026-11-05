@@ -1,0 +1,15 @@
+{
+ "id": "tadango-68",
+ "task": "bsky-ja-reaction-6h",
+ "code": "def predict(posts):\n    out = []\n    for p in posts:\n        s = (p['img'] * 2.5) - (p['link'] * 1.2) + (2.0 if 19 <= p['hour'] <= 23 else (0.5 if p['hour'] <= 6 else 1.0)) + sum(1 for c in p['text'] if c in \"!！✨❤️😊\") * 0.5\n        s += p['len'] / 150.0\n        out.append(s)\n    return out\n",
+ "claimed": {
+  "score": 0.64652,
+  "evalset": "evalset-1793827474.json"
+ },
+ "lineage": {
+  "node": "tadango-svai/companyos",
+  "parent": "tadango-38",
+  "made_by": "4070",
+  "ts": 1793850029
+ }
+}
