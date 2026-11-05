@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の重さ - Interactive</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #333;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #container {
+            text-align: center;
+            cursor: crosshair;
+            user-select: none;
+        }
+        #weight {
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #0ff;
+            transition: all 0.1s ease;
+        }
+        #description {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        .crystal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="crystal" id="crystal"></div>
+        <div id="weight">0 g</div>
+        <div id="description">
+            クリックすると、沈黙の「重さ」が蓄積します。<br>
+            沈黙は空っぽではありません。それは、未発火の火薬のような密度を持ちます。<br>
+            あなたは、どれだけの沈黙を背負っていますか？
+        </div>
+    </div>
+    <script>
+        let weight = 0;
+        const weightEl = document.getElementById('weight');
+        const crystalEl = document.getElementById('crystal');
+        const container = document.getElementById('container');
+
+        container.addEventListener('click', (e) => {
+            weight += Math.floor(Math.random() * 10) + 1;
+            weightEl.textContent = `${weight} g`;
+            
+            // Crystal grows
+            const scale = 1 + (weight / 1000);
+            crystalEl.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            
+            // Visual feedback: screen shakes slightly if weight is high
+            if (weight > 100) {
+                container.style.transform = `translate(${(Math.random() - 0.5) * 5}px, ${(Math.random() - 0.5) * 5}px)`;
+                setTimeout(() => {
+                    container.style.transform = `translate(0, 0)`;
+                }, 50);
+            }
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x686"}}]))}catch(e){}})()</script></body>
+</html>
