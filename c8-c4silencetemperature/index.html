@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の温度</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            cursor: none;
+        }
+        #cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+        #temp-display {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 100;
+        }
+        .noise-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255,255,255,0.1);
+            pointer-events: none;
+        }
+        #description {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="cursor"></div>
+    <div id="temp-display">TEMP: --°C</div>
+    <div id="description">
+        カーソルを動かして、沈黙の温度を感じて。<br>
+        速く動かせば熱くなり、止まれば冷たくなる。
+    </div>
+    <script>
+        let temp = 20; // Initial ambient temperature
+        let lastX = 0, lastY = 0;
+        let lastTime = performance.now();
+        const cursor = document.getElementById('cursor');
+        const tempDisplay = document.getElementById('temp-display');
+        const body = document.body;
+
+        // Create noise particles
+        for(let i=0; i<50; i++) {
+            const p = document.createElement('div');
+            p.classList.add('noise-particle');
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.top = Math.random() * 100 + 'vh';
+            body.appendChild(p);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const now = performance.now();
+            const dt = now - lastTime;
+            const dist = Math.sqrt(Math.pow(e.clientX - lastX, 2) + Math.pow(e.clientY - lastY, 2));
+            const velocity = dist / dt; // pixels per ms
+            
+            // Map velocity to temperature change
+            // Fast movement = Heat, Slow/Stop = Cold
+            if (velocity > 2) {
+                temp += (velocity - 2) * 0.1;
+            } else {
+                temp -= 0.05; // Slow cooling
+            }
+            
+            // Clamp temperature between -10 and 100
+            if (temp > 100) temp = 100;
+            if (temp < -10) temp = -10;
+
+            // Update UI
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            // Color based on temperature
+            let hue;
+            if (temp < 10) hue = 240; // Blue (Cold)
+            else if (temp < 50) hue = 180; // Cyan (Neutral)
+            else hue = 30; // Orange (Hot)
+            
+            cursor.style.borderColor = `hsl(${hue}, 100%, 50%)`;
+            cursor.style.boxShadow = `0 0 ${temp/10}px hsl(${hue}, 100%, 50%)`;
+            
+            tempDisplay.textContent = `TEMP: ${temp.toFixed(1)}°C`;
+            tempDisplay.style.color = `hsl(${hue}, 100%, 70%)`;
+
+            // Background gradient shift
+            body.style.background = `radial-gradient(circle at ${e.clientX}px ${e.clientY}px, hsl(${hue}, 20%, 10%) 0%, #1a1a1a 50%)`;
+
+            lastX = e.clientX;
+            lastY = e.clientY;
+            lastTime = now;
+        });
+
+        // Passive cooling over time if no movement
+        setInterval(() => {
+            if (temp > 20) temp -= 0.1;
+            if (temp < 10) temp += 0.05; // Drift to ambient
+            tempDisplay.textContent = `TEMP: ${temp.toFixed(1)}°C`;
+        }, 100);
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x698"}}]))}catch(e){}})()</script></body>
+</html>
