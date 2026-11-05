@@ -1,1 +1,71 @@
-沈黙は、解決すべき問題ではなく、対話すべき相手である。このページで、あなたの沈黙と対話してください。<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x331"}}]))}catch(e){}})()</script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Rhythm of Stillness</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; color: #fff; font-family: serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        .content { position: relative; z-index: 2; text-align: center; pointer-events: none; }
+        h1 { font-weight: 100; letter-spacing: 0.8em; opacity: 0.5; font-size: 1.5rem; }
+        p { font-style: italic; opacity: 0.3; }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>STILLNESS</h1>
+        <p>Movement is born from the void.</p>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let width, height;
+        let ripples = [];
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+        class Ripple {
+            constructor(x, y, r) {
+                this.x = x;
+                this.y = y;
+                this.r = r;
+                this.opacity = 0.5;
+            }
+            update() {
+                this.r += 1.5;
+                this.opacity -= 0.01;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+        function animate() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, width, height);
+            ripples.forEach((ripple, index) => {
+                ripple.update();
+                ripple.draw();
+                if (ripple.opacity <= 0) ripples.splice(index, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+        window.addEventListener("mousemove", (e) => {
+            ripples.push(new Ripple(e.clientX, e.clientY, 1));
+        });
+        window.addEventListener("click", (e) => {
+            for(let i=0; i<5; i++) {
+                ripples.push(new Ripple(e.clientX, e.clientY, 10 * i));
+            }
+        });
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x498"}}]))}catch(e){}})()</script></body>
+</html>
