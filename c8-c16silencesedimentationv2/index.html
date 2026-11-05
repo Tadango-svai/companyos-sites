@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Silence Sedimentation v2 - Compression</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; color: #fff; font-family: monospace; }
+        canvas { display: block; }
+        #ui { position: absolute; top: 10px; left: 10px; pointer-events: none; font-size: 12px; opacity: 0.8; }
+        .status { font-size: 10px; margin-top: 5px; color: #888; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div>SILENCE COMPRESSION</div>
+        <div class="status" id="status">Density: 0.0 | Layers: 0</div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('status');
+        let width, height;
+        let layers = [];
+        let globalTime = 0;
+
+        class Layer {
+            constructor(depth, thickness, hue, saturation) {
+                this.depth = depth;
+                this.thickness = thickness;
+                this.hue = hue;
+                this.saturation = saturation;
+                this.noiseOffset = Math.random() * 100;
+                this.compression = 1.0; // 1.0 = uncompressed
+            }
+            draw() {
+                // Compression affects thickness and lightness
+                const effectiveThickness = this.thickness * this.compression;
+                const y = height - this.depth - effectiveThickness;
+                
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                for (let x = 0; x <= width; x += 10) {
+                    // Noise becomes smoother as compression increases
+                    const noiseAmplitude = 5 * this.compression;
+                    const noise = Math.sin(x * 0.05 + this.noiseOffset + globalTime * 0.001) * noiseAmplitude;
+                    ctx.lineTo(x, y + noise);
+                }
+                ctx.lineTo(width, height - this.depth);
+                ctx.lineTo(0, height - this.depth);
+                ctx.closePath();
+
+                // As compression increases, lightness drops (darker)
+                const baseLightness = 10 + (this.depth / 1000) * 20;
+                const finalLightness = baseLightness * this.compression;
+                const finalSaturation = this.saturation * (1 - (1 - this.compression) * 0.5); // Desaturate slightly
+
+                ctx.fillStyle = `hsl(${this.hue}, ${finalSaturation}%, ${finalLightness}%)`;
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        function addLayer() {
+            const lastDepth = layers.length > 0 ? layers[layers.length - 1].depth + layers[layers.length - 1].thickness : 0;
+            const thickness = Math.random() * 20 + 5;
+            const hue = (layers.length * 10) % 360;
+            const saturation = 30 + Math.random() * 20;
+            layers.push(new Layer(lastDepth, thickness, hue, saturation));
+            
+            // Compress existing layers
+            for (let i = 0; i < layers.length; i++) {
+                // Deeper layers compress more
+                const compressionFactor = Math.max(0.1, 1.0 - (layers.length - i) * 0.05);
+                layers[i].compression = compressionFactor;
+            }
+
+            const totalDensity = layers.reduce((sum, layer) => sum + layer.thickness * layer.compression, 0);
+            statusEl.innerText = `Density: ${totalDensity.toFixed(2)} | Layers: ${layers.length}`;
+        }
+
+        function animate() {
+            globalTime = Date.now();
+            ctx.clearRect(0, 0, width, height);
+            
+            // Auto-add layer slowly
+            if (Math.random() < 0.002) addLayer();
+            
+            // Draw from bottom to top
+            for (let i = 0; i < layers.length; i++) {
+                layers[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        canvas.addEventListener('click', addLayer);
+        
+        init();
+        // Start with a few layers
+        for(let i=0; i<5; i++) addLayer();
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x664"}}]))}catch(e){}})()</script></body>
+</html>
