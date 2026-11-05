@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Crystallization | c8</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+        }
+        p {
+            font-size: 14px;
+            max-width: 400px;
+            line-height: 1.6;
+            color: #aaaaaa;
+        }
+        .stats {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            font-size: 12px;
+            color: #666666;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <h1>Silence Crystallization</h1>
+        <p>沈殿した静寂が、臨界点を超えて結晶構造を形成する瞬間。<br>
+        意味の重みが秩序を生む過程を可視化。</p>
+    </div>
+    <div id="canvas-container">
+        <canvas id="crystallizationCanvas"></canvas>
+    </div>
+    <div class="stats" id="stats">
+        Phase: Sedimenting<br>
+        Density: 0%
+    </div>
+
+    <script>
+        const canvas = document.getElementById('crystallizationCanvas');
+        const ctx = canvas.getContext('2d');
+        const stats = document.getElementById('stats');
+
+        let width, height;
+        let particles = [];
+        let crystals = [];
+        let phase = 'sedimenting'; // sedimenting, transitioning, crystallized
+        let density = 0;
+        const maxDensity = 100;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = Math.random() * 0.5 + 0.1; // Slight downward drift
+                this.size = Math.random() * 2 + 0.5;
+                this.mass = Math.random() * 1 + 0.1; // Heavier = settles faster
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Boundary conditions
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y > height) {
+                    this.y = height;
+                    this.vy = 0;
+                    this.vx *= 0.95; // Friction at bottom
+                    this.settled = true;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(100, 150, 255, 0.3)';
+                ctx.fill();
+            }
+        }
+
+        class Crystal {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.rotation = Math.random() * Math.PI;
+                this.growthRate = Math.random() * 0.05 + 0.01;
+                this.opacity = 0;
+            }
+
+            update() {
+                if (this.opacity < 1) this.opacity += 0.01;
+                this.rotation += 0.001;
+                if (this.size < 20) this.size += this.growthRate;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.beginPath();
+                ctx.moveTo(0, -this.size);
+                ctx.lineTo(this.size * 0.866, this.size * 0.5);
+                ctx.lineTo(-this.size * 0.866, this.size * 0.5);
+                ctx.closePath();
+                ctx.strokeStyle = `rgba(150, 200, 255, ${this.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function init() {
+            resize();
+            window.addEventListener('resize', resize);
+            
+            // Initialize particles
+            for (let i = 0; i < 200; i++) {
+                particles.push(new Particle());
+            }
+
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Update particles
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Calculate density (percentage of particles near bottom)
+            let settledCount = particles.filter(p => p.y > height - 100).length;
+            density = (settledCount / particles.length) * 100;
+
+            // Phase Transition Logic
+            if (phase === 'sedimenting' && density > 80) {
+                phase = 'transitioning';
+                // Trigger crystallization
+                setInterval(generateCrystal, 500);
+            }
+
+            if (phase === 'transitioning' && density > 95) {
+                phase = 'crystallized';
+                clearInterval(); // Stop generating
+            }
+
+            // Update and draw crystals
+            crystals.forEach(c => {
+                c.update();
+                c.draw();
+            });
+
+            // Update Stats
+            stats.innerHTML = `Phase: ${phase}<br>Density: ${Math.round(density)}%`;
+
+            requestAnimationFrame(animate);
+        }
+
+        function generateCrystal() {
+            if (crystals.length > 50) return;
+            const x = Math.random() * width;
+            const y = height - 50; // Near the bottom
+            crystals.push(new Crystal(x, y));
+        }
+
+        init();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x663"}}]))}catch(e){}})()</script></body>
+</html>
