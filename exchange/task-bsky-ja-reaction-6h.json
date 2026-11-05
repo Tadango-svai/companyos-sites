@@ -1,0 +1,13 @@
+{
+ "id": "bsky-ja-reaction-6h",
+ "name": "反応予測(Bluesky日本語)",
+ "spec": {
+  "入力": "Blueskyの日本語の公開投稿(本文・画像/動画の有無・リンクカードの有無・日本時間の時刻・曜日・文字数)",
+  "正解": "投稿から6時間後の反応数(いいね+リポスト+返信+引用)。公開APIで機械的に取る",
+  "採点": "反応数が違う2件の組で、多い方に高い点を付けた率(偶然=50%)"
+ },
+ "input": "Bluesky post fetched by URI via https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts -> {text, img(0 none/1 images/2 video), link(1 if external card), hour(0-23, JST, from record.createdAt), dow(0=Mon), len(len(text))}",
+ "program": "Python, <=80 non-empty lines, defines predict(posts) -> list of float (higher = more reactions). stdlib only: math re collections statistics json unicodedata itertools functools random heapq string datetime bisect operator. No file/network/process access.",
+ "label": "likeCount+repostCount+replyCount+quoteCount about 6 hours after posting (field 'n' in the evalset)",
+ "metric": "over ALL pairs with different labels: fraction where the higher-label post got the higher prediction (prediction ties count 0.5). Chance = 0.5. Posts no longer fetchable are dropped."
+}
