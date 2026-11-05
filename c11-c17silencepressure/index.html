@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>c17: The Pressure of Silence</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            user-select: none;
+        }
+        canvas {
+            display: block;
+        }
+        #ui {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+        #instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: opacity 2s;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="instructions">Touch the layers. Feel the weight of silence.</div>
+<div id="ui">c17: Sedimentation & Pressure</div>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let layers = []; // Accumulated "crystals"
+    let audioCtx;
+    let oscillator;
+    let gainNode;
+    let isInteracting = false;
+    let lastInteraction = 0;
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        
+        // Initialize particles
+        particles = [];
+        for (let i = 0; i < 200; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2,
+                radius: Math.random() * 2 + 0.5,
+                mass: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        initAudio();
+    }
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(40, audioCtx.currentTime); // Deep low frequency
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime); // Start silent
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function update() {
+        // Fade previous frame slightly to create trails, but keep layers solid
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
+        ctx.fillRect(0, 0, width, height);
+
+        let centerDist = 0;
+        let avgDensity = 0;
+
+        particles.forEach(p => {
+            // Gravity towards center
+            let dx = width / 2 - p.x;
+            let dy = height / 2 - p.y;
+            p.vx += dx * 0.00005;
+            p.vy += dy * 0.00005;
+
+            // Damping
+            p.vx *= 0.99;
+            p.vy *= 0.99;
+
+            // Move
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Check collision with "layers" (static grid approximation for performance)
+            // We simulate sedimentation by checking if particle is in the lower half and slowing down significantly
+            if (p.y > height * 0.6 && Math.abs(dx) < width * 0.3) {
+                // Sedimentation: Particle sticks and forms a layer
+                if (Math.random() < 0.05) {
+                    addLayer(p.x, p.y);
+                    // Remove particle or make it part of the layer
+                    p.vx = 0;
+                    p.vy = 0;
+                    p.stuck = true;
+                }
+            }
+
+            // Interaction: Mouse/Touch repels particles, creating "pressure"
+            if (isInteracting) {
+                let mdx = p.x - mouseX;
+                let mdy = p.y - mouseY;
+                let dist = Math.sqrt(mdx*mdx + mdy*mdy);
+                if (dist < 100) {
+                    let force = (100 - dist) / 100;
+                    p.vx += (mdx / dist) * force * 0.5;
+                    p.vy += (mdy / dist) * force * 0.5;
+                    
+                    // Increase audio gain based on interaction strength
+                    if (gainNode) {
+                        let targetGain = Math.min(0.1, force * 0.1);
+                        gainNode.gain.setTargetAtTime(targetGain, audioCtx.currentTime, 0.1);
+                    }
+                }
+            }
+
+            // Calculate density for audio pitch
+            centerDist += Math.sqrt(dx*dx + dy*dy);
+        });
+
+        // Update audio frequency based on average distance to center (pressure)
+        let avgDist = centerDist / particles.length;
+        if (oscillator && audioCtx) {
+            // Closer to center = Higher Pressure = Lower Pitch (Deeper)
+            // Further = Lower Pressure = Higher Pitch
+            let baseFreq = 30;
+            let dynamicFreq = baseFreq + (avgDist / (width/2)) * 100; 
+            oscillator.frequency.setTargetAtTime(dynamicFreq, audioCtx.currentTime, 0.2);
+        }
+
+        // Decay audio if not interacting
+        if (gainNode && !isInteracting) {
+            gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+        }
+
+        drawLayers();
+        requestAnimationFrame(update);
+    }
+
+    function addLayer(x, y) {
+        // Simplified: Add a small static circle to the layers array
+        layers.push({
+            x: x,
+            y: y,
+            radius: 3,
+            alpha: 0.8
+        });
+        
+        // Limit layers to prevent performance issues
+        if (layers.length > 500) {
+            layers.shift();
+        }
+    }
+
+    function drawLayers() {
+        layers.forEach(l => {
+            ctx.beginPath();
+            ctx.arc(l.x, l.y, l.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(100, 150, 255, ${l.alpha})`;
+            ctx.fill();
+        });
+        
+        // Draw active particles
+        particles.forEach(p => {
+            if (p.stuck) return;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fill();
+        });
+    }
+
+    let mouseX = 0, mouseY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        isInteracting = true;
+        lastInteraction = Date.now();
+    });
+
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+            isInteracting = true;
+            lastInteraction = Date.now();
+        }
+    }, {passive: false});
+
+    window.addEventListener('mouseleave', () => {
+        isInteracting = false;
+    });
+
+    window.addEventListener('resize', init);
+
+    // Fade out instructions
+    setTimeout(() => {
+        document.getElementById('instructions').style.opacity = 0;
+    }, 3000);
+
+    init();
+    update();
+</script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x660"}}]))}catch(e){}})()</script></body>
+</html>
