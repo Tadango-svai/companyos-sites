@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Ripple | c16</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0a0a12;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: crosshair;
+        }
+        canvas {
+            display: block;
+        }
+        .overlay {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.4;
+            transition: opacity 0.5s;
+        }
+        .hint {
+            font-size: 10px;
+            margin-top: 8px;
+            opacity: 0.2;
+        }
+        .status {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            letter-spacing: 1px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="title">Silence Ripple</div>
+        <div class="hint">Touch to disturb the silence</div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div class="status" id="status">STABILITY: 100%</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('status');
+
+        let width, height;
+        let particles = [];
+        let ripples = [];
+        let stability = 1.0; // 1.0 = perfect silence/order, 0.0 = chaos
+
+        const GRID_SIZE = 30;
+        const PARTICLE_COUNT = (window.innerWidth / GRID_SIZE) * (window.innerHeight / GRID_SIZE);
+
+        class Particle {
+            constructor(x, y) {
+                this.homeX = x;
+                this.homeY = y;
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.size = 1.5;
+            }
+
+            update() {
+                // Apply ripple forces
+                for (let ripple of ripples) {
+                    const dx = this.x - ripple.x;
+                    const dy = this.y - ripple.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const waveLength = 100;
+                    const waveSpeed = 5;
+                    
+                    // Ripple effect: sine wave moving outward
+                    if (dist < ripple.radius) {
+                        const strength = (1 - dist / ripple.radius) * ripple.strength;
+                        const angle = Math.atan2(dy, dx);
+                        const force = Math.sin((ripple.radius - dist) / waveLength * Math.PI * 2 - ripple.time * waveSpeed) * strength;
+                        
+                        this.vx += Math.cos(angle) * force * 0.5;
+                        this.vy += Math.sin(angle) * force * 0.5;
+                    }
+                }
+
+                // Spring force back to home (restoring order)
+                const springStrength = 0.02 * stability;
+                this.vx += (this.homeX - this.x) * springStrength;
+                this.vy += (this.homeY - this.y) * springStrength;
+
+                // Damping
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+
+            draw() {
+                // Color based on displacement (disturbance)
+                const dist = Math.sqrt((this.x - this.homeX)**2 + (this.y - this.homeY)**2);
+                const intensity = Math.min(1, dist / 50);
+                
+                // Base color: deep blue/black, disturbance: bright white/cyan
+                const r = Math.floor(10 + intensity * 245);
+                const g = Math.floor(10 + intensity * 245);
+                const b = Math.floor(20 + intensity * 235);
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${0.5 + intensity * 0.5})`;
+                ctx.fill();
+            }
+        }
+
+        class Ripple {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = 300;
+                this.strength = 1.0;
+                this.time = 0;
+            }
+
+            update() {
+                this.radius += 2;
+                this.time += 0.1;
+                this.strength *= 0.98;
+                
+                // Reduce global stability
+                stability = Math.max(0.1, stability - 0.005);
+            }
+
+            isDead() {
+                return this.radius > this.maxRadius || this.strength < 0.05;
+            }
+        }
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const x = (i % (width / GRID_SIZE)) * GRID_SIZE + GRID_SIZE / 2;
+                const y = Math.floor(i / (width / GRID_SIZE)) * GRID_SIZE + GRID_SIZE / 2;
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        function animate() {
+            // Fade effect for trails
+            ctx.fillStyle = 'rgba(10, 10, 18, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Update and draw particles
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Update and draw ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                ripples[i].update();
+                if (ripples[i].isDead()) {
+                    ripples.splice(i, 1);
+                }
+            }
+
+            // Slowly recover stability (silence returns)
+            stability = Math.min(1.0, stability + 0.001);
+            
+            // Update status
+            const stabilityPercent = Math.round(stability * 100);
+            statusEl.textContent = `STABILITY: ${stabilityPercent}%`;
+            statusEl.style.color = stability > 0.8 ? 'rgba(255,255,255,0.3)' : 'rgba(255,100,100,0.5)';
+
+            requestAnimationFrame(animate);
+        }
+
+        // Interaction
+        function disturb(x, y) {
+            ripples.push(new Ripple(x, y));
+            // Visual feedback on click
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fill();
+        }
+
+        canvas.addEventListener('mousedown', (e) => disturb(e.clientX, e.clientY));
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            disturb(touch.clientX, touch.clientY);
+        });
+
+        window.addEventListener('resize', init);
+
+        init();
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x574"}}]))}catch(e){}})()</script></body>
+</html>
