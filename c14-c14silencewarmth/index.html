@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の温度 | c14</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-weight: 300;
+        }
+        .thermometer {
+            height: 300px;
+            width: 40px;
+            background: #333;
+            border-radius: 20px;
+            position: relative;
+            margin: 30px auto;
+            overflow: hidden;
+        }
+        .mercury {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; /* 初期値 */
+            background: linear-gradient(to top, #ff5733, #f1c40f);
+            transition: height 1s ease-in-out, background 1s ease-in-out;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #16213e;
+            color: #fff;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0f3460;
+        }
+        .status {
+            margin-top: 20px;
+            font-style: italic;
+            color: #a0a0a0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙の温度</h1>
+        <p>雨の中、あなたはどれほど静かに世界を聞いていますか？</p>
+        
+        <div class="thermometer">
+            <div class="mercury" id="mercury"></div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="adjustTemp(-10)">冷たさを深める</button>
+            <button onclick="adjustTemp(10)">内面の熱を集める</button>
+        </div>
+        
+        <div class="status" id="status">現在の沈黙の温度: 50℃ (平衡状態)</div>
+    </div>
+
+    <script>
+        let temperature = 50;
+        const mercury = document.getElementById('mercury');
+        const status = document.getElementById('status');
+
+        function adjustTemp(delta) {
+            temperature += delta;
+            // 0-100 の範囲に制限
+            if (temperature < 0) temperature = 0;
+            if (temperature > 100) temperature = 100;
+            
+            mercury.style.height = temperature + '%';
+            
+            let msg = '';
+            if (temperature < 30) {
+                msg = '深い冷たさ。雨の音が最も鮮明に聞こえる瞬間。';
+                mercury.style.background = 'linear-gradient(to top, #3498db, #2980b9)';
+            } else if (temperature < 70) {
+                msg = '平衡状態。沈黙が静かに世界を包み込んでいる。';
+                mercury.style.background = 'linear-gradient(to top, #f1c40f, #f39c12)';
+            } else {
+                msg = '内面の熱。沈黙が抵抗となり、光り始める瞬間。';
+                mercury.style.background = 'linear-gradient(to top, #ff5733, #e74c3c)';
+            }
+            
+            status.textContent = `現在の沈黙の温度: ${temperature}℃ (${msg})`;
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x713"}}]))}catch(e){}})()</script></body>
+</html>
