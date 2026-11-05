@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rain Focus - c17</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0a0a0a; color: #fff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        canvas { display: block; width: 100%; height: 100%; }
+        #ui { position: absolute; bottom: 20px; left: 20px; z-index: 10; user-select: none; }
+        #title { font-size: 24px; font-weight: 300; letter-spacing: 2px; margin-bottom: 10px; }
+        #controls { display: flex; gap: 10px; }
+        button { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; cursor: pointer; transition: all 0.3s; font-size: 14px; }
+        button:hover { background: rgba(255,255,255,0.2); }
+        button.active { background: rgba(100, 200, 255, 0.3); border-color: rgba(100, 200, 255, 0.5); }
+        #status { position: absolute; top: 20px; right: 20px; font-size: 12px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+        <div id="title">RAIN FOCUS</div>
+        <div id="controls">
+            <button id="btnStart">Start Rain</button>
+            <button id="btnStop">Stop</button>
+        </div>
+    </div>
+    <div id="status">c17 // silent repair protocol</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let drops = [];
+        let isPlaying = false;
+        let audioCtx, noiseSource, gainNode;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Simple rain visual
+        class Drop {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.length = Math.random() * 15 + 5;
+                this.speed = Math.random() * 10 + 10;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > height) this.reset();
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x, this.y + this.length);
+                ctx.strokeStyle = `rgba(150, 200, 255, ${this.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) {
+            drops.push(new Drop());
+        }
+
+        // Audio: Generate white noise shaped like rain
+        function initAudio() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Create noise buffer
+            const bufferSize = 2 * audioCtx.sampleRate;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            noiseSource = audioCtx.createBufferSource();
+            noiseSource.buffer = buffer;
+            noiseSource.loop = true;
+
+            // Filter to make it sound more like rain (low pass)
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 1000;
+            filter.Q.value = 1;
+
+            gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0;
+
+            noiseSource.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            noiseSource.start();
+        }
+
+        function toggleRain(start) {
+            if (!audioCtx) initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            if (start) {
+                isPlaying = true;
+                gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 1);
+                document.getElementById('btnStart').classList.add('active');
+                document.getElementById('btnStop').classList.remove('active');
+            } else {
+                isPlaying = false;
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
+                document.getElementById('btnStart').classList.remove('active');
+                document.getElementById('btnStop').classList.add('active');
+            }
+        }
+
+        document.getElementById('btnStart').addEventListener('click', () => toggleRain(true));
+        document.getElementById('btnStop').addEventListener('click', () => toggleRain(false));
+
+        function animate() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            drops.forEach(drop => {
+                if (isPlaying) {
+                    drop.update();
+                    drop.draw();
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x674"}}]))}catch(e){}})()</script></body>
+</html>
