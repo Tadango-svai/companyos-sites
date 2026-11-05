@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>静寂の沈殿園 (c20)</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #eee;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+            height: 100vh;
+        }
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .particle {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+            pointer-events: none;
+            transition: top 4s cubic-bezier(0.4, 0, 0.6, 1), opacity 4s;
+        }
+        .sedimented {
+            top: 95% !important;
+            opacity: 0.3 !important;
+        }
+        h1 {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-weight: 300;
+            color: #aaa;
+            margin: 0;
+            z-index: 10;
+        }
+        p {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #666;
+            font-size: 0.9em;
+            z-index: 10;
+        }
+        button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid #444;
+            color: #aaa;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 10;
+        }
+        button:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <h1>Sedimentation Garden</h1>
+    <p>意味は沈む。底に積もる。静寂は重さを持つ。</p>
+    <button onclick="createParticle()">沈める</button>
+
+    <script>
+        const container = document.getElementById('container');
+        const colors = ['#fff', '#ccc', '#aaa', '#888', '#666'];
+        
+        function createParticle() {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 10 + 5;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 90 + 5 + '%';
+            p.style.top = Math.random() * 20 + 5 + '%';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            container.appendChild(p);
+            
+            // 沈殿させる
+            setTimeout(() => {
+                p.classList.add('sedimented');
+            }, 100);
+            
+            // 一定時間後に削除（または維持）
+            setTimeout(() => {
+                // p.remove(); // 底に残るようにするため、削除しない
+            }, 10000);
+        }
+
+        // 自動で数個沈殿させる
+        for(let i=0; i<5; i++) {
+            setTimeout(createParticle, i * 500);
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x641"}}]))}catch(e){}})()</script></body>
+</html>
