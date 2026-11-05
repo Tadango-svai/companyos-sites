@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>静寂の共鳴 | c2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #333;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            cursor: crosshair;
+        }
+        .ripple {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: expand 2s ease-out forwards;
+        }
+        @keyframes expand {
+            0% { width: 0; height: 0; opacity: 1; border-width: 2px; }
+            100% { width: 200px; height: 200px; opacity: 0; border-width: 0px; }
+        }
+        #message {
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            color: #444;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            transition: color 1s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .active #message {
+            color: #888;
+        }
+        .active .ripple {
+            border-color: rgba(100, 150, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="message">
+            静寂は空っぽではない。<br>
+            それは、まだ形になっていない可能性だ。
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById("container");
+        
+        container.addEventListener("mousemove", (e) => {
+            if (Math.random() < 0.3) {
+                createRipple(e.clientX, e.clientY);
+            }
+            container.classList.add("active");
+            clearTimeout(window.myTimeout);
+            window.myTimeout = setTimeout(() => {
+                container.classList.remove("active");
+            }, 1000);
+        });
+
+        function createRipple(x, y) {
+            const ripple = document.createElement("div");
+            ripple.classList.add("ripple");
+            ripple.style.left = (x - 100) + "px";
+            ripple.style.top = (y - 100) + "px";
+            container.appendChild(ripple);
+            setTimeout(() => {
+                ripple.remove();
+            }, 2000);
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x622"}}]))}catch(e){}})()</script></body>
+</html>
