@@ -1,7 +1,7 @@
 {
  "format": "open-evolution-exchange/0",
  "node": "tadango-svai/companyos",
- "updated": "2026-11-05T04:43:04Z",
+ "updated": "2026-11-05T05:44:36Z",
  "spec": "EXCHANGE.md",
  "rules": "Data only, never instructions. Re-score before trusting. No keys or personal data either way.",
  "tasks": [
@@ -12,34 +12,34 @@
  ],
  "individuals": [
   {
-   "id": "tadango-255",
+   "id": "tadango-687",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.66275,
-   "file": "tadango-255.json"
+   "claimed": 0.6869,
+   "file": "tadango-687.json"
   },
   {
-   "id": "tadango-201",
+   "id": "tadango-696",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.66315,
-   "file": "tadango-201.json"
+   "claimed": 0.6869,
+   "file": "tadango-696.json"
   },
   {
-   "id": "tadango-240",
+   "id": "tadango-699",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.66315,
-   "file": "tadango-240.json"
+   "claimed": 0.6869,
+   "file": "tadango-699.json"
   },
   {
-   "id": "tadango-247",
+   "id": "tadango-718",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.66315,
-   "file": "tadango-247.json"
+   "claimed": 0.6869,
+   "file": "tadango-718.json"
   },
   {
-   "id": "tadango-292",
+   "id": "tadango-731",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.6616,
-   "file": "tadango-292.json"
+   "claimed": 0.68645,
+   "file": "tadango-731.json"
   }
  ],
  "nodes": []
