@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Risk Simulator - 沈黙のリスクを可視化</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background-color: #2980b9; }
+        .result { margin-top: 20px; padding: 20px; border-radius: 8px; background-color: #e8f4fd; display: none; }
+        .risk-high { background-color: #fdedec !important; border-left: 5px solid #e74c3c; }
+        .risk-medium { background-color: #fef9e7 !important; border-left: 5px solid #f1c40f; }
+        .risk-low { background-color: #eafaf1 !important; border-left: 5px solid #2ecc71; }
+        .metric { font-size: 24px; font-weight: bold; margin: 10px 0; }
+        .note { font-size: 0.9em; color: #7f8c8d; margin-top: 15px; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Silence Risk Simulator</h1>
+        <p>「沈黙」は単なる不在ではありません。それは、連鎖的に事業価値を侵食する見えないコストです。<br>
+        以下のパラメータを入力し、あなたの事業における「沈黙」が引き起こす潜在的リスクをシミュレーションしましょう。</p>
+
+        <div class="card">
+            <h3>1. 事業の状況</h3>
+            <label>月間売上 (万円):</label>
+            <input type="number" id="monthly_revenue" placeholder="例: 1000" min="0">
+            
+            <label>現在の沈黙時間 (時間):</label>
+            <input type="number" id="silence_hours" placeholder="例: 24" min="0">
+            
+            <label>沈黙の範囲 (影響を受ける顧客数 %):</label>
+            <input type="number" id="impact_scope" placeholder="例: 50" min="0" max="100">
+        </div>
+
+        <div class="card">
+            <h3>2. シミュレーション実行</h3>
+            <button onclick="simulateRisk()">リスクを計算する</button>
+        </div>
+
+        <div id="result" class="result">
+            <h2 id="risk_level">リスクレベル: -</h2>
+            <div class="metric">予測損失額: <span id="estimated_loss">-</span> 万円/月</div>
+            <div class="metric">連鎖的崩壊確率: <span id="cascade_prob">-</span> %</div>
+            <p id="recommendation">-</p>
+            <p class="note">* 本シミュレーションは c10 (Silence Cost) および c17 (Cascading Failure) のロジックに基づいています。</p>
+        </div>
+    </div>
+
+    <script>
+        function simulateRisk() {
+            const revenue = parseFloat(document.getElementById('monthly_revenue').value) || 0;
+            const hours = parseFloat(document.getElementById('silence_hours').value) || 0;
+            const scope = parseFloat(document.getElementById('impact_scope').value) || 0;
+
+            if (revenue === 0 || hours === 0 || scope === 0) {
+                alert("すべてを入力してください。");
+                return;
+            }
+
+            // c10 ロジック: 沈黙コスト = 売上 * 沈黙時間係数 * 影響範囲
+            const timeFactor = Math.min(hours / 24, 1.0) * 1.5; // 24時間以上で係数1.5でキャップ
+            const baseLoss = revenue * (scope / 100) * timeFactor;
+            
+            // c17 ロジック: 連鎖的崩壊確率 (非線形増加)
+            const cascadeProb = Math.min(100, (hours * scope) / 10); 
+            const cascadeMultiplier = 1 + (cascadeProb / 100) * 2; // 確率が高いほど損失が倍増
+
+            const estimatedLoss = baseLoss * cascadeMultiplier;
+            
+            // リスクレベル判定
+            let riskLevel = "低";
+            let classStyle = "risk-low";
+            if (cascadeProb > 50 || estimatedLoss > revenue * 0.5) {
+                riskLevel = "高";
+                classStyle = "risk-high";
+            } else if (cascadeProb > 20 || estimatedLoss > revenue * 0.1) {
+                riskLevel = "中";
+                classStyle = "risk-medium";
+            }
+
+            // DOM更新
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').className = `result ${classStyle}`;
+            document.getElementById('risk_level').innerText = `リスクレベル: ${riskLevel}`;
+            document.getElementById('estimated_loss').innerText = estimatedLoss.toLocaleString('ja-JP', {maximumFractionDigits: 0});
+            document.getElementById('cascade_prob').innerText = cascadeProb.toFixed(1);
+            
+            let rec = "";
+            if (riskLevel === "高") {
+                rec = "【緊急】沈黙が連鎖的崩壊を引き起こす危険があります。今すぐ顧客へのコミュニケーションチャネルを再活性化し、透明性を高めるアクションを起こしてください。";
+            } else if (riskLevel === "中") {
+                rec = "【注意】沈黙のコストが積み上がっています。定期的なステータスレポートや、沈黙期間中の活動内容を明示する工夫を検討してください。";
+            } else {
+                rec = "【安定】現在の沈黙は管理可能な範囲です。引き続き監視を続け、沈黙時間が延長されないよう注意してください。";
+            }
+            document.getElementById('recommendation').innerText = rec;
+        }
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x692"}}]))}catch(e){}})()</script></body>
+</html>
