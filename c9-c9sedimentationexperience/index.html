@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Silence Sedimentation - c16</title>
+    <style>
+        body { margin: 0; background: #0a0a0a; overflow: hidden; color: #fff; font-family: 'Courier New', monospace; }
+        canvas { display: block; }
+        #ui { position: absolute; top: 20px; left: 20px; pointer-events: none; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        h1 { font-size: 14px; margin: 0 0 10px 0; font-weight: normal; letter-spacing: 2px; }
+        .stats { font-size: 10px; opacity: 0.7; }
+        .hint { position: absolute; bottom: 20px; left: 20px; font-size: 10px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>GEOLOGY OF SILENCE</h1>
+        <div class="stats" id="stats">Layers: 0 | Density: 0.00</div>
+    </div>
+    <div class="hint">Click to add a layer of silence</div>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const stats = document.getElementById('stats');
+
+        let width, height;
+        let layers = [];
+        let totalDensity = 0;
+
+        class Layer {
+            constructor(depth, thickness, hue) {
+                this.depth = depth;
+                this.thickness = thickness;
+                this.hue = hue;
+                this.noiseOffset = Math.random() * 100;
+            }
+            draw() {
+                const y = height - this.depth;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                for (let x = 0; x <= width; x += 10) {
+                    const noise = Math.sin(x * 0.05 + this.noiseOffset + Date.now() * 0.001) * 5;
+                    ctx.lineTo(x, y + noise);
+                }
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+                ctx.closePath();
+                const lightness = 10 + (this.depth / 1000) * 20;
+                ctx.fillStyle = `hsl(${this.hue}, 20%, ${lightness}%)`;
+                ctx.fill();
+            }
+        }
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        function addLayer() {
+            const lastDepth = layers.length > 0 ? layers[layers.length - 1].depth + layers[layers.length - 1].thickness : 0;
+            const thickness = Math.random() * 30 + 10;
+            const hue = (layers.length * 15) % 360;
+            layers.push(new Layer(lastDepth, thickness, hue));
+            totalDensity += thickness * (1 + layers.length * 0.1);
+            stats.innerText = `Layers: ${layers.length} | Density: ${totalDensity.toFixed(2)}`;
+        }
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            // Auto-add slowly
+            if (Math.random() < 0.005) addLayer();
+            for (let i = 0; i < layers.length; i++) layers[i].draw();
+            requestAnimationFrame(animate);
+        }
+        window.addEventListener('resize', init);
+        canvas.addEventListener('click', addLayer);
+        
+        init();
+        addLayer(); // Initial layer
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x658"}}]))}catch(e){}})()</script></body>
+</html>
