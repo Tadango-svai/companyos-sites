@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の結晶 | Silence Crystal</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            cursor: crosshair;
+        }
+        #canvas {
+            display: block;
+        }
+        .overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+            transition: opacity 0.5s ease;
+        }
+        h1 {
+            font-weight: 200;
+            letter-spacing: 5px;
+            margin: 0;
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+        p {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            margin-top: 10px;
+        }
+        .status {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="intro">
+        <h1>SILENCE CRYSTAL</h1>
+        <p>指を離し、静止させてみて。<br>ノイズが、静寂の結晶になる瞬間。</p>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div class="status" id="status">SILENCE LEVEL: 0%</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouse = { x: -1000, y: -1000, stillness: 0 };
+        let lastMoveTime = Date.now();
+        let globalCrystalOrder = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 2 + 1;
+                this.hue = 200 + Math.random() * 40; // Blue range
+            }
+
+            update() {
+                // Noise movement
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Boundary check
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // If high stillness, particles slow down and align (simplified)
+                if (mouse.stillness > 0.5) {
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
+                }
+            }
+
+            draw() {
+                // Color: Blue (noise) -> White/Cyan (crystal)
+                const crystalness = mouse.stillness;
+                const brightness = 20 + crystalness * 80;
+                const sat = 50 - crystalness * 50;
+                
+                ctx.fillStyle = `hsl(${200 - crystalness * 20}, ${sat}%, ${brightness}%)`;
+
+                if (crystalness > 0.3) {
+                    // Draw as diamond/square for crystal look
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(Math.PI / 4);
+                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                    ctx.restore();
+                } else {
+                    // Draw as circle for noise look
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Initialize particles
+        const particleCount = Math.min(200, Math.floor((width * height) / 5000));
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        // Mouse tracking
+        function updateMousePos(x, y) {
+            const now = Date.now();
+            if (Math.abs(x - mouse.x) > 5 || Math.abs(y - mouse.y) > 5) {
+                lastMoveTime = now;
+            }
+            mouse.x = x;
+            mouse.y = y;
+        }
+
+        window.addEventListener('mousemove', (e) => updateMousePos(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        // Hide intro after first interaction
+        let introHidden = false;
+        function hideIntro() {
+            if (!introHidden) {
+                document.getElementById('intro').style.opacity = '0';
+                introHidden = true;
+            }
+        }
+        window.addEventListener('mousemove', hideIntro, { once: true });
+        window.addEventListener('touchmove', hideIntro, { once: true });
+
+        function animate() {
+            // Clear with fade
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Calculate stillness
+            const timeSinceMove = Date.now() - lastMoveTime;
+            let targetStillness = 0;
+            
+            if (timeSinceMove > 500) {
+                // Start increasing after 500ms of stillness
+                targetStillness = Math.min(1, (timeSinceMove - 500) / 2000);
+            }
+
+            // Smooth transition
+            mouse.stillness += (targetStillness - mouse.stillness) * 0.05;
+
+            // Update status text
+            document.getElementById('status').innerText = `SILENCE LEVEL: ${Math.round(mouse.stillness * 100)}%`;
+
+            // Update and draw
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x708"}}]))}catch(e){}})()</script></body>
+</html>
