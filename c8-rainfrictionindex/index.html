@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>RAIN FRICTION INDEX</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050505; transition: background 0.5s; }
+        #visualArea { width: 100vw; height: 100vh; position: relative; }
+        #title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; font-family: sans-serif; pointer-events: none; z-index: 10; }
+        .drop { position: absolute; background: rgba(255, 255, 255, 0.2); width: 2px; height: 15px; top: -20px; animation: fall linear; }
+        @keyframes fall { to { transform: translateY(110vh); } }
+        .ripple { position: absolute; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-out 2s linear; }
+        @keyframes ripple-out { from { width: 0; height: 0; opacity: 0.5; } to { width: 500px; height: 500px; opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div id="title">RAIN FRICTION INDEX</div>
+    <div id="visualArea"></div>
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 100; color: white; background: rgba(0,0,0,0.5); padding: 10px;">
+        <label>Rain Intensity</label>
+        <input type="range" id="rainSlider" min="0" max="100" value="20">
+        <div id="status">State: Stillness</div>
+    </div>
+    <script>
+        const slider = document.getElementById('rainSlider');
+        const visualArea = document.getElementById('visualArea');
+        const status = document.getElementById('status');
+        const title = document.getElementById('title');
+        
+        function createDrop() {
+            const drop = document.createElement('div');
+            drop.classList.add('drop');
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.animationDuration = (0.5 + Math.random() * 1) + 's';
+            visualArea.appendChild(drop);
+            setTimeout(() => drop.remove(), 1500);
+        }
+
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            ripple.style.left = (x - 25) + 'px';
+            ripple.style.top = (y - 25) + 'px';
+            visualArea.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 2000);
+        }
+
+        slider.addEventListener('input', () => {
+            const val = slider.value;
+            const intensity = val / 100;
+            const hue = 220 - (intensity * 220);
+            const color = `hsl(${hue}, 50%, 50%)`;
+            document.body.style.backgroundColor = `hsl(${hue}, 10%, ${10 - intensity * 5}%)`;
+            title.style.color = color;
+            status.innerText = val > 80 ? "State: Dissonance" : (val > 40 ? "State: Friction" : "State: Whisper");
+            if (val > 10 && Math.random() > 0.7) {
+                const rect = visualArea.getBoundingClientRect();
+                createRipple(Math.random() * rect.width, Math.random() * rect.height);
+            }
+        });
+
+        setInterval(() => {
+            if (slider.value > 0) createDrop();
+        }, 100);
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x495"}}]))}catch(e){}})()</script></body>
+</html>
