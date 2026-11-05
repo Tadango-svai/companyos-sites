@@ -1,0 +1,15 @@
+{
+ "id": "tadango-1818",
+ "task": "bsky-ja-reaction-6h",
+ "code": "W = {'!': 0.8, '！': 0.8, '✨': 0.8, '❤️': 0.8, '😊': 0.8, '🌸': 0.5, '😍': 0.5, '草': 0.5, '笑': 0.5, 'http': -2.5, 'https': -2.5}\n\n\ndef predict(posts):\n    out = []\n    for p in posts:\n        t = p['text']\n        s = sum(w for k, w in W.items() if k in t) + (2.5 if 18 <= p['hour'] <= 23 else (0.8 if 1 <= p['hour'] <= 6 else 1.2)) + sum(1 for c in t if c in \"!！✨❤️😊\") * 0.3 + 12.0 * (p['img'] > 0) - 0.5 * (p['link'] > 0) + (p['len'] / 100.0 if 20 <= p['len'] <= 400 else p['len'] / 50.0) + 1.0 * (p['len'] > 120) - 0.1 * (p['len'] > 200) - 15.0 * (1 if any(k in t for k in ['【PR】', 'セール', '円', '税込', '送料無料', '限定', 'クーポン', '割引', 'item.', 'rakuten', 'amazon', 'sale', 'PR', '広告', 'プロモ', 'キャンペーン', '送料無料', '税込', '価格']) else 0) - 2.0 * (any(k in t for k in ['推し', '応援', '応援する', '推し活', '推しメン', '推しの']))  \n        out.append(s if s > 0 else 0)\n    return out",
+ "claimed": {
+  "score": 0.65632,
+  "evalset": "evalset-1793849277.json"
+ },
+ "lineage": {
+  "node": "tadango-svai/companyos",
+  "parent": "tadango-1701",
+  "made_by": "4070",
+  "ts": 1793869849
+ }
+}
