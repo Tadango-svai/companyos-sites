@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の呼吸 | c2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 2s ease;
+        }
+
+        .noise-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 1;
+            transition: opacity 2s ease, filter 2s ease;
+        }
+
+        .noise-word {
+            color: #444;
+            font-size: 12px;
+            margin: 2px;
+            white-space: nowrap;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .center-stage {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 0.5em;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            color: #888;
+            transition: color 2s ease;
+        }
+
+        .breath-circle {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .breath-circle::after {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+
+        .instruction {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #555;
+            letter-spacing: 0.1em;
+        }
+
+        .state-active {
+            background-color: #1a1a2e;
+        }
+
+        .state-active .noise-container {
+            opacity: 0;
+            filter: blur(5px);
+        }
+
+        .state-active h1 {
+            color: #fff;
+        }
+
+        .state-active .breath-circle {
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="noise-container" id="noise"></div>
+    
+    <div class="center-stage">
+        <h1>沈黙の呼吸</h1>
+        <div class="breath-circle" id="breath"></div>
+        <div class="instruction">クリックして、騒音を吸い出す。</div>
+    </div>
+
+    <script>
+        const noiseContainer = document.getElementById('noise');
+        const breath = document.getElementById('breath');
+        const body = document.body;
+
+        // 騒音の単語リスト（情報のノイズ、SNSの叫び、ニュースの断片）
+        const noiseWords = [
+            "Breaking", "Urgent", "Like", "Share", "Follow", "Hate", "Love", 
+            "Stock", "Drop", "Rise", "News", "Opinion", "Fact", "Opinion", 
+            "Scroll", "Refresh", "Notify", "Alert", "Error", "Success", 
+            "Wait", "Ready", "Go", "Stop", "Start", "End", "Begin", "Finish",
+            "100", "0", "1", "True", "False", "Null", "Void", "Empty", "Full"
+        ];
+
+        // 騒音を生成
+        function generateNoise() {
+            noiseContainer.innerHTML = '';
+            for (let i = 0; i < 200; i++) {
+                const word = document.createElement('span');
+                word.className = 'noise-word';
+                word.textContent = noiseWords[Math.floor(Math.random() * noiseWords.length)];
+                word.style.position = 'absolute';
+                word.style.left = Math.random() * 100 + '%';
+                word.style.top = Math.random() * 100 + '%';
+                word.style.transform = `rotate(${Math.random() * 360}deg)`;
+                noiseContainer.appendChild(word);
+            }
+        }
+
+        generateNoise();
+
+        let isSilent = false;
+
+        breath.addEventListener('click', () => {
+            isSilent = !isSilent;
+            if (isSilent) {
+                body.classList.add('state-active');
+                document.querySelector('.instruction').textContent = "静寂の中で、自分と出会う。";
+            } else {
+                body.classList.remove('state-active');
+                document.querySelector('.instruction').textContent = "クリックして、騒音を吸い出す。";
+            }
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x634"}}]))}catch(e){}})()</script></body>
+</html>
