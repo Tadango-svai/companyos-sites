@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Meaning Thermodynamics Visualizer</title>
+    <style>
+        body { background: #050505; color: #eee; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        canvas { border: 1px solid #333; cursor: crosshair; }
+        .controls { position: absolute; bottom: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px; border: 1px solid #444; }
+        .label { margin-bottom: 5px; font-size: 0.8em; color: #888; }
+        input { width: 200px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="controls">
+        <div class="label">Meaning Complexity (Complexity)</div>
+        <input type="range" id="complexity" min="0.1" max="20" step="0.1" value="5">
+        <div class="label">World Sensitivity (Sensitivity)</div>
+        <input type="range" id="sensitivity" min="0.1" max="3" step="0.1" value="1.2">
+        <div id="stats" style="margin-top:10px; font-size: 0.9em; color: #0f0;"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const compInput = document.getElementById('complexity');
+        const sensInput = document.getElementById('sensitivity');
+        const statsDiv = document.getElementById('stats');
+
+        canvas.width = 600;
+        canvas.height = 400;
+
+        let particles = [];
+
+        class Particle {
+            constructor(x, y, heat, color) {
+                this.x = x; this.y = y;
+                this.radius = 2;
+                this.life = 1.0;
+                this.decay = 0.015;
+                this.heat = heat;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.life -= this.decay;
+                this.radius += 1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(${this.color}, ${this.life})`;
+                ctx.stroke();
+            }
+        }
+
+        function simulate() {
+            const complexity = parseFloat(compInput.value);
+            const sensitivity = parseFloat(sensInput.value);
+            
+            // Thermodynamic Math
+            const infoDensity = complexity; 
+            const entropy = Math.max(0.01, 1.0 - (infoDensity * 0.05));
+            const internalHeat = Math.abs(entropy - 1.0) * infoDensity;
+            const transmittedEnergy = internalHeat * Math.exp(-0.1);
+            const receivedHeat = transmittedEnergy * sensitivity;
+
+            // Visualization
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add particles based on heat
+            if (Math.random() < Math.min(internalHeat * 0.5, 1)) {
+                const r = Math.floor(Math.min(255, internalHeat * 30));
+                const g = Math.floor(Math.min(255, receivedHeat * 50));
+                const b = Math.floor(Math.min(255, entropy * 100));
+                particles.push(new Particle(canvas.width/2, canvas.height/2, internalHeat, `${r},${g},${b}`));
+            }
+
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+
+            statsDiv.innerHTML = `
+                Entropy: ${entropy.toFixed(4)}<br>
+                Internal Heat: ${internalHeat.toFixed(4)}<br>
+                Received Heat (Response): ${receivedHeat.toFixed(4)}<br>
+                Status: ${entropy <= 0.01 ? 'Absolute Silence' : 'Thermal Noise'}
+            `;
+
+            requestAnimationFrame(simulate);
+        }
+
+        simulate();
+    </script>
+</body>
+</html>
