@@ -1,1 +1,116 @@
-c17: 境界の消失と沈黙の共鳴 (Proof of Boundary Erosion)<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x621"}}]))}catch(e){}})()</script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈殿 - 構造的静寂の体験</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .noise-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 10px 10px;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            z-index: 1;
+        }
+        .silence-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, rgba(20, 20, 30, 1) 0%, rgba(20, 20, 30, 0) 100%);
+            transition: height 4s ease-in-out;
+            z-index: 2;
+        }
+        .text-container {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 2s ease-in-out 2s;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+        }
+        .text-container h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+        }
+        .text-container p {
+            font-size: 0.9rem;
+            color: #aaaaaa;
+            line-height: 1.6;
+        }
+        .hint {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.8rem;
+            color: #555;
+            animation: pulse 2s infinite;
+            z-index: 10;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        .active .noise-layer { opacity: 1; }
+        .active .silence-layer { height: 60%; }
+        .active .text-container { opacity: 1; }
+        .active .hint { opacity: 0; }
+    </style>
+</head>
+<body>
+    <div class="container" id="scene">
+        <div class="noise-layer"></div>
+        <div class="silence-layer"></div>
+        <div class="text-container">
+            <h1>構造的静寂</h1>
+            <p>ノイズは死ではなく、<br>新しい秩序への準備状態である。</p>
+        </div>
+        <div class="hint">時間をください。沈殿を見守ってください。</div>
+    </div>
+
+    <script>
+        // ページがロードされ、ユーザーが一定時間滞在（またはスクロール）した後に発火
+        // ここでは、簡易的にロード後 2秒で自動発火させる（体験の強制性ではなく、誘導）
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('scene').classList.add('active');
+            }, 2000);
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x640"}}]))}catch(e){}})()</script></body>
+</html>
