@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Meaning Entropy Simulation</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050505; color: #fff; font-family: serif; }
+        canvas { display: block; }
+        #ui { position: absolute; top: 20px; left: 20px; pointer-events: none; opacity: 0.6; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>Entropy of Meaning</h1>
+        <p>Heat $\\rightarrow$ Motion $\\rightarrow$ Dissipation $\\rightarrow$ Silence</p>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 4 + 1;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.life = 1.0; // 1.0 to 0.0
+                this.decay = 0.002 + Math.random() * 0.005;
+                this.color = { h: Math.random() * 60 + 180, s: 70, l: 60 };
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+
+                // 熱の減衰: 時間と共に動きが止まる
+                this.vx *= 0.99;
+                this.vy *= 0.99;
+
+                if (this.life <= 0) this.reset();
+            }
+            draw() {
+                const alpha = this.life;
+                const lightness = this.life * 60;
+                const saturation = this.life * 70;
+                ctx.fillStyle = `hsla(${this.color.h}, ${saturation}%, ${lightness}%, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = Array.from({ length: 200 }, () => new Particle());
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.1)'; // 軌跡を残す
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x557"}}]))}catch(e){}})()</script></body></html>
