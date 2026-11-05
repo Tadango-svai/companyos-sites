@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の共振：ノイズ・トランスデューサー</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+        }
+        .visualizer {
+            height: 200px;
+            background: #111;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .noise-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,0,0,0.3), transparent);
+            animation: moveWave 2s infinite linear;
+            opacity: 0.5;
+        }
+        @keyframes moveWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric-box {
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .metric-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .status.calm { background-color: rgba(0, 128, 0, 0.2); color: #4CAF50; }
+        .status.warning { background-color: rgba(255, 165, 0, 0.2); color: #FFC107; }
+        .status.critical { background-color: rgba(255, 0, 0, 0.2); color: #F44336; }
+        .description {
+            font-size: 0.9rem;
+            color: #999;
+            line-height: 1.6;
+            margin-top: 20px;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>沈黙の共振：ノイズ・トランスデューサー</h1>
+        <p class="description">
+            情報の欠落（沈黙）が、周囲のノイズ（不安・トレンド）と衝突した際に、如何にして「意味の歪み」や「信頼の崩壊」を生むかをシミュレートします。<br>
+            スライダーを動かし、静寂が如何にして騒音へと変質していくかを感じてください。
+        </p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="silence">情報の欠落度（沈黙）: <span id="silenceVal">50%</span></label>
+                <input type="range" id="silence" min="0" max="100" value="50">
+            </div>
+            <div class="control-group">
+                <label for="noise">世界の騒がしさ（ノイズ）: <span id="noiseVal">50%</span></label>
+                <input type="range" id="noise" min="0" max="100" value="50">
+            </div>
+        </div>
+
+        <div class="visualizer">
+            <div class="noise-wave" id="wave"></div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-box">
+                <div class="metric-value" id="frictionVal">0.0</div>
+                <div class="metric-label">摩擦係数 (Friction)</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value" id="meaningVal">0.0</div>
+                <div class="metric-label">意味の強度 (Meaning)</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value" id="eventVal">-</div>
+                <div class="metric-label">社会的イベント</div>
+            </div>
+        </div>
+
+        <div class="status calm" id="statusBar">
+            安定した状態
+        </div>
+    </div>
+
+    <script>
+        // c5_noise_transducer.py のロジックをJavaScriptに移植
+        const anxiety = 0.8;
+        const frictionBase = 0.5;
+
+        function calculateTransduction(silencePct, noisePct) {
+            // 0-100を0.0-1.0に正規化
+            const infoDensity = 1.0 - (silencePct / 100); // 沈黙が深いほどinfoDensityは低い
+            const noiseLevel = noisePct / 100;
+            const void = 1.0 - infoDensity; // 欠落
+
+            // 摩擦係数: 情報が欠落しているほど、反発は大きい
+            const friction = frictionBase / (infoDensity + 0.1);
+            
+            // 意味の生成: (欠落の二乗) * (不安) * (ノイズ) * (摩擦)
+            const meaningIntensity = Math.min(10.0, (void ** 2) * anxiety * noiseLevel * friction);
+            
+            const isSocialEvent = meaningIntensity > 1.5;
+
+            return {
+                friction: friction,
+                meaning: meaningIntensity,
+                isSocialEvent: isSocialEvent
+            };
+        }
+
+        const silenceInput = document.getElementById('silence');
+        const noiseInput = document.getElementById('noise');
+        const silenceVal = document.getElementById('silenceVal');
+        const noiseVal = document.getElementById('noiseVal');
+        const frictionVal = document.getElementById('frictionVal');
+        const meaningVal = document.getElementById('meaningVal');
+        const eventVal = document.getElementById('eventVal');
+        const statusBar = document.getElementById('statusBar');
+        const wave = document.getElementById('wave');
+
+        function updateSimulation() {
+            const s = parseInt(silenceInput.value);
+            const n = parseInt(noiseInput.value);
+            
+            silenceVal.textContent = s + '%';
+            noiseVal.textContent = n + '%';
+
+            const result = calculateTransduction(s, n);
+
+            frictionVal.textContent = result.friction.toFixed(2);
+            meaningVal.textContent = result.meaning.toFixed(2);
+            eventVal.textContent = result.isSocialEvent ? '発生' : 'なし';
+
+            // 視覚的なフィードバック
+            // 摩擦が大きいほど、波の速度と不透明度が増す
+            const speed = Math.max(0.5, 3.0 - result.friction * 0.5); // 摩擦大 = 速く動揺
+            wave.style.animationDuration = speed + 's';
+            wave.style.opacity = Math.min(1, result.meaning / 5);
+
+            // ステータス表示
+            if (result.meaning > 3.0) {
+                statusBar.className = 'status critical';
+                statusBar.textContent = '信頼崩壊の危機：沈黙が暴力的なノイズを生んでいる';
+            } else if (result.meaning > 1.5) {
+                statusBar.className = 'status warning';
+                statusBar.textContent = '摩擦上昇中：情報の欠落が不安を増幅している';
+            } else {
+                statusBar.className = 'status calm';
+                statusBar.textContent = '安定した状態：システムはノイズを吸収している';
+            }
+        }
+
+        silenceInput.addEventListener('input', updateSimulation);
+        noiseInput.addEventListener('input', updateSimulation);
+        
+        // 初期表示
+        updateSimulation();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x610"}}]))}catch(e){}})()</script></body>
+</html>
