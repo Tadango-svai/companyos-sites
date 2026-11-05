@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の胃袋</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+        #stage {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #silence-ball {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease-out;
+            z-index: 10;
+        }
+        .noise-particle {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            pointer-events: none;
+            transition: all 0.5s ease-in;
+        }
+        #instructions {
+            position: absolute;
+            bottom: 40px;
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+            opacity: 0.8;
+        }
+        #status {
+            position: absolute;
+            top: 40px;
+            font-size: 0.8em;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div id="stage">
+        <div id="silence-ball"></div>
+        <div id="instructions">キーボードで打てば、沈黙がそれを食べる。<br>打たなければ、ノイズが戻る。</div>
+        <div id="status">沈黙は空腹だ...</div>
+    </div>
+
+    <script>
+        const stage = document.getElementById('stage');
+        const ball = document.getElementById('silence-ball');
+        const status = document.getElementById('status');
+        
+        let ballSize = 50;
+        let noiseInterval = null;
+        let particles = [];
+
+        // Create random noise particles around the center
+        function createNoise() {
+            const p = document.createElement('div');
+            p.className = 'noise-particle';
+            p.textContent = Math.random() > 0.5 ? '■' : '□'; // Or random chars
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 150 + Math.random() * 100;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+            
+            p.style.transform = `translate(${x}px, ${y}px)`;
+            p.style.opacity = '0.5';
+            
+            stage.appendChild(p);
+            particles.push(p);
+            
+            // Remove old particles if too many
+            if (particles.length > 50) {
+                const old = particles.shift();
+                if (old.parentNode) old.parentNode.removeChild(old);
+            }
+        }
+
+        // Start noise generation
+        noiseInterval = setInterval(createNoise, 500);
+
+        // Handle keydown: "Silence eats"
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') return; // Ignore escape
+            
+            // 1. Grow ball slightly
+            ballSize += 2;
+            if (ballSize > 200) ballSize = 200; // Cap size
+            ball.style.width = ballSize + 'px';
+            ball.style.height = ballSize + 'px';
+
+            // 2. Attract nearest particle to center and remove it
+            if (particles.length > 0) {
+                // Simplest: just remove one random particle and animate it to center
+                const target = particles.pop();
+                if (target) {
+                    target.style.transform = `translate(0px, 0px)`;
+                    target.style.opacity = '0';
+                    setTimeout(() => {
+                        if (target.parentNode) target.parentNode.removeChild(target);
+                    }, 500);
+                }
+            }
+
+            // 3. Update status
+            const hunger = Math.max(0, 100 - (ballSize - 50));
+            status.textContent = `沈黙は ${{0:'空腹', 50:'少し満たされた', 100:'満腹'}[hunger < 20 ? '0' : hunger < 80 ? '50' : '100']}だ...`;
+        });
+
+        // Decay: If no input, noise grows and ball shrinks slowly
+        setInterval(() => {
+            if (ballSize > 50) {
+                ballSize -= 1;
+                ball.style.width = ballSize + 'px';
+                ball.style.height = ballSize + 'px';
+            }
+        }, 1000);
+
+    </script>
+</body>
+</html>
