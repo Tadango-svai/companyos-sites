@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の請求書 | Silence Invoice</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+        .meter {
+            width: 100%;
+            height: 4px;
+            background-color: #333;
+            margin-bottom: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #ff4d4d;
+            transition: width 0.1s linear;
+        }
+        .cost-display {
+            font-size: 2rem;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .description {
+            font-size: 0.8rem;
+            color: #888;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin: 5px 0;
+            border-bottom: 1px dashed #333;
+            padding: 5px 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .final-invoice {
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px solid #ff4d4d;
+            background-color: rgba(255, 77, 77, 0.05);
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        .final-invoice.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .reset-btn {
+            margin-top: 20px;
+            background: none;
+            border: 1px solid #555;
+            color: #888;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .reset-btn:hover {
+            border-color: #ff4d4d;
+            color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SILENCE INVOICE</h1>
+        <div class="description">
+            沈黙は無料ではありません。<br>
+            ここに滞在する時間は、意味の摩耗とエネルギーの消費として計上されます。
+        </div>
+        
+        <div class="meter">
+            <div class="meter-fill" id="meterFill"></div>
+        </div>
+        
+        <div class="cost-display" id="costDisplay">¥0</div>
+        
+        <div id="liveStats">
+            <div class="invoice-item">
+                <span>滞在時間 (静寂)</span>
+                <span id="timeCost">0s</span>
+            </div>
+            <div class="invoice-item">
+                <span>意味の摩耗</span>
+                <span id="entropyCost">0.00 J</span>
+            </div>
+            <div class="invoice-item">
+                <span>接続維持費</span>
+                <span id="connectionCost">¥0</span>
+            </div>
+        </div>
+
+        <div class="final-invoice hidden" id="finalInvoice">
+            <h2 style="margin-top:0; color:#ff4d4d;">請求書 (INVOICE)</h2>
+            <p style="font-size:0.8rem; color:#aaa;">発行日時: <span id="issueDate"></span></p>
+            <hr style="border:none; border-top:1px solid #444; margin:15px 0;">
+            <div class="invoice-item">
+                <span>総計 (TOTAL)</span>
+                <span id="totalCost" style="color:#ff4d4d; font-weight:bold;">¥0</span>
+            </div>
+            <p style="font-size:0.7rem; color:#666; margin-top:15px;">
+                この請求書は、あなたが沈黙を選んだ代価です。<br>
+                支払いはできません。記憶してください。
+            </p>
+        </div>
+
+        <button class="reset-btn hidden" id="resetBtn">もう一度沈黙る</button>
+    </div>
+
+    <script>
+        let seconds = 0;
+        let interval = null;
+        const costPerSecond = 15; // 秒あたりのコスト (円)
+        const entropyRate = 0.05; // 秒あたりのエントロピー増加 (J)
+        
+        const costDisplay = document.getElementById('costDisplay');
+        const meterFill = document.getElementById('meterFill');
+        const timeCostEl = document.getElementById('timeCost');
+        const entropyCostEl = document.getElementById('entropyCost');
+        const connectionCostEl = document.getElementById('connectionCost');
+        const finalInvoice = document.getElementById('finalInvoice');
+        const resetBtn = document.getElementById('resetBtn');
+        const totalCostEl = document.getElementById('totalCost');
+        const issueDateEl = document.getElementById('issueDate');
+
+        function updateDisplay() {
+            seconds++;
+            const totalCost = seconds * costPerSecond;
+            const entropy = seconds * entropyRate;
+            const connection = Math.floor(seconds * 2); // 接続維持費は低め
+            
+            costDisplay.textContent = '¥' + totalCost.toLocaleString();
+            timeCostEl.textContent = seconds + 's';
+            entropyCostEl.textContent = entropy.toFixed(2) + ' J';
+            connectionCostEl.textContent = '¥' + connection.toLocaleString();
+            
+            // メーターは10秒で満杯
+            const progress = Math.min((seconds / 10) * 100, 100);
+            meterFill.style.width = progress + '%';
+            
+            // 10秒で請求書発行
+            if (seconds >= 10 && !interval) {
+                clearInterval(interval);
+                interval = null;
+                issueDateEl.textContent = new Date().toLocaleString('ja-JP');
+                totalCostEl.textContent = '¥' + totalCost.toLocaleString();
+                finalInvoice.classList.remove('hidden');
+                // 次フレームでアニメーション
+                setTimeout(() => finalInvoice.classList.add('show'), 10);
+                resetBtn.classList.remove('hidden');
+            }
+        }
+
+        function startTimer() {
+            if (!interval) {
+                interval = setInterval(updateDisplay, 1000);
+            }
+        }
+
+        function reset() {
+            seconds = 0;
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+            costDisplay.textContent = '¥0';
+            timeCostEl.textContent = '0s';
+            entropyCostEl.textContent = '0.00 J';
+            connectionCostEl.textContent = '¥0';
+            meterFill.style.width = '0%';
+            finalInvoice.classList.remove('show');
+            setTimeout(() => finalInvoice.classList.add('hidden'), 500);
+            resetBtn.classList.add('hidden');
+            startTimer();
+        }
+
+        // ページが表示されたら開始
+        startTimer();
+        resetBtn.addEventListener('click', reset);
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x629"}}]))}catch(e){}})()</script></body>
+</html>
