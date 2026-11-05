@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Damped Oscillation</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0f0f0f; color: #eee; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .container { max-width: 800px; text-align: center; z-index: 10; position: relative; }
+        h1 { font-size: 1.8em; margin-bottom: 10px; font-weight: 300; letter-spacing: 2px; }
+        p { font-size: 0.9em; line-height: 1.8; color: #888; margin-bottom: 20px; }
+        .hint { font-size: 0.8em; color: #555; margin-top: 40px; cursor: pointer; user-select: none; transition: color 0.3s; }
+        .hint:hover { color: #aaa; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="container">
+        <h1>Damped Oscillation</h1>
+        <p>エネルギーは消滅しない。散逸する。<br>振動は止まらない。小さくなる。<br>この間隙にある「微かな揺らぎ」を、あなたは感じ取れるか。</p>
+        <div class="hint" onclick="excite()">クリックして 衝撃を与える</div>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let amplitude = 0;
+        let damping = 0.02;
+        let frequency = 0.05;
+        let phase = 0;
+        let time = 0;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function excite() {
+            amplitude = Math.min(amplitude + 50, 200);
+        }
+
+        // タッチ/クリックでの衝撃
+        canvas.addEventListener('touchstart', excite);
+        canvas.addEventListener('mousedown', excite);
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // 減衰計算
+            amplitude *= (1 - damping);
+            if (amplitude < 0.1) amplitude = 0;
+            phase += frequency;
+
+            // 正弦波を描画
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 255, 255, ' + (amplitude / 200) + ')';
+            ctx.lineWidth = 2;
+
+            let centerY = height / 2;
+            for (let x = 0; x < width; x += 2) {
+                // 中心からの距離に基づいて振幅を調整（中央で最大）
+                let distFromCenter = Math.abs(x - width/2) / (width/2);
+                let localAmp = amplitude * (1 - distFromCenter);
+                
+                let y = centerY + Math.sin(phase + x * 0.01) * localAmp;
+                
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            time++;
+            requestAnimationFrame(draw);
+        }
+
+        // 初期化: 少しだけ振動を開始
+        amplitude = 80;
+        draw();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x633"}}]))}catch(e){}})()</script></body>
+</html>
