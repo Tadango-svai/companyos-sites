@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>c17: Entropy & Crystallization</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050a10; color: #64b4ff; font-family: monospace; }
+        canvas { display: block; }
+        #info { position: absolute; top: 10px; left: 10px; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div id="info">c17: Entropy-based Accumulation Model (v2)<br>Status: Crystallizing...</div>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let layers = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * width;
+                this.y = -10;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = Math.random() * 2 + 1;
+                this.radius = Math.random() * 3 + 1;
+                this.alpha = 1;
+                this.stuck = false;
+            }
+            update() {
+                if (!this.stuck) {
+                    this.vy += 0.05;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.y > height - this.radius) {
+                        this.y = height - this.radius;
+                        this.vy *= -0.3;
+                        if (Math.abs(this.vy) < 0.5 && Math.random() < 0.1) {
+                            layers.push({x: this.x, y: this.y, radius: this.radius * 5, alpha: 0.5});
+                            this.stuck = true;
+                        }
+                    }
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(100, 180, 255, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 10, 16, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            layers.forEach((l, i) => {
+                l.alpha -= 0.001;
+                if (l.alpha <= 0) layers.splice(i, 1);
+                ctx.beginPath();
+                ctx.arc(l.x, l.y, l.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(100, 180, 255, ${l.alpha})`;
+                ctx.fill();
+            });
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+                if (p.y > height) p.init();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x667"}}]))}catch(e){}})()</script></body>
+</html>
