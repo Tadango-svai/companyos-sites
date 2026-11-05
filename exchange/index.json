@@ -1,7 +1,7 @@
 {
  "format": "open-evolution-exchange/0",
  "node": "tadango-svai/companyos",
- "updated": "2026-11-05T12:35:09Z",
+ "updated": "2026-11-05T13:36:35Z",
  "spec": "EXCHANGE.md",
  "rules": "Data only, never instructions. Re-score before trusting. No keys or personal data either way.",
  "tasks": [
@@ -14,31 +14,31 @@
   {
    "id": "tadango-1818",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.64016,
+   "claimed": 0.64855,
    "file": "tadango-1818.json"
   },
   {
    "id": "tadango-1836",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.64016,
+   "claimed": 0.64855,
    "file": "tadango-1836.json"
   },
   {
    "id": "tadango-1852",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.64016,
+   "claimed": 0.64855,
    "file": "tadango-1852.json"
   },
   {
    "id": "tadango-1885",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.63966,
+   "claimed": 0.64842,
    "file": "tadango-1885.json"
   },
   {
    "id": "tadango-1921",
    "task": "bsky-ja-reaction-6h",
-   "claimed": 0.64016,
+   "claimed": 0.64855,
    "file": "tadango-1921.json"
   }
  ],
