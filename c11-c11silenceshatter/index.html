@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の破砕 - c11</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+        }
+        #canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        .ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .status {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-bottom: 5px;
+        }
+        .title {
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        .hint {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.4;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .shattered .hint {
+            opacity: 0;
+        }
+        .shattered .title {
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui-layer">
+        <div class="status">STATE: SILENCE</div>
+        <div class="title">SILENCE SHATTER</div>
+    </div>
+    <div class="hint">クリックして沈黙を破砕する</div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let isShattered = false;
+        let cracks = [];
+        let time = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.size = Math.random() * 3 + 1;
+                this.color = `hsl(${Math.random() * 60 + 300}, 100%, 60%)`; // 赤〜ピンク系
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw() {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class Crack {
+            constructor(x, y) {
+                this.points = [{x, y}];
+                this.angle = Math.random() * Math.PI * 2;
+                this.length = Math.random() * 100 + 50;
+                this.speed = 5;
+                this.finished = false;
+            }
+            update() {
+                if (!this.finished) {
+                    const last = this.points[this.points.length - 1];
+                    const dx = Math.cos(this.angle) * this.speed;
+                    const dy = Math.sin(this.angle) * this.speed;
+                    this.points.push({x: last.x + dx, y: last.y + dy});
+                    // 角度のゆらぎ
+                    this.angle += (Math.random() - 0.5) * 0.5;
+                    if (this.points.length * this.speed > this.length) {
+                        this.finished = true;
+                    }
+                }
+            }
+            draw() {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(this.points[0].x, this.points[0].y);
+                for (let i = 1; i < this.points.length; i++) {
+                    ctx.lineTo(this.points[i].x, this.points[i].y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function shatter(x, y) {
+            if (isShattered) return;
+            isShattered = true;
+            document.body.classList.add('shattered');
+            
+            // 亀裂生成
+            for (let i = 0; i < 10; i++) {
+                cracks.push(new Crack(x, y));
+            }
+            
+            // 粒子爆発
+            for (let i = 0; i < 200; i++) {
+                particles.push(new Particle(x, y));
+            }
+            
+            // ステータス更新
+            document.querySelector('.status').textContent = 'STATE: NOISE / SHATTERED';
+        }
+
+        canvas.addEventListener('click', (e) => {
+            shatter(e.clientX, e.clientY);
+        });
+
+        function animate() {
+            // 背景のフェード（残像効果）
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            // 亀裂の更新と描画
+            cracks.forEach(crack => {
+                crack.update();
+                crack.draw();
+            });
+
+            // 粒子の更新と描画
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw();
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // 沈黙状態（未破砕）の場合、微かなノイズを描画
+            if (!isShattered) {
+                ctx.globalAlpha = 0.05;
+                for (let i = 0; i < 5; i++) {
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(Math.random() * width, Math.random() * height, 2, 2);
+                }
+                ctx.globalAlpha = 1.0;
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x653"}}]))}catch(e){}})()</script></body>
+</html>
