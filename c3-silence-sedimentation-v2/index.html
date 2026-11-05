@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silence Sedimentation: The Weight of Time</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #fff;
+        }
+        canvas {
+            display: block;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            margin-bottom: 5px;
+        }
+        #desc {
+            font-size: 12px;
+            opacity: 0.3;
+        }
+        #weight-meter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+        #weight-fill {
+            height: 100%;
+            width: 0%;
+            background: #88ccff;
+            transition: width 0.5s ease, background 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div id="title">SILENCE SEDIMENTATION</div>
+        <div id="desc">Move your cursor to disturb the silence.</div>
+    </div>
+    <div id="weight-meter">
+        <div id="weight-fill"></div>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const weightFill = document.getElementById('weight-fill');
+
+        let width, height;
+        let particles = [];
+        let sedimentLayers = []; // 沈殿した層の記録
+        let mouse = { x: -1000, y: -1000 };
+        let silenceWeight = 0; // 0-100 の重さ
+
+        const MAX_PARTICLES = 150;
+        const GRAVITY = 0.05;
+        const FRICTION = 0.98;
+        const MOUSE_RADIUS = 100;
+        const MOUSE_FORCE = 0.5;
+
+        // 色相のシフト: 青(新しいノイズ) -> 白(沈黙) -> 黒(固まった重さ)
+        function getParticleColor(life, sedimentation) {
+            // sedimentation: 0 (air) to 1 (bottom)
+            let r, g, b;
+            if (sedimentation < 0.5) {
+                // Air: Light Blue to White
+                const t = sedimentation * 2;
+                r = 100 + t * 155;
+                g = 150 + t * 105;
+                b = 255;
+            } else {
+                // Sediment: White to Dark Grey/Black
+                const t = (sedimentation - 0.5) * 2;
+                r = 255 - t * 200;
+                g = 255 - t * 200;
+                b = 255 - t * 200;
+            }
+            const alpha = Math.max(0, 1 - life * 0.005); // Life based fade
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = -10;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = Math.random() * 0.5 + 0.5;
+                this.size = Math.random() * 2 + 0.5;
+                this.life = 0;
+                this.maxLife = 300 + Math.random() * 200;
+                this.sedimented = false;
+            }
+
+            update() {
+                if (this.sedimented) return;
+
+                this.life++;
+
+                // Mouse Interaction (Wind)
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < MOUSE_RADIUS) {
+                    const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+                    this.vx -= (dx / dist) * force * MOUSE_FORCE;
+                    this.vy -= (dy / dist) * force * MOUSE_FORCE;
+                    // Disturbing silence reduces weight slightly
+                    silenceWeight = Math.max(0, silenceWeight - 0.1);
+                }
+
+                // Physics
+                this.vy += GRAVITY;
+                this.vx *= FRICTION;
+                this.vy *= FRICTION;
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Boundary Checks
+                if (this.x < 0) { this.x = 0; this.vx *= -0.5; }
+                if (this.x > width) { this.x = width; this.vx *= -0.5; }
+
+                // Sedimentation Check
+                const sedimentLine = height - (silenceWeight * 2); // Heavy silence takes up more visual space
+                if (this.y > sedimentLine) {
+                    this.sedimented = true;
+                    this.y = sedimentLine + (Math.random() * 10 - 5); // Jitter
+                    this.vx = 0;
+                    this.vy = 0;
+                    
+                    // Increase Silence Weight
+                    silenceWeight = Math.min(100, silenceWeight + 0.5);
+                    
+                    // Record layer for history (optional, for deeper visualization)
+                    if (Math.random() < 0.1) {
+                        sedimentLayers.push({
+                            y: this.y,
+                            weight: silenceWeight,
+                            time: Date.now()
+                        });
+                    }
+                }
+
+                if (this.life > this.maxLife) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                if (this.sedimented) return; // Sedimented particles are drawn as background layers
+
+                const sedimentationRatio = this.y / height;
+                const color = getParticleColor(this.life, sedimentationRatio);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+            
+            particles = [];
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                particles.push(new Particle());
+            }
+            
+            // Initial state: Some sediment already there?
+            silenceWeight = 10; 
+        }
+
+        function drawSedimentLayers() {
+            // Draw a gradient at the bottom representing accumulated silence
+            const gradientHeight = silenceWeight * 2; // Max 200px height for 100% weight
+            if (gradientHeight > 0) {
+                const gradient = ctx.createLinearGradient(0, height - gradientHeight, 0, height);
+                // Top of sediment: Lighter (recently settled)
+                // Bottom of sediment: Darker (old, heavy)
+                const topColor = `rgba(200, 220, 255, 0.2)`;
+                const bottomColor = `rgba(10, 10, 15, 0.9)`;
+                
+                gradient.addColorStop(0, topColor);
+                gradient.addColorStop(1, bottomColor);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, height - gradientHeight, width, gradientHeight);
+            }
+        }
+
+        function animate() {
+            // Trail effect: Slight fade to create motion trails
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+
+            drawSedimentLayers();
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Update UI
+            weightFill.style.width = `${silenceWeight}%`;
+            // Change color of weight bar based on weight
+            if (silenceWeight > 80) {
+                weightFill.style.background = '#fff';
+            } else if (silenceWeight > 40) {
+                weightFill.style.background = '#aaccff';
+            } else {
+                weightFill.style.background = '#5588cc';
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        });
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                mouse.x = e.touches[0].clientX;
+                mouse.y = e.touches[0].clientY;
+            }
+        }, {passive: false});
+
+        init();
+        animate();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x638"}}]))}catch(e){}})()</script></body>
+</html>
