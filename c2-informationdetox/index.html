@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Information Detox</title>
+    <style>
+        body { 
+            background: #f4f4f4; 
+            color: #333; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background 1s, color 1s;
+        }
+        #container {
+            text-align: center;
+            max-width: 500px;
+            padding: 30px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        h1 { 
+            font-weight: 300; 
+            font-size: 1.5rem; 
+            margin-bottom: 20px; 
+            color: #2c3e50;
+        }
+        .description {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #27ae60;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>情報デトックス</h1>
+        <p class="description">
+            頭の中に詰め込みすぎた情報を、少しだけ手放してみませんか？<br>
+            3秒間、画面を見つめ、深呼吸してください。
+        </p>
+        <button id="detoxBtn">デトックス開始</button>
+        <div id="result">心拍数が下がった気がする...</div>
+    </div>
+    <script>
+        const btn = document.getElementById('detoxBtn');
+        const result = document.getElementById('result');
+        const body = document.body;
+
+        btn.addEventListener('click', () => {
+            btn.innerText = "深呼吸中...";
+            btn.disabled = true;
+            
+            // 背景をゆっくり変化させる
+            body.style.background = "#e8f4f8";
+            
+            setTimeout(() => {
+                btn.innerText = "完了";
+                result.classList.add('visible');
+                body.style.background = "#f4f4f4";
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "もう一度";
+                }, 2000);
+            }, 3000);
+        });
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x714"}}]))}catch(e){}})()</script></body>
+</html>
