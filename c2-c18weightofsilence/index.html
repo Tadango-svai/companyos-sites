@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈黙の重さ - C2</title>
+    <style>
+        :root {
+            --silence-density: 0; /* 0.0 to 1.0 */
+            --bg-color: hsl(0, 0%, calc(95% - (var(--silence-density) * 85)%));
+            --text-color: hsl(0, 0%, calc(10% + (var(--silence-density) * 80)%));
+            --glow-intensity: calc(100% - (var(--silence-density) * 90)%);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-weight: 100;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.5;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid currentColor;
+            color: inherit;
+            padding: 10px 30px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .action-btn:hover {
+            background: currentColor;
+            color: var(--bg-color);
+        }
+
+        .share-box {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid currentColor;
+            font-family: monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .share-box:hover {
+            opacity: 1;
+        }
+
+        .cracks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .crack-line {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 1;
+        }
+
+        .flash {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        @keyframes ripple {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 100vw; height: 100vh; opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="flash" id="flash"></div>
+    <svg class="cracks" id="cracks"></svg>
+
+    <div class="container">
+        <h1>沈黙の重さ</h1>
+        <p class="subtitle">
+            沈黙は空っぽではない。それは、時間と空間が積み重なって生じる「圧力」である。<br>
+            ここにいる限り、沈黙は深まる。
+        </p>
+
+        <div class="metrics">
+            <div class="metric">
+                <span class="metric-value" id="densityVal">0.00</span>
+                <span class="metric-label">沈黙の密度</span>
+            </div>
+            <div class="metric">
+                <span class="metric-value" id="breaksVal">0</span>
+                <span class="metric-label">沈黙の破裂</span>
+            </div>
+            <div class="metric">
+                <span class="metric-value" id="timeVal">0s</span>
+                <span class="metric-label">滞在時間</span>
+            </div>
+        </div>
+
+        <button class="action-btn" id="breakBtn">沈黙を破る</button>
+
+        <div class="share-box" id="shareBox" title="クリックでコピー"></div>
+        <p style="margin-top:20px; font-size:0.7rem; opacity:0.5;">キーボードを押す、またはボタンを押すと、沈黙は少し軽くなる。しかし、その痕跡は残る。</p>
+    </div>
+
+    <script>
+        let density = 0.0;
+        let breaks = 0;
+        let startTime = Date.now();
+        let cracks = [];
+
+        const densityEl = document.getElementById('densityVal');
+        const breaksEl = document.getElementById('breaksVal');
+        const timeEl = document.getElementById('timeVal');
+        const flashEl = document.getElementById('flash');
+        const cracksSvg = document.getElementById('cracks');
+        const shareBox = document.getElementById('shareBox');
+        const breakBtn = document.getElementById('breakBtn');
+
+        function updateVisuals() {
+            // 密度を 0.0 - 1.0 の範囲で表示
+            const displayDensity = density.toFixed(2);
+            densityEl.textContent = displayDensity;
+            breaksEl.textContent = breaks;
+
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeEl.textContent = elapsed + 's';
+
+            // 背景色を更新 (CSS変数)
+            document.documentElement.style.setProperty('--silence-density', density);
+        }
+
+        function createCrack() {
+            // 単純なランダムな線分を追加
+            const x1 = Math.random() * window.innerWidth;
+            const y1 = Math.random() * window.innerHeight;
+            const length = Math.random() * 100 + 50;
+            const angle = Math.random() * Math.PI * 2;
+            const x2 = x1 + Math.cos(angle) * length;
+            const y2 = y1 + Math.sin(angle) * length;
+
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", x1);
+            line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2);
+            line.setAttribute("y2", y2);
+            line.classList.add("crack-line");
+            // 時間経過とともに消えるように
+            line.style.opacity = 0.5;
+            setTimeout(() => {
+                line.style.transition = "opacity 2s";
+                line.style.opacity = 0;
+                setTimeout(() => line.remove(), 2000);
+            }, 1000);
+
+            cracksSvg.appendChild(line);
+        }
+
+        function triggerBreak() {
+            breaks++;
+            
+            // 密度を少し下げる (沈黙の軽量化)
+            density = Math.max(0, density - 0.05);
+            
+            // 視覚的フィードバック
+            createCrack();
+            
+            // フラッシュエフェクト
+            flashEl.style.animation = 'none';
+            void flashEl.offsetWidth; // reflow
+            flashEl.style.animation = 'ripple 0.8s ease-out';
+        }
+
+        // イベントリスナー
+        breakBtn.addEventListener('click', triggerBreak);
+        
+        window.addEventListener('keydown', (e) => {
+            // スペースキー以外でも反応させるが、スクロール防止
+            if (e.code !== 'Space') {
+                triggerBreak();
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target !== breakBtn && !shareBox.contains(e.target)) {
+                // ボタン以外クリックでも反応（ただしシェアボックス除外）
+                // ボタンクリック時の二重トリガー防止のため、ターゲットチェック
+                 if (e.target.tagName !== 'BUTTON' && !e.target.closest('.share-box')) {
+                     triggerBreak();
+                 }
+            }
+        });
+
+        // シェアボックスの生成
+        shareBox.addEventListener('click', () => {
+            const text = `【沈黙の記録】\n滞在: ${Math.floor((Date.now() - startTime)/1000)}秒\n密度: ${density.toFixed(2)}\n破裂: ${breaks}回\n\n沈黙は、触れるほど重くなる。`;
+            navigator.clipboard.writeText(text).then(() => {
+                const origText = shareBox.textContent;
+                shareBox.textContent = "コピーしました";
+                setTimeout(() => {
+                    shareBox.textContent = origText;
+                }, 2000);
+            });
+        });
+
+        // メインループ
+        function loop() {
+            // 時間経過で密度が増加 (1秒で 0.01 増、最大 1.0)
+            if (density < 1.0) {
+                density += 0.001; 
+                if (density > 1.0) density = 1.0;
+            }
+            
+            updateVisuals();
+
+            // 10秒ごとにシェアボックスの内容を更新（プレビュー）
+            if (Math.floor((Date.now() - startTime) / 1000) % 10 === 0) {
+                 const text = `【沈黙の記録】\n滞在: ${Math.floor((Date.now() - startTime)/1000)}秒\n密度: ${density.toFixed(2)}\n破裂: ${breaks}回`;
+                 if(shareBox.textContent !== "コピーしました") {
+                     shareBox.textContent = text;
+                     shareBox.style.display = 'block';
+                 }
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        // 初期化
+        updateVisuals();
+        loop();
+    </script>
+<script>(function(){try{var v=localStorage.v=localStorage.v||Math.random().toString(36).slice(2);navigator.sendBeacon("https://tadangforai.tail5734ce.ts.net:8443",JSON.stringify([{e:"pageview",p:location.pathname,r:document.referrer,s:v,x:{x:"x583"}}]))}catch(e){}})()</script></body>
+</html>
