@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>胚(はい) — 育ちつづける図</title>
+<meta name="description" content="言葉を持たない小さな部品が、つながりを変えながら育つ「胚」。いまの姿をそのまま映しています。">
+<style>
+:root{--bg:#07080d;--card:#11141d;--line:#232838;--ink:#e8eaf0;--mut:#8b91a3;--pink:#ff9ecb;--grn:#3ddc97;--red:#ff5d5d;--gold:#f5b73b;--blue:#5fd0ff;--vio:#a9b4ff}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP",sans-serif}
+header{display:flex;align-items:center;gap:18px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px}.logo b{font-size:26px;color:#ffd3e6;letter-spacing:2px}.logo span{color:var(--mut);font-size:13px}
+.state{padding:5px 12px;border-radius:99px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;animation:pu 1.6s infinite}@keyframes pu{50%{opacity:.35}}
+.stats{display:flex;gap:22px;margin-left:auto;flex-wrap:wrap}.st{min-width:70px}.st small{display:block;color:var(--mut);font-size:11px}.st b{font-size:20px;font-variant-numeric:tabular-nums}
+main{display:grid;grid-template-columns:1fr 400px;gap:14px;padding:14px 20px;height:calc(100vh - 82px);min-height:560px}
+#gwrap{position:relative;background:radial-gradient(ellipse at center,#121628,#07080d 75%);border:1px solid var(--line);border-radius:16px;overflow:hidden;min-height:360px}
+#g{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.legend{position:absolute;left:14px;bottom:10px;display:flex;gap:14px;font-size:11px;color:var(--mut);flex-wrap:wrap;pointer-events:none}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.hint{position:absolute;right:14px;bottom:10px;font-size:11px;color:#5d6377;pointer-events:none}
+#slp{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(8,12,42,.55);color:#c7cdff;pointer-events:none}
+#slp b{font-size:30px}#slp span{font-size:14px;margin-top:8px;color:#aab2e6;text-align:center;padding:0 20px}
+aside{overflow:auto;display:flex;flex-direction:column;gap:12px;padding-right:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+details.card>summary{list-style:none;cursor:pointer;font-weight:700;font-size:13px;color:#cfd3df;display:flex;justify-content:space-between}
+details.card>summary::-webkit-details-marker{display:none}details.card>summary::after{content:"▾";color:var(--mut)}details.card:not([open])>summary::after{content:"▸"}
+h3{margin:0 0 8px;font-size:13px;color:#cfd3df}
+.bar{height:8px;border-radius:4px;background:#232838;overflow:hidden}.bar>b{display:block;height:100%;border-radius:4px;transition:width .6s}
+.row{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin:4px 0}
+.four{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.four div{font-size:12px}.four small{color:var(--mut)}
+.mach{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.mach:first-of-type{border:0}
+.ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;font-size:16px}
+.mach .tx{flex:1;min-width:0}.mach .nm{display:flex;justify-content:space-between;align-items:center}.mach .nm b{font-size:14px}
+.chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px}
+.mach .role{font-size:11px;color:var(--mut);margin-top:2px}.mach .det{font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtr{display:flex;gap:8px;margin-top:6px}.mtr>div{flex:1;min-width:0;font-size:10px;color:var(--mut)}.mtr span{float:right;color:#d6d9e3}
+.mtr i{display:block;height:4px;border-radius:2px;background:#2a2f3e;margin-top:2px;overflow:hidden}.mtr i b{display:block;height:100%;border-radius:2px;transition:width .6s}
+.now{font-size:13px;margin-top:2px;word-break:break-all}.now a{color:var(--blue);text-decoration:none}
+.trail{font-size:12px;max-height:260px;overflow:auto}.trail div{padding:5px 0;border-top:1px solid var(--line);display:flex;gap:8px}.trail div:first-child{border:0}
+.trail .h{color:#cfd3df;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}.trail .t{color:#5d6377;flex:none;font-variant-numeric:tabular-nums}
+.new{color:var(--grn);font-size:10px;font-weight:700;flex:none}
+.about{font-size:12px;color:var(--mut);line-height:1.7}
+.stale{display:none;background:#3a1620;color:#ffb3c0;padding:6px 20px;font-size:12px}
+@media (max-width:900px){.hint{display:none}main{grid-template-columns:1fr;height:auto}#gwrap{height:62vh}.stats{gap:14px;margin-left:0}header{padding:12px 16px}main{padding:12px 16px}}
+</style></head><body>
+<div class="stale" id="stale">胚の本体からの便りが途切れています(最後の便りから時間が経っています)</div>
+<header>
+ <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#ff9ecb" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7a5 5 0 1 0 5 5"/><circle cx="12" cy="12" r="1.6" fill="#ff9ecb"/></svg><div><b>胚</b><span> はい ・ 育ちつづける図</span></div></div>
+ <div class="state" id="state">…</div>
+ <div class="stats" id="stats"></div>
+</header>
+<main>
+ <div id="gwrap"><canvas id="g"></canvas>
+  <div id="slp"><b>☾ 眠っている</b><span id="slpt"></span></div>
+  <div class="legend"><span><i style="background:#4678e6"></i>静か</span><span><i style="background:#ff8cc8"></i>驚き</span><span><i style="background:#ffd76e"></i>強い驚き</span><span><i style="background:#7fd1b9;border-radius:2px"></i>感覚</span><span><i style="background:#c58bff;border-radius:1px;transform:rotate(45deg)"></i>「私」</span><span><i style="background:none;border:2px solid #f5b73b"></i>いま意識に上っている</span></div>
+  <div class="hint">ホイール/ピンチで拡大・ドラッグで移動・ダブルクリックで全体</div>
+ </div>
+ <aside>
+  <div class="card"><h3>元気と眠り</h3><div class="row"><span>元気</span><span id="atx">-</span></div><div class="bar"><b id="abar" style="width:0;background:var(--grn)"></b></div>
+   <div class="row" style="margin-top:8px"><span>眠った回数</span><span id="nsl">-</span></div><div class="row"><span>前の眠り</span><span id="lsl">-</span></div><div id="aspark"></div><div id="aeta"></div></div>
+  <div class="card"><h3>4つの数(気持ちのようなもの)</h3><div class="four" id="four"></div></div>
+  <details class="card" open><summary>体 ― どの機械が何をしているか</summary><div id="body" style="margin-top:6px"></div></details>
+  <div class="card"><h3>いま見ているページ</h3><div class="now" id="now">-</div></div>
+  <details class="card" open><summary>歩いた道(新しい順)</summary><div class="trail" id="trail" style="margin-top:6px"></div></details>
+  <details class="card"><summary>胚とは</summary><div class="about" style="margin-top:8px">言葉も意味も持たない小さな部品が、つながりを強めたり、切ったり、新しく結んだりしながら、全体として育っていく仕組みです。課題もごほうびも命令もありません。予想が外れた「驚き」に引かれて、公開されたウェブを自分で歩きます。疲れると眠り、その日見たものを思い出して整理します。このページは胚のいまの姿をそのまま映しています(読むだけで、胚に何かを送ることはできません)。</div></details>
+ </aside>
+</main>
+<script>
+var D=null,pos={},tgt={},flash={},sc=1,ox=0,oy=0,user=false,T0=Date.now();
+var cv=document.getElementById('g'),X=cv.getContext('2d');
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmt(n){return n==null?'-':Number(n).toLocaleString('ja-JP')}
+function heat(e,a){var s=Math.max(0,Math.min(1,(e||0)/1.4)),r,g,b;if(s<.5){var k=s/.5;r=70+185*k;g=120+20*k;b=230-30*k}else{k=(s-.5)/.5;r=255;g=140+75*k;b=200-90*k}return'rgba('+(r|0)+','+(g|0)+','+(b|0)+','+a+')'}
+function host(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch(e){return u||''}}
+function ago(s){s=Math.max(0,s|0);return s<60?s+'秒':s<3600?Math.floor(s/60)+'分':Math.floor(s/3600)+'時間'+Math.floor(s%3600/60)+'分'}
+function resize(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;X.setTransform(d,0,0,d,0,0);if(!user)fit()}
+window.addEventListener('resize',resize);
+function bounds(){var xs=[],ys=[];for(var k in tgt){xs.push(tgt[k][0]);ys.push(tgt[k][1])}if(!xs.length)return[-1,-1,1,1];xs.sort(function(a,b){return a-b});ys.sort(function(a,b){return a-b});
+ var q=function(a,p){return a[Math.floor(p*(a.length-1))]};return[q(xs,.01),q(ys,.01),q(xs,.99),q(ys,.99)]}
+function fit(){var b=bounds(),w=cv.clientWidth,h=cv.clientHeight,m=40;sc=Math.min((w-2*m)/Math.max(1e-3,b[2]-b[0]),(h-2*m)/Math.max(1e-3,b[3]-b[1]));ox=w/2-(b[0]+b[2])/2*sc;oy=h/2-(b[1]+b[3])/2*sc}
+cv.addEventListener('wheel',function(e){e.preventDefault();var f=e.deltaY<0?1.15:1/1.15,r=cv.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top;ox=px-(px-ox)*f;oy=py-(py-oy)*f;sc*=f;user=true},{passive:false});
+var drag=null,pts={},pd=0;
+cv.addEventListener('pointerdown',function(e){pts[e.pointerId]=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId);drag=[e.clientX,e.clientY];var k=Object.keys(pts);if(k.length==2){pd=Math.hypot(pts[k[0]][0]-pts[k[1]][0],pts[k[0]][1]-pts[k[1]][1])}});
+cv.addEventListener('pointermove',function(e){if(!pts[e.pointerId])return;pts[e.pointerId]=[e.clientX,e.clientY];var k=Object.keys(pts);
+ if(k.length==2){var d=Math.hypot(pts[k[0]][0]-pts[k[1]][0],pts[k[0]][1]-pts[k[1]][1]);if(pd){var f=d/pd,r=cv.getBoundingClientRect(),cx=(pts[k[0]][0]+pts[k[1]][0])/2-r.left,cy=(pts[k[0]][1]+pts[k[1]][1])/2-r.top;ox=cx-(cx-ox)*f;oy=cy-(cy-oy)*f;sc*=f;user=true}pd=d;return}
+ if(drag){ox+=e.clientX-drag[0];oy+=e.clientY-drag[1];drag=[e.clientX,e.clientY];user=true}});
+function up(e){delete pts[e.pointerId];drag=null;pd=0}cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+cv.addEventListener('dblclick',function(){user=false;fit()});
+function draw(){var w=cv.clientWidth,h=cv.clientHeight,t=(Date.now()-T0)/1000;X.clearRect(0,0,w,h);
+ for(var k in tgt){var p=pos[k]||tgt[k];pos[k]=[p[0]+(tgt[k][0]-p[0])*.15,p[1]+(tgt[k][1]-p[1])*.15]}
+ for(k in flash){flash[k]*=.9;if(flash[k]<.05)delete flash[k]}
+ if(D){var W=new Set(D.W||[]);X.lineWidth=.8;
+  (D.edges||[]).forEach(function(e){var a=pos[e[0]],b=pos[e[1]];if(!a||!b)return;var ww=e[2]/1000,al=Math.min(.9,.06+.5*Math.min(1,Math.abs(ww)));X.strokeStyle=ww>=0?'rgba(95,208,255,'+al+')':'rgba(255,107,139,'+al+')';X.beginPath();X.moveTo(a[0]*sc+ox,a[1]*sc+oy);X.lineTo(b[0]*sc+ox,b[1]*sc+oy);X.stroke()});
+  (D.cols||[]).forEach(function(c){var p=pos[c[0]];if(!p)return;var x=p[0]*sc+ox,y=p[1]*sc+oy;if(x<-20||y<-20||x>w+20||y>h+20)return;var rad=2.2+Math.min(3.5,c[4]*40)+(c[6]>=1?.8:0),fl=flash[c[0]]||0;
+   if(fl>.05){var g=X.createRadialGradient(x,y,0,x,y,rad*5);g.addColorStop(0,'rgba(255,243,196,'+.55*fl+')');g.addColorStop(1,'rgba(255,243,196,0)');X.fillStyle=g;X.beginPath();X.arc(x,y,rad*5,0,6.283);X.fill()}
+   if(c[6]==3){X.fillStyle='#c58bff';var r=rad+1.5;X.beginPath();X.moveTo(x,y-r);X.lineTo(x+r,y);X.lineTo(x,y+r);X.lineTo(x-r,y);X.closePath();X.fill();return}
+   X.fillStyle=c[6]==0?heat(c[3],1):(c[6]==1?'#7fd1b9':'#b4f0a0');if(c[6]>=1)X.fillRect(x-rad,y-rad,2*rad,2*rad);else{X.beginPath();X.arc(x,y,rad,0,6.283);X.fill()}
+   if(W.has(c[0])){X.strokeStyle='rgba(245,183,59,'+(.6+.4*Math.sin(t*5))+')';X.lineWidth=1.8;X.beginPath();X.arc(x,y,rad+4,0,6.283);X.stroke();X.lineWidth=.8}})}
+ requestAnimationFrame(draw)}
+function meter(mt){if(!mt)return'<div class="role">実測が届いていない</div>';var gb=function(x){return(x/1024).toFixed(1)+'G'},it=[['CPU',mt.cpu,mt.cpu>=0?Math.round(mt.cpu)+'%':'-'],['GPU',mt.gpu,mt.gpu>=0?Math.round(mt.gpu)+'%':'-']];
+ if(mt.vram_total)it.push(['VRAM',100*mt.vram/mt.vram_total,gb(mt.vram)]);if(mt.ram_total)it.push(['メモリ',100*mt.ram/mt.ram_total,gb(mt.ram)]);
+ return'<div class="mtr">'+it.map(function(a){var v=Math.min(100,a[1]),c=v<60?'#3ddc97':(v<85?'#ffb84d':'#ff5d5d');return'<div>'+a[0]+'<span>'+a[2]+'</span><i>'+(a[1]>=0?'<b style="width:'+Math.max(3,v)+'%;background:'+c+'"></b>':'')+'</i></div>'}).join('')+'</div>'}
+function aSpark(ser,w,h){if(!ser||ser.length<2)return'';var t0=ser[0][0],t1=ser[ser.length-1][0],dx=Math.max(1,t1-t0),pts=ser.map(function(x){return[(x[0]-t0)/dx*w,h-x[1]*h,x[2]]});
+ var bands='',i=0;while(i<pts.length){if(pts[i][2]){var j=i;while(j<pts.length&&pts[j][2])j++;bands+='<rect x="'+pts[i][0].toFixed(1)+'" y="0" width="'+Math.max(1,(pts[Math.min(j,pts.length-1)][0]-pts[i][0])).toFixed(1)+'" height="'+h+'" fill="rgba(169,180,255,.25)"/>';i=j}else i++}
+ var d=pts.map(function(p,k){return(k?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join('');
+ return'<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" preserveAspectRatio="none" style="display:block;margin-top:6px">'+bands+'<line x1="0" x2="'+w+'" y1="'+(h-.3*h)+'" y2="'+(h-.3*h)+'" stroke="#5a6078" stroke-dasharray="3 3"/><line x1="0" x2="'+w+'" y1="'+(h-.9*h)+'" y2="'+(h-.9*h)+'" stroke="#5a6078" stroke-dasharray="3 3"/><path d="'+d+'" fill="none" stroke="#3ddc97" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg><div style="color:var(--mut);font-size:11px;display:flex;justify-content:space-between;gap:6px"><span>'+new Date(t0*1000).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+'</span><span>点線 0.3で眠り・0.9で起床/青は眠り</span><span>いま</span></div>'}
+function aEta(bs){if(bs.sleep)return'';if(bs.next_sleep_min!=null)return'<div style="font-size:12px;margin-top:4px">次の眠りまで 約'+bs.next_sleep_min+'分(今の増減 '+(bs.A_rate_min>0?'+':'')+Number(bs.A_rate_min).toFixed(4)+'/分)</div>';if(bs.A_rate_min!=null)return'<div style="color:var(--mut)" style="font-size:12px;margin-top:4px">今の増減 '+(bs.A_rate_min>0?'+':'')+Number(bs.A_rate_min).toFixed(4)+'/分(減っていないので眠りの見込みは立たない)</div>';return''}
+function render(d){D=d;var now=Date.now()/1000,alive=d.ts&&now-d.ts<(MODE=='live'?10:1500),sl=d.sleep||{};
+ var sb=document.getElementById('stale');sb.style.display=(alive&&MODE=='live')?'none':'block';
+ sb.style.background=alive?'#1d2236':'#3a1620';sb.style.color=alive?'#aab2e6':'#ffb3c0';
+ sb.textContent=alive?('約'+Math.max(1,Math.round((now-d.ts)/60))+'分前の様子です(10分ごとに更新。生の様子につながると2秒ごとに動きます)'):'胚の本体からの便りが途切れています';
+ var st=document.getElementById('state');if(!alive){st.style.background='rgba(255,93,93,.15)';st.style.color='#ff9aa8';st.innerHTML='<i class="dot" style="background:#ff5d5d"></i>便りを待っている'}
+ else if(sl.state){st.style.background='rgba(169,180,255,.15)';st.style.color='#c7cdff';st.innerHTML='<i class="dot" style="background:#a9b4ff"></i>眠っている('+esc(sl.state)+')'}
+ else{st.style.background='rgba(61,220,151,.13)';st.style.color='#7ff0c0';st.innerHTML='<i class="dot" style="background:#3ddc97"></i>起きている・1秒に20回'}
+ var S=[['部品',fmt(d.N)],['つながり',fmt(d.E)],['発火率',d.fire!=null?(d.fire*100).toFixed(1)+'%':'-'],['驚き(平均)',d.e_mean!=null?Number(d.e_mean).toFixed(3):'-'],['訪れたページ',fmt(d.visits)],['たどり着いたサイト',fmt(d.domains)]];
+ document.getElementById('stats').innerHTML=S.map(function(s){return'<div class="st"><small>'+s[0]+'</small><b>'+s[1]+'</b></div>'}).join('');
+ var tg={};(d.cols||[]).forEach(function(c){tg[c[0]]=[c[1],c[2]];if(c[5])flash[c[0]]=1});for(var k in pos)if(!tg[k])delete pos[k];tgt=tg;if(!user)fit();
+ document.getElementById('slp').style.display=sl.state?'flex':'none';document.getElementById('slpt').textContent=sl.state=='徐波'?'その日見たものを速く思い出して、つながりを固めている':'遠い部品どうしを試しにつなぎ、予測が良くなれば「ひらめき」として残す';
+ var A=sl.A;document.getElementById('atx').textContent=A!=null?Math.round(A*100)+'%':'-';var ab=document.getElementById('abar');ab.style.width=(A!=null?Math.max(2,A*100):0)+'%';ab.style.background=A==null?'#555':(A<.3?'#a9b4ff':A<.5?'#ffb84d':'#3ddc97');
+ document.getElementById('aspark').innerHTML=aSpark(sl.A_series,300,48);document.getElementById('aeta').innerHTML=aEta({sleep:sl.state,next_sleep_min:sl.next_sleep_min,A_rate_min:sl.A_rate_min});var ss=sl.sleeps||[];document.getElementById('nsl').textContent=ss.length+'回';document.getElementById('lsl').textContent=ss.length?(ago(now-ss[ss.length-1].start)+'前・'+ago(ss[ss.length-1].dur||0)+'眠った'):'-';
+ var f=d.four||{},M=[['DA','驚き','ドーパミン','#ffb84d'],['NA','探検','ノルアドレナリン','#ff6b8b'],['5HT','待てる','セロトニン','#5fd0ff'],['ACh','集中','アセチルコリン','#3ddc97']];
+ document.getElementById('four').innerHTML=M.map(function(m){var v=f[m[0]];return'<div><div class="row" style="margin:0 0 3px"><span style="color:'+m[3]+';font-weight:700">'+m[1]+'</span><span>'+(v!=null?Number(v).toFixed(2):'-')+'</span></div><div class="bar"><b style="width:'+(v!=null?Math.max(2,v*100):0)+'%;background:'+m[3]+'"></b></div><small>'+m[2]+'</small></div>'}).join('');
+ document.getElementById('body').innerHTML=(d.body||[]).map(function(m,i){var col=m.active?'#3ddc97':(m.online?'#8b91a3':'#ff5d5d'),stt=m.active?'動いている':(m.online?'待機':'つながっていない');
+  return'<div class="mach"><div class="ic" style="background:'+(i==0?'rgba(255,158,203,.15)':'rgba(95,208,255,.12)')+'">'+(i==0?'✿':(/Mac/.test(m.name)?'💻':'▣'))+'</div><div class="tx"><div class="nm"><b>'+esc(m.name)+'</b><span class="chip" style="background:'+col+'22;color:'+col+'">'+stt+'</span></div><div class="role">'+esc(m.role)+'</div><div class="det" style="color:'+col+'">'+esc(m.detail)+'</div>'+meter(m.meter)+'</div></div>'}).join('');
+ var n=d.now||{};document.getElementById('now').innerHTML=n.url?('<a href="'+esc(n.url)+'" target="_blank" rel="noopener noreferrer nofollow">'+esc(n.title||host(n.url))+'</a><div class="role">'+esc(host(n.url))+'</div>'):esc(n.title||'-');
+ document.getElementById('trail').innerHTML=(d.trail||[]).slice().reverse().slice(0,40).map(function(t){return'<div><span class="t">'+new Date(t.ts*1000).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+'</span><span class="h" title="'+esc(t.title)+'">'+esc(t.url?host(t.url):'(伏せた)')+' ― '+esc(t.title)+'</span>'+(t.new?'<span class="new">初</span>':'')+'</div>'}).join('');
+}
+var LIVE='https://tadangforai.tail5734ce.ts.net:10000/live.json',liveBad=0,MODE='live';
+function getData(){
+ if(/ts\.net$/.test(location.hostname)){MODE='live';return fetch('live.json',{cache:'no-store'}).then(function(r){return r.json()})}
+ if(Date.now()-liveBad>60000){var c=new AbortController(),tm=setTimeout(function(){c.abort()},4000);
+  return fetch(LIVE,{cache:'no-store',signal:c.signal}).then(function(r){clearTimeout(tm);if(!r.ok)throw 0;MODE='live';return r.json()})
+   .catch(function(){liveBad=Date.now();MODE='snap';return fetch('live.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()})})}
+ MODE='snap';return fetch('live.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()})}
+function load(){getData().then(render).catch(function(){document.getElementById('stale').style.display='block'}).finally(function(){setTimeout(load,MODE=='live'?2000:30000)})}
+resize();load();requestAnimationFrame(draw);
+</script></body></html>
