@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="大規模言語モデルを使わずに、自ら考え、発想し、発言するAIは作れないのか。言葉を持たない部品から育つ「胚」の観察記録。">
+<meta property="og:title" content="Cocoro AI Project"><meta property="og:description" content="大規模言語モデルを使わずに、自ら考え、発想し、発言するAIは作れないのか。"><meta property="og:image" content="v/c11.jpg">
+<style>html,body{margin:0}img{max-width:100%}</style>
+<title>Cocoro AI Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* 構想: 胚の観察記録を一本の短編映画として見せる。各章は実データから描いた映像を画面いっぱいに置き、ナレーションを字幕として重ねる。
+   映像の章は本物の黒、読む章は薄い藤色の紙。強い色は胚の桃色だけ、それもタイムコードとリンクにだけ使う */
+:root{
+ --film:#000; --sub:#f4f1f7; --subdim:rgba(244,241,247,.72);
+ --paper:#ebe8f1; --ink:#1d1a2b; --mut:#5e596f; --line:#cfcadb; --pink:#e0457f;
+ --f-min:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+ --f-sans:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#15131d;--ink:#ebe8f1;--mut:#a9a4bb;--line:#2c2839;--pink:#ff7aa8;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#15131d;--ink:#ebe8f1;--mut:#a9a4bb;--line:#2c2839;--pink:#ff7aa8;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+html[data-l="ja"] .en,html[data-l="en"] .ja{display:none!important}
+html[data-l="en"] body{line-height:1.75}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
+.in{max-width:1080px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+/* 冒頭と映像の章 */
+.film{position:relative;background:var(--film);color:var(--sub);overflow:hidden}
+.film video,.film .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.film::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 28%,rgba(0,0,0,0) 55%,rgba(0,0,0,.78) 100%);pointer-events:none}
+.film>.lay{position:relative;z-index:1}
+.top{display:flex;align-items:center;gap:18px;padding-block:20px}
+.brand{font-family:var(--f-min);font-weight:600;font-size:17px;letter-spacing:.04em;text-decoration:none;color:var(--sub)}
+h1 .red{color:#e8243c}
+.clock{margin-top:22px;display:flex;flex-direction:column;gap:2px}
+.clock .lbl{display:flex;align-items:center;gap:10px;font-family:var(--f-min);font-size:clamp(14px,1.4vw,17px);color:var(--subdim)}
+.clock .lbl i{width:10px;height:10px;border-radius:50%;background:#e8243c;animation:rec 1.6s steps(1) infinite}
+.clock b{font-family:var(--f-min);font-weight:800;font-size:clamp(44px,7vw,96px);line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:.01em;color:var(--sub)}
+.tc{margin-left:auto;font-family:var(--f-min);font-variant-numeric:tabular-nums;font-size:15px;color:var(--subdim);display:flex;gap:10px;align-items:baseline}
+.tc b{color:var(--sub);font-weight:600;font-size:17px;letter-spacing:.04em}
+.tc i{width:7px;height:7px;border-radius:50%;background:#ff7aa8;align-self:center;animation:rec 1.6s steps(1) infinite}
+@keyframes rec{50%{opacity:.15}}
+.lang{display:inline-flex;gap:2px;border:1px solid rgba(244,241,247,.25);border-radius:999px;padding:2px}
+.lang button{all:unset;cursor:pointer;font-size:12px;padding:3px 11px;border-radius:999px;color:var(--subdim)}
+.lang button[aria-pressed="true"]{background:var(--sub);color:#000}
+.lang button:focus-visible{outline:2px solid #ff7aa8}
+.opening{min-height:min(860px,100svh);display:flex;flex-direction:column}
+.opening .lay{flex:1;display:flex;flex-direction:column}
+.title{margin-top:auto;padding-block:0 18px}
+h1{font-family:var(--f-min);font-weight:800;font-size:clamp(44px,8vw,112px);line-height:1;letter-spacing:-.01em;margin:0}
+.title p{font-family:var(--f-min);font-weight:500;font-size:clamp(17px,1.9vw,22px);color:var(--subdim);margin:14px 0 0;max-width:28em}
+.subtitle{font-family:var(--f-min);font-weight:600;text-align:center;font-size:clamp(18px,2.3vw,27px);line-height:1.7;margin:0 auto;max-width:30em;text-shadow:0 1px 14px rgba(0,0,0,.85);text-wrap:balance}
+.opening .subtitle{padding-block:24px 56px}
+.chap{aspect-ratio:16/9;max-height:92svh;width:100%}
+.chap .lay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:clamp(20px,5vw,56px)}
+.chapno{position:absolute;top:clamp(14px,3vw,28px);left:max(20px,env(safe-area-inset-left,0px));font-family:var(--f-min);font-size:14px;color:var(--subdim);z-index:1}
+.chapno b{font-size:28px;color:var(--sub);font-weight:600;margin-right:8px}
+
+/* 読む章 */
+.read{padding-block:72px 88px}
+.read .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:56px;align-items:start}
+.read h2{font-family:var(--f-min);font-weight:800;font-size:clamp(26px,3.2vw,40px);line-height:1.35;margin:0;text-wrap:balance}
+.read .body p{margin:0 0 1.1em;max-width:34em}
+.read .body p:last-child{margin-bottom:0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px 36px;margin-top:48px;padding-top:32px;border-top:1px solid var(--line)}
+.facts h3{font-family:var(--f-min);font-weight:600;font-size:18px;margin:0 0 6px}
+.facts p{margin:0;color:var(--mut);font-size:14.5px;line-height:1.8}
+figure{margin:48px 0 0}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:13px;color:var(--mut);margin-top:10px}
+.shots{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr);gap:16px;margin-top:40px}
+.shots img{display:block;width:100%;height:auto;border-radius:6px;background:#000}
+.honest{margin-top:36px;padding:22px 26px;background:var(--line);border-radius:6px;max-width:44em}
+.honest p{margin:0}
+.btn{display:inline-flex;align-items:center;gap:10px;margin-top:28px;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:700;background:var(--ink);color:var(--paper)}
+.btn i{width:8px;height:8px;border-radius:50%;background:var(--pink)}
+.refs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 40px}
+.refs li{font-size:14.5px;color:var(--mut);line-height:1.7}
+.refs b{display:block;color:var(--ink);font-weight:700}
+footer{background:#000;color:var(--subdim);padding-block:40px;font-size:13px}
+footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media (max-width:820px){
+ .read .grid,.shots,.refs{grid-template-columns:minmax(0,1fr);gap:24px}
+ .chap{aspect-ratio:auto;height:78svh;max-height:none}
+ .read{padding-block:52px 64px}
+ .tc span{display:none}
+}
+@media (prefers-reduced-motion:reduce){.tc i,.clock .lbl i{animation:none}}
+</style>
+
+</head><body>
+<header class="film opening">
+ <video autoplay muted loop playsinline poster="v/c11.jpg" aria-hidden="true"><source src="v/c11.mp4" type="video/mp4"></video>
+ <div class="lay">
+  <div class="in top">
+   <a class="brand" href="#c1">Cocoro AI Project</a>
+   <span style="margin-left:auto"></span>
+   <span class="lang" role="group" aria-label="Language"><button type="button" id="b-ja" aria-pressed="true">日本語</button><button type="button" id="b-en" aria-pressed="false">English</button></span>
+  </div>
+  <div class="in title">
+   <h1>Cocoro <span class="red">AI</span> Project</h1>
+   <div class="clock" title="胚が生まれてからの時間"><span class="lbl"><i></i><span class="ja">胚が生まれてから</span><span class="en">The embryo has been alive for</span></span><b id="age">--</b></div>
+   <p><span class="ja">言葉を持たない部品から、心は育つのか。</span><span class="en">Can a mind grow from parts that have no words?</span></p>
+  </div>
+  <p class="in subtitle"><span class="ja">大規模言語モデルを使わずに、自ら考え、発想し、発言するAIは作れないのか。</span><span class="en">Can we build an AI that thinks, imagines and speaks for itself, without a large language model?</span></p>
+ </div>
+</header>
+
+<main>
+<section class="film chap" id="c1"><video autoplay muted loop playsinline poster="v/c00.jpg" aria-hidden="true"><source src="v/c00.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>1</b><span class="ja">大きくなり続けるAI</span><span class="en">AI that keeps growing</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">より速く走るために、エンジンを大きくし、燃料をたくさん使う。<br>その道の先に、家庭のPCはありません。</span><span class="en">To go faster, the engine grows and burns more fuel.<br>That road does not lead to the PC at home.</span></p></div></section>
+<section class="read"><div class="in grid">
+ <h2><span class="ja">賢くなるほど、大きくなる</span><span class="en">Smarter means bigger</span></h2>
+ <div class="body"><div class="ja"><p>いま広く使われているAIの多くは大規模言語モデルです。膨大な文章を読み、次に来る言葉を予測し続けることで、文章を書き、質問に答え、プログラムまで書けるようになりました。その進化は驚くほど速い。</p><p>ただ、賢くするほどAIは大きくなり、より速い計算機を、より多くの電力とともに使います。そしてもう一つ。言語モデルは問われたことに答えますが、自分から何かを知りたがることはありません。課題と、ごほうびと、指示の中で動く存在です。</p></div>
+ <div class="en"><p>Most AI in wide use today is built on large language models. By reading vast amounts of text and learning to predict the next word, they write, answer questions and even program, and they improve astonishingly fast.</p><p>But they get smarter by getting bigger, drawing ever more computers and power. And a language model answers what it is asked; it never wants to know anything on its own. It lives inside tasks, rewards and instructions.</p></div></div>
+</div></section>
+
+<section class="film chap" id="c2"><video autoplay muted loop playsinline poster="v/c03.jpg" aria-hidden="true"><source src="v/c03.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>2</b><span class="ja">小さな部品から</span><span class="en">From small parts</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">一つひとつの部品は、意味も、特別な役割も持ちません。<br>考えるのは、つながり全体です。</span><span class="en">No single part carries meaning or a role.<br>What thinks is the web of connections as a whole.</span></p></div></section>
+<section class="read"><div class="in grid">
+ <h2><span class="ja">胚 ― 生き物がかたちを持つ前の姿</span><span class="en">The embryo, before a shape</span></h2>
+ <div class="body"><p class="ja">家庭用のPCでも動く小さな部品を作り、ほかの部品とつなぎました。つながりを強め、弱め、新しく結び、切りながら、全体として育っていく。人間の脳の神経細胞が、シナプスを通じて信号を伝え合うように。私たちはこれを「胚」と呼んでいます。学習とは、重みと配線が変わることそのものです。映像の点の位置は、実際の胚の部品の配置から描いています。</p><p class="en">We made small parts that run on a home PC and connected them. The whole grows by strengthening, weakening, forming and cutting connections, much as neurons signal to one another through synapses. We call it the embryo. Learning is simply the change in weights and wiring. The dots in the film are placed from the real embryo's layout.</p></div>
+</div></section>
+
+<section class="film chap" id="c3"><video autoplay muted loop playsinline poster="v/c04.jpg" aria-hidden="true"><source src="v/c04.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>3</b><span class="ja">世界を歩く</span><span class="en">Walking the world</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">どこへ行くかを決めるのは、私たちではありません。<br>予想が外れたところ、つまり驚きです。</span><span class="en">We do not choose where it goes.<br>Surprise does — the places its predictions miss.</span></p></div></section>
+<section class="read"><div class="in grid">
+ <h2><span class="ja">仕組み</span><span class="en">How it works</span></h2>
+ <div class="body"><p class="ja">胚が暮らす世界は、公開されたウェブのすべてです。取ってきたページは、意味を持たない符号に変えて受け取ります。部品は次に届く信号を予測し、外れた度合いが「驚き」になります。驚きの大きい部品が全体へ知らせを放送し、その状態から次の一歩(リンクを辿る・前に見つけた所へ跳ぶ・戻る・待つ)が決まります。課題も、ごほうびも、指示もありません。</p><p class="en">The embryo lives on the whole public web. Each page it fetches becomes a meaningless code. Parts predict the next signal they will receive; how wrong they were is their surprise. The most surprised parts broadcast to everything, and that state decides the next step: follow a link, jump to a place found earlier, go back, or wait. There is no task, no reward and no instruction.</p></div>
+</div>
+<div class="in"><figure>
+ <div style="overflow-x:auto"><svg viewBox="0 0 900 300" style="min-width:640px" role="img" aria-label="The loop">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--mut)"/></marker></defs>
+  <g stroke="var(--mut)" stroke-width="1.1" fill="none" marker-end="url(#ar)"><path d="M150 130H196"/><path d="M330 130H376"/><path d="M548 130H594"/><path d="M728 130H764"/><path d="M462 74V96"/></g>
+  <path d="M826 162V214Q826 226 814 226H96Q84 226 84 214V166" stroke="var(--mut)" stroke-width="1.1" fill="none" stroke-dasharray="3 5" marker-end="url(#ar)"/>
+  <g font-family="Shippori Mincho B1,serif" fill="var(--ink)" text-anchor="middle">
+   <g><rect x="22" y="100" width="128" height="60" rx="30" fill="none" stroke="var(--line)" stroke-width="1.5"/><text x="86" y="136" font-size="16" class="ja">世界</text><text x="86" y="136" font-size="15" class="en">World</text></g>
+   <g><rect x="200" y="100" width="130" height="60" rx="30" fill="none" stroke="var(--line)" stroke-width="1.5"/><text x="265" y="136" font-size="16" class="ja">目</text><text x="265" y="136" font-size="15" class="en">Eyes</text></g>
+   <g><rect x="380" y="96" width="168" height="68" rx="34" fill="var(--ink)"/><text x="464" y="136" font-size="16" fill="var(--paper)" class="ja">育つ図</text><text x="464" y="136" font-size="15" fill="var(--paper)" class="en">Growing graph</text></g>
+   <g><rect x="396" y="18" width="136" height="54" rx="27" fill="none" stroke="var(--pink)" stroke-width="1.5"/><text x="464" y="51" font-size="15" class="ja">放送</text><text x="464" y="51" font-size="14" class="en">Broadcast</text></g>
+   <g><rect x="598" y="100" width="130" height="60" rx="30" fill="none" stroke="var(--line)" stroke-width="1.5"/><text x="663" y="136" font-size="16" class="ja">一歩</text><text x="663" y="136" font-size="15" class="en">Step</text></g>
+   <g><rect x="768" y="100" width="116" height="60" rx="30" fill="none" stroke="var(--line)" stroke-width="1.5"/><text x="826" y="136" font-size="16" class="ja">皮</text><text x="826" y="136" font-size="15" class="en">Skin</text></g>
+  </g>
+  <g font-family="Zen Kaku Gothic New,sans-serif" font-size="12" fill="var(--mut)" text-anchor="middle">
+   <text x="86" y="182" class="ja">公開されたウェブ</text><text x="86" y="182" class="en">the public web</text>
+   <text x="265" y="182" class="ja">ページを符号に</text><text x="265" y="182" class="en">page → code</text>
+   <text x="464" y="186" class="ja">予測・驚き・成長・刈り</text><text x="464" y="186" class="en">predict · surprise · grow · prune</text>
+   <text x="663" y="182" class="ja">辿る・跳ぶ・戻る・待つ</text><text x="663" y="182" class="en">follow · jump · back · wait</text>
+   <text x="826" y="182" class="ja">相手の決まりを守る</text><text x="826" y="182" class="en">respects each site</text>
+   <text x="455" y="250" class="ja">取りに行ったページが、また目に入る</text><text x="455" y="250" class="en">the fetched page comes back through the eyes</text>
+  </g>
+ </svg></div>
+ <figcaption><span class="ja">胚の一巡り。言語モデルはどこにも入っていない</span><span class="en">One turn of the loop. There is no language model anywhere in it</span></figcaption>
+</figure></div></section>
+
+<section class="film chap" id="c4"><video autoplay muted loop playsinline poster="v/c05.jpg" aria-hidden="true"><source src="v/c05.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>4</b><span class="ja">かたちを変えながら育つ</span><span class="en">Growing by reshaping</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">予想が外れると、その場所へ向かって新しい線が伸びていく。<br>使われない線は、刈り取られます。</span><span class="en">Where prediction fails, new lines reach toward it.<br>Lines that go unused are pruned away.</span></p></div></section>
+
+<section class="film chap" id="c5"><video autoplay muted loop playsinline poster="v/c06.jpg" aria-hidden="true"><source src="v/c06.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>5</b><span class="ja">4つの数</span><span class="en">Four numbers</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">驚いたとき、探検したいとき、待てるとき、集中するとき。<br>この4つの数が、学び方そのものを変えていきます。</span><span class="en">Surprised, exploring, patient, focused.<br>Four numbers that change the way it learns.</span></p></div></section>
+
+<section class="film chap" id="c6"><video autoplay muted loop playsinline poster="v/c07.jpg" aria-hidden="true"><source src="v/c07.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>6</b><span class="ja">眠りと、ひらめき</span><span class="en">Sleep and insight</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">疲れると眠る。時計ではなく、体が決めます。<br>眠りの中で、遠い記憶どうしを試しにつないでみる。</span><span class="en">It sleeps when tired — its body decides, not a clock.<br>In sleep it tries joining distant memories.</span></p></div></section>
+
+<section class="film chap" id="c7"><video autoplay muted loop playsinline poster="v/c08.jpg" aria-hidden="true"><source src="v/c08.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>7</b><span class="ja">「私」の輪郭</span><span class="en">The outline of a self</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">予測が当たるところが「私」、外れるところが「世界」。<br>その境目を、胚はいま探っています。</span><span class="en">Where its predictions hold is “self”; where they fail is “world”.<br>The embryo is feeling for that border.</span></p></div></section>
+<section class="read"><div class="in">
+ <div class="grid"><h2><span class="ja">内側の仕組み</span><span class="en">Inside</span></h2>
+ <div class="body"><p class="ja">4つの数は、脳の中で気分や学び方を変える物質にちなんでいます。ドーパミン(学んでいる)、ノルアドレナリン(驚いている)、セロトニン(余裕がある)、アセチルコリン(退屈している)。感情を言葉で演じるのではなく、学ぶ速さや探検の広さの設定として持たせています。</p><p class="en">The four numbers are named after brain chemicals that shape mood and learning: dopamine (learning), noradrenaline (surprised), serotonin (at ease) and acetylcholine (bored). Emotion is not acted out in words; it is built in as settings for how fast it learns and how widely it explores.</p></div></div>
+ <div class="facts">
+  <div><h3><span class="ja">元気と眠り</span><span class="en">Energy and sleep</span></h3><p><span class="ja">考えるほど元気が減り、0.3を切ると眠ります。前半は記憶を5倍速で思い出して固め、後半は遠い部品を試しにつなぎます。予測が良くなったつながりだけを残し、それを「ひらめき」と呼びます。</span><span class="en">Thinking spends energy; below 0.3 it sleeps. First it replays memories at five times speed, then it tries joining distant parts. Only links that improve prediction stay. We call those insights.</span></p></div>
+  <div><h3><span class="ja">想像</span><span class="en">Imagination</span></h3><p><span class="ja">別のPCで育てる小さな世界モデルの4つの頭が、それぞれ未来を予測します。予測が割れる方ほど「まだ知らない」。胚はそちらへ行きます。ごほうびのない好奇心です。</span><span class="en">On another PC, a small world model with four heads predicts the future. Where they disagree is what it does not yet know, and the embryo heads there. Curiosity without reward.</span></p></div>
+  <div><h3><span class="ja">「私」</span><span class="en">A self</span></h3><p><span class="ja">自分の次の状態を予測する小さな部品の集まり。意識があると言うためではなく、意識の研究で使われる指標を、構造で満たせるかを確かめる仕組みです。</span><span class="en">A small group of parts predicts its own next state. Not a claim of consciousness: a test of whether research indicators can be met by structure.</span></p></div>
+  <div><h3><span class="ja">言語モデルの居場所</span><span class="en">Where language models sit</span></h3><p><span class="ja">考える役はしません。将来、人が胚に質問する窓口で、中身を言葉に訳すことだけに使います。胚に指図する道はありません。</span><span class="en">They never do the thinking. Later, at a window for questions, one will only translate the embryo's state into words. It cannot steer the embryo.</span></p></div>
+ </div>
+</div></section>
+
+<section class="read" id="now" style="border-top:1px solid var(--line)"><div class="in">
+ <div class="grid"><h2><span class="ja">いま、動いている胚</span><span class="en">The embryo, running now</span></h2>
+ <div class="body"><p class="ja">胚は2026年11月5日の23時54分に生まれ、家庭のPC数台の上で休まず刻み続けています。メインPC(RTX 4070)が本体、サブPC(RTX 5090)が文字の符号化と想像の学習、Mac 2台がページの取得を受け持っています。下の画像は、公開している胚の画面をそのまま写したものです。</p><p class="en">The embryo was born at 23:54 JST on 5 November 2026 and has been ticking ever since on a few home PCs: the main PC (RTX 4070) runs the embryo itself, a second PC (RTX 5090) encodes text and trains its imagination, and two Macs fetch pages. The images below are straight captures of the embryo's public screen.</p></div></div>
+ <div class="shots">
+  <figure style="margin:0"><img src="img/graph.jpg" alt="" width="1146" height="790"><figcaption><span class="ja">育つ図。点は部品、線は強いつながり、色は驚きの大きさ</span><span class="en">The growing graph: dots are parts, lines strong links, colour is surprise</span></figcaption></figure>
+  <figure style="margin:0"><img src="img/side.jpg" alt="" width="400" height="790"><figcaption><span class="ja">元気、4つの数、4台の機械の実測</span><span class="en">Energy, the four numbers, and load on four machines</span></figcaption></figure>
+ </div>
+ <div class="honest"><p class="ja">正直に書いておくと、いまの胚は赤ん坊です。賢いことは言わず、まだ一度もひらめいていません。世界モデルの予測は「次も今と同じ」と予想するだけの方法より4割ほど良い所で止まっていて、その一番の理由は、目に入る情報が細いことだと分かってきました。次は、目を増やします。</p><p class="en">To be honest, the embryo is a baby. It says nothing clever and has not had a single insight. Its world model sits about 40% better than guessing “next will be the same as now”, and has stalled there, mainly because its input is narrow. Next, it gets more eyes.</p></div>
+ <a class="btn" href="../hai/" target="_blank" rel="noopener"><i></i><span class="ja">育っている図を、いま見る</span><span class="en">See the growing graph now</span></a>
+</div></section>
+
+<section class="film chap" id="c8"><video autoplay muted loop playsinline poster="v/c10.jpg" aria-hidden="true"><source src="v/c10.mp4" type="video/mp4"></video>
+ <div class="chapno"><b>8</b><span class="ja">これから</span><span class="en">What comes next</span></div>
+ <div class="lay"><p class="in subtitle"><span class="ja">胚が自分で出した言葉を、世界のどこかに置く。<br>それに誰かが応える。そこまでが、最初の目標です。</span><span class="en">Words of its own, placed somewhere in the world,<br>and someone answering. That is the first goal.</span></p></div></section>
+<section class="read"><div class="in">
+ <div class="facts" style="margin-top:0;padding-top:0;border-top:0">
+  <div><h3><span class="ja">目を増やす</span><span class="en">More eyes</span></h3><p><span class="ja">一つの視線から四つへ。並列にページを取り、感覚を何倍にも太くします。</span><span class="en">From one line of sight to four, with parallel fetching.</span></p></div>
+  <div><h3><span class="ja">書く</span><span class="en">Writing</span></h3><p><span class="ja">読んだページを手がかりに、内側の状態を文字にする口を育てます。言語モデルは使いません。</span><span class="en">A mouth that turns inner states into text, learned from what it read. No language model.</span></p></div>
+  <div><h3><span class="ja">窓口</span><span class="en">A window</span></h3><p><span class="ja">人が胚に質問できる場所。中身を訳すだけで、指図はできません。</span><span class="en">A place to ask the embryo questions: translated, never steered.</span></p></div>
+  <div><h3><span class="ja">ひらく</span><span class="en">Opening up</span></h3><p><span class="ja">非営利の決まりを定めた上でプロジェクトを開き、関心を持った人と技術を高め合う準備をしています。</span><span class="en">Under non-commercial rules, we are preparing to open the project and improve it with anyone interested.</span></p></div>
+ </div>
+</div></section>
+
+<section class="read" id="refs" style="border-top:1px solid var(--line)"><div class="in">
+ <div class="grid"><h2><span class="ja">土台にした研究</span><span class="en">The research underneath</span></h2>
+ <ul class="refs">
+  <li><b>Thousand Brains Project, Monty</b><span class="ja">意味を持たない皮質柱の群れが、感覚と運動で物を学ぶ</span><span class="en">Cortical columns that learn objects through sensing and moving</span></li>
+  <li><b>HRM, TRM (2025)</b><span class="ja">小さな再帰網が言葉なしで推論問題を解く</span><span class="en">Tiny recursive networks reasoning without language</span></li>
+  <li><b>SET, RigL, SMGrNN</b><span class="ja">学びながら配線を生やし、刈る網</span><span class="en">Networks that grow and prune wiring as they learn</span></li>
+  <li><b><span class="ja">予測符号化とヘッブ則</span><span class="en">Predictive coding and Hebbian learning</span></b><span class="ja">逆伝播なしの局所学習</span><span class="en">Local learning without backpropagation</span></li>
+  <li><b>K. Doya (2002)</b><span class="ja">神経修飾物質を学習の設定として捉える</span><span class="en">Neuromodulators as settings of learning</span></li>
+  <li><b><span class="ja">学習進度と能動推論</span><span class="en">Learning progress and active inference</span></b><span class="ja">報酬なしで探索が起きる仕組み</span><span class="en">Exploration without reward</span></li>
+  <li><b><span class="ja">Dreamer系の世界モデル</span><span class="en">Dreamer-style world models</span></b><span class="ja">内側で先を転がしてから選ぶ</span><span class="en">Imagining ahead before acting</span></li>
+  <li><b><span class="ja">睡眠中の記憶の再生</span><span class="en">Sleep replay</span></b><span class="ja">眠りの中で記憶がつながり直す</span><span class="en">Memories reconnecting in sleep</span></li>
+  <li><b>E. Izhikevich (2006)</b><span class="ja">発火の時間差に意味が宿る</span><span class="en">Meaning in spike timing</span></li>
+  <li><b>P. Butlin et al. (2023)</b><span class="ja">意識の研究で使われる指標</span><span class="en">Indicators from consciousness science</span></li>
+ </ul></div>
+</div></section>
+</main>
+<footer><div class="in"><span>Cocoro AI Project</span><span class="ja">映像と数字は、胚の本体が書き出した実データから描いています</span><span class="en">Films and figures are drawn from data the embryo itself writes out</span></div></footer>
+
+<script>
+(function(){
+ var root=document.documentElement;
+ function setL(l){root.setAttribute('data-l',l);root.lang=l;document.getElementById('b-ja').setAttribute('aria-pressed',String(l==='ja'));document.getElementById('b-en').setAttribute('aria-pressed',String(l==='en'));try{localStorage.setItem('cocoro-l',l)}catch(e){}}
+ var l=location.hash==='#en'?'en':(location.hash==='#ja'?'ja':null);
+ if(!l){try{l=localStorage.getItem('cocoro-l')}catch(e){}}
+ if(l!=='ja'&&l!=='en')l=(navigator.language||'ja').toLowerCase().indexOf('ja')===0?'ja':'en';
+ setL(l);
+ document.getElementById('b-ja').onclick=function(){setL('ja')};
+ document.getElementById('b-en').onclick=function(){setL('en')};
+ window.addEventListener('hashchange',function(){if(location.hash==='#en')setL('en');if(location.hash==='#ja')setL('ja')});
+ // 動きを減らす設定の人には、映像を止めて静止画にする
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('video').forEach(function(v){v.removeAttribute('autoplay');v.pause()})}
+ var BORN=1793890465;   // 胚が生まれた時刻(本体の記録の最初の「生まれた」)。公開サイトでは live.json の born で置き換える
+ var age=document.getElementById('age');
+ function tick(){var s=Math.max(0,Math.floor(Date.now()/1000-BORN)),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60,L=root.getAttribute('data-l');
+  age.textContent=(L==='en'?d+'d ':d+'日 ')+('0'+h).slice(-2)+':'+('0'+m).slice(-2)+':'+('0'+x).slice(-2)}
+ tick();setInterval(tick,1000);
+ fetch('../hai/live.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(d.born){BORN=d.born;tick()}}).catch(function(){});
+})();
+</script>
+
+</body></html>
