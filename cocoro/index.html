@@ -87,7 +87,35 @@ footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
  .tc span{display:none}
 }
 @media (prefers-reduced-motion:reduce){.tc i,.clock .lbl i{animation:none}}
+/* 来訪者・コメント・リンク */
+.visits{margin-top:10px;font-family:var(--f-min);font-size:clamp(14px,1.4vw,17px);color:var(--subdim);font-variant-numeric:tabular-nums}
+.visits b{color:var(--sub);font-weight:600;font-size:1.15em;margin:0 .15em}
+.visits[hidden]{display:none}
+.social{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.social a{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-weight:700;font-size:14px}
+.social a:hover{border-color:var(--ink)}
+.social a.kofi{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.social a.kofi i{width:8px;height:8px;border-radius:50%;background:var(--pink)}
+.cform{display:grid;gap:12px;margin-top:8px}
+.cform input,.cform textarea{font:inherit;font-size:15px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:6px;padding:11px 14px;width:100%}
+.cform textarea{min-height:110px;resize:vertical;line-height:1.7}
+.cform input:focus,.cform textarea:focus{outline:none;border-color:var(--ink)}
+.cform .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.cform button{all:unset;cursor:pointer;padding:11px 24px;border-radius:999px;font-weight:700;background:var(--ink);color:var(--paper)}
+.cform button[disabled]{opacity:.45;cursor:default}
+.cform .msg{font-size:13.5px;color:var(--mut)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.clist{list-style:none;margin:36px 0 0;padding:0;border-top:1px solid var(--line)}
+.clist li{padding:18px 0;border-bottom:1px solid var(--line)}
+.clist .who{font-weight:700;font-size:14.5px}
+.clist .when{color:var(--mut);font-size:12.5px;margin-left:10px;font-variant-numeric:tabular-nums}
+.clist p{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.cempty{color:var(--mut);font-size:14.5px;margin-top:28px}
+.fsoc{display:flex;gap:16px;flex-wrap:wrap}
+.fsoc a{color:var(--subdim);text-decoration:none}
+.fsoc a:hover{color:var(--sub)}
 </style>
+
 
 </head><body>
 <header class="film opening">
@@ -100,7 +128,7 @@ footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
   <div class="in title">
    <h1>Cocoro <span class="red">AI</span> Project</h1>
-   <div class="clock" title="胚が生まれてからの時間"><span class="lbl"><i></i><span class="ja">胚が生まれてから</span><span class="en">The embryo has been alive for</span></span><b id="age">--</b></div>
+   <div class="clock" title="胚が生まれてからの時間"><span class="lbl"><i></i><span class="ja">胚が生まれてから</span><span class="en">The embryo has been alive for</span></span><b id="age">--</b><div class="visits" id="visits" hidden><span class="ja">これまでに訪れた人</span><span class="en">Visitors so far</span><b id="v-all">-</b><span class="ja">人 ・ 今日</span><span class="en">· today</span><b id="v-today">-</b><span class="ja">人</span></div></div>
    <p><span class="ja">言葉を持たない部品から、心は育つのか。</span><span class="en">Can a mind grow from parts that have no words?</span></p>
   </div>
   <p class="in subtitle"><span class="ja">大規模言語モデルを使わずに、自ら考え、発想し、発言するAIは作れないのか。</span><span class="en">Can we build an AI that thinks, imagines and speaks for itself, without a large language model?</span></p>
@@ -221,8 +249,30 @@ footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <li><b>P. Butlin et al. (2023)</b><span class="ja">意識の研究で使われる指標</span><span class="en">Indicators from consciousness science</span></li>
  </ul></div>
 </div></section>
+<section class="read" id="talk" style="border-top:1px solid var(--line)"><div class="in">
+ <div class="grid"><h2><span class="ja">ひとこと、残していく</span><span class="en">Leave a word</span></h2>
+ <div class="body">
+  <p class="ja">感想、質問、胚への言葉。書いたものはすぐにこの下に並びます。リンクは載りません。</p><p class="en">Thoughts, questions, or a word for the embryo. Posts appear below right away. Links are not shown.</p>
+  <form class="cform" id="cform" autocomplete="off">
+   <input id="c-name" maxlength="30" placeholder="お名前(なくても可)" aria-label="Name">
+   <textarea id="c-body" maxlength="600" required placeholder="コメント" aria-label="Comment"></textarea>
+   <div class="hp" aria-hidden="true"><input id="c-hp" tabindex="-1"></div>
+   <div class="row"><button type="submit" id="c-send"><span class="ja">送る</span><span class="en">Post</span></button><span class="msg" id="c-msg"></span></div>
+  </form>
+  <ul class="clist" id="clist"></ul>
+  <p class="cempty" id="cempty"><span class="ja">まだコメントはありません。</span><span class="en">No comments yet.</span></p>
+ </div></div>
+</div></section>
+
+<section class="read" id="follow" style="border-top:1px solid var(--line)"><div class="in">
+ <div class="grid"><h2><span class="ja">追いかける・応援する</span><span class="en">Follow and support</span></h2>
+ <div class="body">
+  <p class="ja">胚の成長は動画でも記録していきます。開発を応援していただける方は Ko-fi からどうぞ。</p><p class="en">The embryo's growth is also recorded on video. If you'd like to support the work, Ko-fi is the way.</p>
+  <div class="social"><a href="https://www.youtube.com/@tadango7897" target="_blank" rel="noopener">YouTube</a><a href="https://www.tiktok.com/@tadango2" target="_blank" rel="noopener">TikTok</a><a href="https://www.instagram.com/tadango/" target="_blank" rel="noopener">Instagram</a><a class="kofi" href="https://ko-fi.com/tadango" target="_blank" rel="noopener"><i></i><span class="ja">Ko-fi で応援する</span><span class="en">Support on Ko-fi</span></a></div>
+ </div></div>
+</div></section>
 </main>
-<footer><div class="in"><span>Cocoro AI Project</span><span class="ja">映像と数字は、胚の本体が書き出した実データから描いています</span><span class="en">Films and figures are drawn from data the embryo itself writes out</span></div></footer>
+<footer><div class="in"><span>Cocoro AI Project</span><span class="fsoc"><a href="https://www.youtube.com/@tadango7897" target="_blank" rel="noopener">YouTube</a><a href="https://www.tiktok.com/@tadango2" target="_blank" rel="noopener">TikTok</a><a href="https://www.instagram.com/tadango/" target="_blank" rel="noopener">Instagram</a><a href="https://ko-fi.com/tadango" target="_blank" rel="noopener">Ko-fi</a></span><span class="ja">映像と数字は、胚の本体が書き出した実データから描いています</span><span class="en">Films and figures are drawn from data the embryo itself writes out</span></div></footer>
 
 <script>
 (function(){
@@ -243,6 +293,21 @@ footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   age.textContent=(L==='en'?d+'d ':d+'日 ')+('0'+h).slice(-2)+':'+('0'+m).slice(-2)+':'+('0'+x).slice(-2)}
  tick();setInterval(tick,1000);
  fetch('../hai/live.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(d.born){BORN=d.born;tick()}}).catch(function(){});
+ // 来訪の記録と、来訪者数・コメント(4070の計測の受け口)
+ var C='https://tadangforai.tail5734ce.ts.net:8443';
+ var sid=(Math.random().toString(36)+Date.now().toString(36)).slice(2,14);
+ try{fetch(C+'/',{method:'POST',headers:{'Content-Type':'text/plain'},keepalive:true,body:JSON.stringify({e:'pageview',p:location.pathname,r:document.referrer,s:sid})}).catch(function(){})}catch(e){}
+ function stats(){fetch(C+'/cocoro/stats',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(!d||!d.uv)return;document.getElementById('v-all').textContent=d.uv.toLocaleString();document.getElementById('v-today').textContent=(d.today||0).toLocaleString();document.getElementById('visits').hidden=false}).catch(function(){})}
+ setTimeout(stats,1500);setInterval(stats,60000);
+ var list=document.getElementById('clist'),empty=document.getElementById('cempty');
+ function fmt(ts){var d=new Date(ts*1000);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+ function load(){fetch(C+'/cocoro/comments',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){var it=(d&&d.items)||[];list.textContent='';it.forEach(function(c){var li=document.createElement('li'),w=document.createElement('span'),t=document.createElement('span'),p=document.createElement('p');w.className='who';w.textContent=c.name;t.className='when';t.textContent=fmt(c.ts);p.textContent=c.body;li.appendChild(w);li.appendChild(t);li.appendChild(p);list.appendChild(li)});empty.hidden=it.length>0}).catch(function(){})}
+ load();setInterval(load,60000);
+ var f=document.getElementById('cform'),msg=document.getElementById('c-msg'),btn=document.getElementById('c-send');
+ f.addEventListener('submit',function(ev){ev.preventDefault();var b=document.getElementById('c-body').value.trim(),en=root.getAttribute('data-l')==='en';if(b.length<2)return;btn.disabled=true;msg.textContent=en?'Sending…':'送っています…';
+  fetch(C+'/cocoro/comment',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:document.getElementById('c-name').value,body:b,_honey:document.getElementById('c-hp').value})}).then(function(r){return r.json().then(function(j){return [r.status,j]})}).then(function(x){if(x[1]&&x[1].ok){document.getElementById('c-body').value='';msg.textContent=en?'Posted. Thank you.':'届きました。ありがとうございます。';load()}else{msg.textContent=x[0]===429?(en?'Too many posts. Please wait a few minutes.':'続けての投稿が多いため、数分あけてください。'):(en?'Could not post. Please try again.':'送れませんでした。もう一度お試しください。')}}).catch(function(){msg.textContent=en?'Could not reach the server.':'つながりませんでした。少し後でお試しください。'}).then(function(){btn.disabled=false})});
+ function ph(){var en=root.getAttribute('data-l')==='en';document.getElementById('c-name').placeholder=en?'Name (optional)':'お名前(なくても可)';document.getElementById('c-body').placeholder=en?'Your comment':'コメント'}
+ ph();new MutationObserver(ph).observe(root,{attributes:true,attributeFilter:['data-l']});
 })();
 </script>
 
