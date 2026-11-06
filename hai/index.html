@@ -45,6 +45,7 @@ h3{margin:0 0 8px;font-size:13px;color:#cfd3df}
 <header>
  <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#ff9ecb" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7a5 5 0 1 0 5 5"/><circle cx="12" cy="12" r="1.6" fill="#ff9ecb"/></svg><div><b>胚</b><span> はい ・ 育ちつづける図</span></div></div>
  <div class="state" id="state">…</div>
+ <div class="state" id="age" style="background:rgba(169,180,255,.12);color:#c7cdff;font-family:ui-monospace,Menlo,monospace;font-weight:500"></div>
  <div class="stats" id="stats"></div>
 </header>
 <main>
@@ -103,7 +104,7 @@ function aSpark(ser,w,h){if(!ser||ser.length<2)return'';var t0=ser[0][0],t1=ser[
  var d=pts.map(function(p,k){return(k?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join('');
  return'<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" preserveAspectRatio="none" style="display:block;margin-top:6px">'+bands+'<line x1="0" x2="'+w+'" y1="'+(h-.3*h)+'" y2="'+(h-.3*h)+'" stroke="#5a6078" stroke-dasharray="3 3"/><line x1="0" x2="'+w+'" y1="'+(h-.9*h)+'" y2="'+(h-.9*h)+'" stroke="#5a6078" stroke-dasharray="3 3"/><path d="'+d+'" fill="none" stroke="#3ddc97" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg><div style="color:var(--mut);font-size:11px;display:flex;justify-content:space-between;gap:6px"><span>'+new Date(t0*1000).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+'</span><span>点線 0.3で眠り・0.9で起床/青は眠り</span><span>いま</span></div>'}
 function aEta(bs){if(bs.sleep)return'';if(bs.next_sleep_min!=null)return'<div style="font-size:12px;margin-top:4px">次の眠りまで 約'+bs.next_sleep_min+'分(今の増減 '+(bs.A_rate_min>0?'+':'')+Number(bs.A_rate_min).toFixed(4)+'/分)</div>';if(bs.A_rate_min!=null)return'<div style="color:var(--mut)" style="font-size:12px;margin-top:4px">今の増減 '+(bs.A_rate_min>0?'+':'')+Number(bs.A_rate_min).toFixed(4)+'/分(減っていないので眠りの見込みは立たない)</div>';return''}
-function render(d){D=d;var now=Date.now()/1000,alive=d.ts&&now-d.ts<(MODE=='live'?10:1500),sl=d.sleep||{};
+function render(d){D=d;if(d.born){BORN=d.born;ageTick()}var now=Date.now()/1000,alive=d.ts&&now-d.ts<(MODE=='live'?10:1500),sl=d.sleep||{};
  var sb=document.getElementById('stale');sb.style.display=(alive&&MODE=='live')?'none':'block';
  sb.style.background=alive?'#1d2236':'#3a1620';sb.style.color=alive?'#aab2e6':'#ffb3c0';
  sb.textContent=alive?('約'+Math.max(1,Math.round((now-d.ts)/60))+'分前の様子です(10分ごとに更新。生の様子につながると2秒ごとに動きます)'):'胚の本体からの便りが途切れています';
@@ -130,6 +131,10 @@ function getData(){
   return fetch(LIVE,{cache:'no-store',signal:c.signal}).then(function(r){clearTimeout(tm);if(!r.ok)throw 0;MODE='live';return r.json()})
    .catch(function(){liveBad=Date.now();MODE='snap';return fetch('live.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()})})}
  MODE='snap';return fetch('live.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()})}
+var BORN=null;
+function ageTick(){if(!BORN)return;var s=Math.max(0,Math.floor(Date.now()/1000-BORN)),dd=Math.floor(s/86400),hh=Math.floor(s%86400/3600),mm=Math.floor(s%3600/60),ss=s%60;
+ document.getElementById('age').textContent='生まれてから '+(dd?dd+'日 ':'')+('0'+hh).slice(-2)+':'+('0'+mm).slice(-2)+':'+('0'+ss).slice(-2)}
+setInterval(ageTick,1000);
 function load(){getData().then(render).catch(function(){document.getElementById('stale').style.display='block'}).finally(function(){setTimeout(load,MODE=='live'?2000:30000)})}
 resize();load();requestAnimationFrame(draw);
 </script></body></html>
