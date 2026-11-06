@@ -317,7 +317,10 @@ footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
  // 来訪の記録と、来訪者数・コメント(4070の計測の受け口)
  var C='https://tadangforai.tail5734ce.ts.net:8443';
  var sid=(Math.random().toString(36)+Date.now().toString(36)).slice(2,14);
- try{fetch(C+'/',{method:'POST',headers:{'Content-Type':'text/plain'},keepalive:true,body:JSON.stringify({e:'pageview',p:location.pathname,r:document.referrer,s:sid})}).catch(function(){})}catch(e){}
+ var own=false;try{if(/[?&]cos_owner=1/.test(location.search))localStorage.setItem('cos_owner','1');own=localStorage.getItem('cos_owner')==='1'}catch(e){}
+ // 社長の端末(会社OSの画面から一度でも開いたブラウザ)は来訪として数えない。代わりに社長の印だけ送る(そのネットワークも数えなくなる)
+ try{fetch(C+'/',{method:'POST',headers:{'Content-Type':'text/plain'},keepalive:true,body:JSON.stringify(own?{e:'owner_ping',p:location.pathname,s:sid}:{e:'pageview',p:location.pathname,r:document.referrer,s:sid})}).catch(function(){})}catch(e){}
+ if(/[?&]cos_owner=1/.test(location.search)){try{history.replaceState(null,'',location.pathname+location.hash)}catch(e){}}
  function stats(){fetch(C+'/cocoro/stats',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(!d||!d.uv)return;document.getElementById('v-all').textContent=d.uv.toLocaleString();document.getElementById('v-today').textContent=(d.today||0).toLocaleString();document.getElementById('visits').hidden=false}).catch(function(){})}
  setTimeout(stats,1500);setInterval(stats,60000);
  var list=document.getElementById('clist'),empty=document.getElementById('cempty');
