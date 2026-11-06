@@ -109,7 +109,7 @@ function render(d){D=d;var now=Date.now()/1000,alive=d.ts&&now-d.ts<(MODE=='live
  sb.textContent=alive?('約'+Math.max(1,Math.round((now-d.ts)/60))+'分前の様子です(10分ごとに更新。生の様子につながると2秒ごとに動きます)'):'胚の本体からの便りが途切れています';
  var st=document.getElementById('state');if(!alive){st.style.background='rgba(255,93,93,.15)';st.style.color='#ff9aa8';st.innerHTML='<i class="dot" style="background:#ff5d5d"></i>便りを待っている'}
  else if(sl.state){st.style.background='rgba(169,180,255,.15)';st.style.color='#c7cdff';st.innerHTML='<i class="dot" style="background:#a9b4ff"></i>眠っている('+esc(sl.state)+')'}
- else{st.style.background='rgba(61,220,151,.13)';st.style.color='#7ff0c0';st.innerHTML='<i class="dot" style="background:#3ddc97"></i>起きている・1秒に20回'}
+ else{st.style.background='rgba(61,220,151,.13)';st.style.color='#7ff0c0';st.innerHTML='<i class="dot" style="background:#3ddc97"></i>起きている'+(d.tick_hz?'・1秒に約'+Math.round(d.tick_hz)+'回':'')}
  var S=[['部品',fmt(d.N)],['つながり',fmt(d.E)],['発火率',d.fire!=null?(d.fire*100).toFixed(1)+'%':'-'],['驚き(平均)',d.e_mean!=null?Number(d.e_mean).toFixed(3):'-'],['訪れたページ',fmt(d.visits)],['たどり着いたサイト',fmt(d.domains)]];
  document.getElementById('stats').innerHTML=S.map(function(s){return'<div class="st"><small>'+s[0]+'</small><b>'+s[1]+'</b></div>'}).join('');
  var tg={};(d.cols||[]).forEach(function(c){tg[c[0]]=[c[1],c[2]];if(c[5])flash[c[0]]=1});for(var k in pos)if(!tg[k])delete pos[k];tgt=tg;if(!user)fit();
